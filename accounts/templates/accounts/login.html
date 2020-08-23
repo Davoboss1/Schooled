@@ -1,0 +1,39 @@
+{% extends "admins/school_owner_admin_page.html" %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+<!-- ================ start banner Area ================= -->
+<section class="home-banner-area">
+	<!-- Header area -->
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-header">
+				<h2 class="text-white text-center">Schooled Login page</h2>
+
+			</div>
+
+		</div>
+	</div>
+
+</section>
+<!-- ================ End banner Area ================= -->
+<div class="container my-3 d-flex flex-column" style="max-width:350px;">
+
+	<form class="w-100 mx-auto"  method="post" action="{% url 'accounts:login' %}">
+
+		{% csrf_token %}
+		<fieldset class="form-group">
+			<legend class="border-bottom mb-4">
+				Please Login</legend>
+			{{form|crispy}}
+
+		</fieldset>
+		<button class="genric-btn info radius">Login</button>
+
+	</form>
+	<a class="ml-auto" href="{% url 'accounts:reset_password' %}">Reset password?</a>
+</div>
+
+{% endblock %}
+{% block script %}
+{% endblock %}

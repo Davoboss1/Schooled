@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<link href="css/bootstrap.min.css">
+<head>
+</head>
+<body>
+<form method='post' action=''>
+	{% csrf_token %}
+	<div class='form-group'>
+	<div class='col-lg-5'>
+	<input class='form-control' type='text' placeholder='Type in a name or city' name="srh">
+	</div>
+	<label class='col-col-lg-2'>
+	<button class="btn btn-danger" type='submit'>Search</button>
+	</label>
+	</div>
+	<br><br>
+		<div style="color: blue;">
+			{% if messages %}
+			<ul class='messages'>
+				
+				</ul>
+			{% endif %}
+		</div>
+</body>
+</html>	

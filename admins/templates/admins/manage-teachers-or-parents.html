@@ -1,0 +1,295 @@
+{% load crispy_forms_tags %}
+{% load custom_filter %}
+<!-- Add Teacher or parents Button -->
+<div class="d-flex flex-column">
+    <!-- List of all teachers or parents list Group -->
+    {% if type == "Teacher" %}
+    <div class="list-group spaced-list">
+        <a data-toggle="collapse" data-target="#collapse-{{teacher.pk}}"
+            class="list-group-item list-group-item-action text-center">{{teacher.full_name}}</a>
+        <!-- Collapse of button group for teacher or parents actions -->
+        <div class="collapse" id="collapse-{{teacher.pk}}">
+            <div class="d-flex">
+                <button type="button" class="genric-btn info radius ml-auto" data-toggle="collapse"
+                    data-target="#Profile{{teacher.pk}}">
+                    View Info
+                </button>
+                <button type="button" class="genric-btn warning radius text-dark mx-auto" data-toggle="collapse"
+                    data-target="#edit-{{teacher.pk}}">
+                    Edit
+                </button>
+                <button type="button" class="genric-btn danger radius mr-auto" data-toggle="collapse"
+                    data-target="#delete-{{teacher.pk}}">
+                    Delete
+                </button>
+            </div>
+            <!-- End of button group collapse -->
+            <!-- Start of accordion-->
+            <div class="accordion" id="manage-teacher-accordion">
+                <!-- Start of view teacher or parents profile collapse -->
+                <div class="collapse my-3" id="Profile{{teacher.pk}}" data-parent="#manage-teacher-accordion">
+                    <!-- Card that shows profile -->
+                    <div class="card">
+                        <!-- Profile Image -->
+                        <img class="card-img-top mx-auto" src="{{teacher.school_user.profile_picture.url}}" alt=""
+                            style="max-height:50%; max-width:50%;">
+                        <!-- Card body -->
+                        <div class="card-body">
+                            <!-- Profile Info -->
+                            <h5><u class="text-dark">Full Name</u></h5>
+                            <b class="dark-red">{{teacher.full_name}}</b>
+                            <h5><u class="text-dark">Username</u></h5>
+                            <b class="dark-red">{{teacher.school_user.user.get_username}}</b>
+                            <h5><u class="text-dark">Address</u></h5>
+                            <b class="dark-red">{{teacher.address}}</b>
+                            <h5><u class="text-dark">Class teacher of</u></h5>
+                            <b class="dark-red">{{teacher.teacher_class.class_name }}</b>
+                            <h5><u class="text-dark">Date_of_birth</u></h5>
+                            <b class="dark-red">{{teacher.date_of_birth }}</b>
+                            <h5><u class="text-dark">Age</u></h5>
+                            <b class="dark-red">{{teacher.age }}</b>
+
+                            <h5><u class="text-dark">Sex</u></h5>
+                            <b class="dark-red">{{teacher.sex}}</b>
+                            <h5><u class="text-dark">Email</u></h5>
+                            <b class="dark-red">{{teacher.school_user.user.email}}</b>
+                            <h5><u class="text-dark">Phone number</u></h5>
+                            <b class="dark-red">{{teacher.phone_no}}</b>
+                            <h5><u class="text-dark">State of Origin</u></h5>
+                            <b class="dark-red">{{teacher.state_of_origin }}</b>
+
+
+                            <!-- End of profile info -->
+                        </div>
+                        <!-- End of card body-->
+                    </div>
+                    <!-- End of card -->
+                </div>
+                <!-- End of view teacher or parents profile collapse -->
+                <!-- Edit teacher or parents Collapse-->
+                <div class="collapse" id="edit-{{teacher.pk}}" data-parent="#manage-teacher-accordion">
+                    <!-- Edit form -->
+                    <div class="d-flex">
+                        <form method="post" class="my-1 w-100 mx-auto" style="max-width:300px;"
+                            action="{% url 'teacher_update' teacher.pk %}" id="update-teachers-form">
+                            {% csrf_token %}
+                            <h4>Teacher Information</h4>
+                            {{ form | crispy }}
+                            {{ form.errors }}
+                            <div class="d-flex">
+                                <button type="submit"
+                                    class="genric-btn success w-75 mx-auto text-center">Update</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- End of edit form-->
+                </div>
+                <!-- End of edit teacher or parents collapse -->
+                <!-- Start of delete teacher or parents collapse -->
+                <div class="collapse border border-dark rounded my-3 p-3" id="delete-{{teacher.pk}}"
+                    data-parent="#manage-teacher-accordion">
+                    <b class="dark-red">Are you sure you want to delete this {{type}} ?</b>
+                    <div class="d-flex">
+                        <button class="btn btn-danger mr-3 delete-teacher-btn" type="button"
+                            data-id="{{teacher.pk}}">Yes</button>
+                        <button class="btn btn-success ml-3" type="button" data-toggle="collapse"
+                            data-target="#delete-{{teacher.pk}}">No</button>
+                    </div>
+                </div>
+                <!-- End of delete container -->
+            </div>
+            <div id="update-status" class="my-2">
+
+            </div>
+            <!-- End of accordion -->
+        </div>
+        <!-- End of  Collapse of button group for teacher actions-->
+
+    </div>
+    <!-- End of List group -->
+
+
+    {% elif type == "Parent" %}
+    <div class="list-group spaced-list">
+        {% for student in students %}
+        <a data-toggle="collapse" data-target="#student-collapse{{student.pk}}"
+            class="list-group-item list-group-item-action text-center">{{student.name}}</a>
+        <!-- Collapse of button group for teacher or parents actions -->
+        <div class="collapse" id="student-collapse{{student.pk}}">
+            <h4 class="text-center mb-3">Parent</h4>
+            {% for parent in student.parents.all %}
+            <div class="d-flex my-2">
+                <button type="button" class="w-100 btn btn-dark" data-toggle="collapse"
+                    data-target="#parentsProfile{{parent.pk}}">
+                    {{parent.full_name|default:"No name yet"}}
+                </button>
+
+            </div>
+            <!-- End of button group collapse -->
+            <!-- Start of view teacher or parents profile collapse -->
+            <div class="collapse my-3" id="parentsProfile{{parent.pk}}">
+                <!-- Card that shows profile -->
+                <div class="card">
+                    <!-- Profile Image -->
+                    <img class="card-img-top mx-auto" src="{{parent.school_user.profile_picture.url}}"
+                        alt="Card image cap" style="max-height:50%; max-width:50%;">
+                    <!-- Card body -->
+                    <div class="card-body">
+                        <!-- Profile Info -->
+                        <h5><u class="text-dark">Full Name</u></h5>
+                        <b class="dark-red">{{parent.full_name|default:"Not set yet"}}</b>
+                        <h5><u class="text-dark">Username</u></h5>
+                        <b class="dark-red">{{parent.school_user.user.get_username}}</b>
+                        <h5><u class="text-dark">Address</u></h5>
+                        <b class="dark-red">{{parent.address|default:"Not set yet"}}</b>
+
+                        <h5><u class="text-dark">Sex</u></h5>
+                        <b class="dark-red">{{parent.sex|default:"Not set yet"}}</b>
+                        <h5><u class="text-dark">Email</u></h5>
+                        <b class="dark-red">{{parent.school_user.user.email|default:"Not set yet"}}</b>
+                        <h5><u class="text-dark">Phone number</u></h5>
+                        <b class="dark-red">{{parent.phone_no|default:"Not set yet"}}</b>
+                        <h5><u class="text-dark">Children in your school</u></h5>
+                        <table class="table my-3">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Class</th>
+                                    <th scope="col">Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for child in parent|get_children:student.Class.school.pk %}
+                                <tr>
+                                    <th scope="row">{{forloop.counter}}</th>
+                                    <td>{{child.Class.class_name}}</td>
+
+                                    <td>{{child.name}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- End of profile info -->
+                    </div>
+                    <!-- End of card body-->
+                </div>
+                <!-- End of card -->
+            </div>
+            <!-- End of view teacher or parents profile collapse -->
+            {% endfor %}
+            <!-- End of accordion -->
+
+            <!-- End of  Collapse of button group for teacher actions-->
+        </div>
+        {% endfor %}
+        <!-- pagination -->
+    </div>
+    <!-- End of List group -->
+    <!-- pagination -->
+    <div class="row py-3 border-top border-bottom">
+        <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
+            {% if students.has_previous %}
+            <button class="genric-btn primary mx-auto students-pagination-handler"
+                data-page="{{students.previous_page_number}}">
+                <span class="fa fa-angle-left mr-1"></span>Prev </button>
+            {% endif %}
+        </div>
+        <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
+            <select class="form-control mx-auto students-pagination-handler" style="max-width: 100px;">
+                {% for page_no in students.paginator.page_range %}
+                <option {% if page_no == students.number %}selected{% endif %}>{{page_no}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
+            {% if students.has_next %}
+            <button class="genric-btn primary mx-auto students-pagination-handler "
+                data-page="{{students.next_page_number}}">Next <span class="fa fa-angle-right ml-1"></span></button>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script>
+    {% if type == "Parent" %}
+    //Pagination event handlers
+    $("button.students-pagination-handler").click(function () {
+        var page_no = $(this).attr("data-page");
+        fetch_students(page_no, this);
+    });
+
+    $("select.students-pagination-handler").change(function () {
+        var page_no = $(this).val();
+        fetch_students(page_no, this);
+    });
+    //Function fetches students by page
+    function fetch_students(page_no, elem) {
+        var body = $(elem).parent().parent().parent().parent();
+        body.html('<div class="mx-auto my-3 progressBar"></div>');
+        $.ajax({
+            url: "{% url 'manage_parents' class_pk %}",
+            data: {
+                page: page_no,
+            },
+            success: function (data) {
+
+                body.html(data);
+            },
+            error: function (req, status, error) {
+                body.html('<div class="alert alert-danger alert-dismissible fade show" role="alert" > <strong>Error!</strong> Something went wrong. Attendance was not fetched. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+            }
+        });
+    }
+
+    {% else %}
+
+    $(function () {
+        var status = $("#update-status");
+        $("#update-teachers-form").submit(function (event) {
+            event.preventDefault();
+
+            status.html('<div class="mx-auto progressBar"></div>');
+            var $form = $(this);
+            $.ajax({
+                url: $form.attr("action"),
+                type: "POST",
+                data: $form.serialize(),
+                success: function (data) {
+
+                    if (data == "Success") {
+                        status.html('<div class="alert alert-success alert-dismissible fade show" role="alert"> <strong>Success..</strong> You have successfully updated this teacher information.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+
+                    } else {
+                        status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong> Please recheck your forms and make sure you entered the correct information. Thank you..<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+
+                    }
+                },
+                error: function (data) {
+                    status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong>Something went wrong. Form was not submitted <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+
+                }
+            });
+        });
+        //Delete teacher event handler
+        $(".delete-teacher-btn").click(function () {
+
+            status.html('<div class="mx-auto progressBar"></div>');
+            $.ajax({
+                url: "{% url 'teacher_delete' %}",
+                type: "POST",
+                data: { csrfmiddlewaretoken: "{{csrf_token}}", pk: $(this).attr("data-id"), },
+                success: function (data) {
+                    status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Success..</strong>' + data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+
+                },
+                error: function (data) {
+
+                    status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Success..</strong> Request Failed.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+                }
+            });
+        });
+
+    });
+    {% endif %}				
+</script>

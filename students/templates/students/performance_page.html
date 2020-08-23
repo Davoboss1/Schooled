@@ -1,0 +1,220 @@
+{% load static %}
+<div class="my-1 mx-auto" style="max-width:400px;">
+	<!-- Main Tabs -->
+	<div class="d-flex flex-column mb-2">
+		<span class="fas fa-3x fa-redo-alt mx-auto" id="refresh"></span>
+		<small class="mx-auto">Refresh</small>
+	</div>
+	<div class="d-flex flex-column">
+		<div class="d-flex mx-2">
+			<h6 class="w-50 ml-3">Year</h6>
+			<h6 class="w-50">Term</h6>
+		</div>
+		<div class="d-flex my-2 mx-3">
+
+			<select class="form-control" name="year" id="year" style="min-width: 100px;">{% for term in terms %}
+				{% ifchanged %}
+				<option value="{{term.year}}">{{term.session}}</option>
+				{% endifchanged %}
+				{% endfor %}
+			</select>
+
+			<select class="ml-3 form-control" name="term" id="term">
+
+				<option {% if terms.first.term == "1st Term"%}selected{% endif %}>1st Term</option>
+				<option {% if terms.first.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
+				<option {% if terms.first.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
+			</select>
+			<button class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span class="fas fa-redo"></span></button>
+		</div>
+
+	</div>
+	<!-- Main Tabs -->
+	<nav class="">
+		<div class="nav nav-tabs d-flex" id="nav-tab" role="tablist">
+			<!-- View Performance Tab link -->
+			<a class="nav-item nav-link ml-auto" id="nav-view-performance-tab" data-toggle="tab"
+				href="#nav-view-performance" role="tab" aria-controls="nav-view-performance" aria-selected="true">
+				View Performance
+			</a>
+			<!-- Edit Performance Tab link -->
+			<a class="nav-item nav-link mr-auto" id="nav-edit-performance-tab" data-toggle="tab"
+				href="#nav-edit-performance" role="tab" aria-controls="nav-edit<-performance" aria-selected="false">
+				Edit Performance
+			</a>
+		</div>
+	</nav>
+	<!-- End of nav -->
+	<!-- Tab Body -->
+	<div class="tab-content" id="nav-tabContent">
+
+		<!-- View performance  tab body-->
+		<div class="tab-pane fade" id="nav-view-performance" role="tabpanel" aria-labelledby="nav-view-performance-tab">
+			<!-- View performance tab body  accordion -->
+			<div class="accordion" id="main-accordion">
+				<!-- Performance List -->
+				<div class="list-group spaced-list" id="performance-list">
+					<!-- performance list body -->
+				</div>
+				<!-- end of list group -->
+			</div>
+			<!-- End of accordion -->
+		</div>
+		<!-- End of view performance tab -->
+
+
+
+		<!-- Edit performance tab -->
+		<div class="tab-pane fade" id="nav-edit-performance" role="tabpanel" aria-labelledby="nav-edit-performance-tab">
+			<!-- List group and Accordion for performance -->
+			<div class="list-group spaced-list accordion" id="editPerformanceAccordion">
+				<!-- Edit performance body -->
+
+			</div>
+			<!-- End of List group and accordion -->
+
+		</div>
+		<!-- End of edit Performance tab -->
+
+	</div>
+
+	<!-- Beginning of delete modal -->
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered " role="document">
+			<div class="modal-content border border-danger">
+				<div class="modal-header bg-danger text-light">
+					<h5 class="modal-title" id="deleteModalTitle">Delete Performance</h5> <button type="button"
+						class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true"
+							style="color:white;">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" style="background:#EB6666; color:white;" id="deleteModalContent">Are you sure.
+					You want to delete this performance : <p id="modalsubject"></p>
+				</div>
+				<div class="modal-footer flex-column">
+					<div class="d-flex ml-auto">
+						<button type="button" class="btn btn-secondary mr-3" data-dismiss="modal">No</button>
+
+						<button id="deleteButton" class="btn btn-danger" type="button">yes</button>
+					</div>
+					<div id="status" class="mt-2"></div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--End of delete modal -->
+	<script>
+
+		$(function () {
+			//Pagination
+			var body = $("#performance-list");
+			body.html('<div class="mx-auto  my-3 progressBar"></div>');
+
+			$.ajax({
+				url: "{% url 'students:performance_page' 'view-performance' %}",
+				data: {
+					page: 1,
+					year: $("#year").val(),
+					term: $("#term").val(),
+				},
+				success: function (data) {
+					$("#performance-list").html(data);
+				},
+				error: function (req, status, error) {
+					$("#performance-list").html("<div class='d-flex flex-column my-3'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong and page could not be fetched.</div>");
+				}
+			});
+
+			//Pagination
+			var body = $("#editPerformanceAccordion");
+			body.html('<div class="mx-auto  my-3 progressBar"></div>');
+			$.ajax({
+				url: "{% url 'students:performance_page' 'edit-performance' %}",
+				data: {
+					page: 1,
+				},
+				success: function (data) {
+					$("#editPerformanceAccordion").html(data);
+				},
+				error: function (req, status, error) {
+					$("#editPerformanceAccordion").html("<div class='d-flex flex-column my-3'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong and page could not be fetched.</div>");
+				}
+			});
+
+		});
+
+		{% if type == "view-performance" %}
+		$("#nav-view-performance-tab").addClass("active");
+		$("#nav-view-performance").addClass("show active");
+
+		{% elif type == "edit-performance" %}
+		$("#nav-edit-performance-tab").addClass("active");
+		$("#nav-edit-performance").addClass("show active");
+		{% endif %}
+
+
+
+		$("#refresh").click(function () {
+			var refresh_btn = $(this);
+			var refresh_text = refresh_btn.next();
+			refresh_btn.addClass("fa-spin");
+
+			var view_performance = document.getElementById("nav-view-performance-tab");
+			var url = null;
+			if (view_performance.classList.contains("active")) {
+				url = "{% url 'students:performance_page' 'view-performance' %}";
+			} else {
+				url = "{% url 'students:performance_page' 'edit-performance' %}";
+			}
+
+			$.ajax({
+				url: url,
+				type: "GET",
+				success: function (data) {
+
+					$("#main").html(data);
+					refresh_btn.removeClass("text-danger");
+					refresh_text.removeClass("text-danger");
+					refresh_text.text("Refresh");
+				},
+				error: function () {
+					refresh_btn.removeClass("fa-spin");
+					refresh_btn.addClass("text-danger");
+					refresh_text.addClass("text-danger");
+					refresh_text.text("Refresh failed");
+				}
+			});
+
+		});
+
+		$("#fetch-termly-performance").click(function (event) {
+			var span_icon = $($(this).find("span")[0]);
+			span_icon.addClass("fa-spin");
+			var view_performance = document.getElementById("nav-view-performance-tab");
+
+			$.ajax({
+				url: "{% url 'students:performance_page' 'view-performance' %}",
+				type: "GET",
+				data: {
+					page: 1,
+					year: $("#year").val(),
+					term: $("#term").val(),
+				},
+				success: function (data) {
+					span_icon.removeClass("fa-spin");
+					if (data == "DOE_ERROR") {
+						$("#performance-list").html('<div class="alert alert-warning my-3" role="alert"> <h6 class="text-center">Term selected does not exist. </div></h6>');
+					}
+					else {
+						$("#performance-list").html(data);
+					}
+				},
+				error: function (response, status, error) {
+					span_icon.removeClass("fa-spin");
+				}
+			});
+
+		});
+	</script>

@@ -1,0 +1,327 @@
+{% load custom_utils %}
+<div class="my-1 mx-auto w-100" style="max-width:400px;">
+    <!-- Attendance Mark -->
+    <div class="d-flex flex-column mb-2">
+        <span class="fas fa-3x fa-redo-alt mx-auto" id="refresh"></span>
+        <small class="mx-auto">Refresh</small>
+    </div>
+    <div class="d-flex my-3">
+
+        <h5 class="my-auto ml-3">Select Date : </h5>
+
+        <div class="d-flex date-container ">
+            <span class="fas fa-calendar vcenter ml-2">
+            </span>
+            <input class="date-input" type="date" value="{{date}}" onchange="viewDay(this.value);">
+
+        </div>
+    </div>
+    <div class="m-2" id="date-error"></div>
+
+
+    <div id="attendance-mark">
+
+        <!-- Button to switch to attendance view -->
+        <button class="btn btn-light btn-block mt-3" onclick="switchAttendance();">View students attendance</button>
+
+
+        <!-- Attendance mark form -->
+        <form method="post" action="{% url 'students:mark' date %}" id="mark-form">
+            <h5>Mark attendance for {{date|to_date|date:"l jS, F Y"}}</h5>
+            <!-- Mark and Unmark all buttons -->
+            <div class="mark-all-container">
+                <button class="btn btn-info mx-auto" id="markallBtn" onclick="markAll(true);" type="button">Mark all
+                </button>
+                <button class="btn btn-info mx-auto" id="markallBtn" onclick="markAll(false);" type="button">Unmark all
+                </button>
+            </div>
+
+            <!-- Attendance marking table -->
+            <table class="table attendance-table table-hover">
+                <!-- Table head -->
+                <thead class="thead-light">
+                    <th style="width:15%;">No</th>
+                    <th>Full Name</th>
+                    <th>Present</th>
+                </thead>
+
+                <!-- Body of the table -->
+                <tbody>
+                    <!-- Test rows of the table -->
+                    <!-- Loop should start here -->
+                    {% csrf_token %}
+                    {% for students in all_students %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td><img src="#" alt="" class="student-icon">{{students.name}} </td>
+                            <td><input type="checkbox" class="student-checkbox" name="present" value="{{students.id}}"
+                                                                                               {% if students in attendance %}checked{% endif %}></td>
+                        </tr>
+                    {% endfor %}
+
+
+
+                    <!-- Loop Should end here -->
+                    <!-- Remaining rows -->
+                    <!-- Should be deleted -->
+
+                    <!-- Deletable rows ends here -->
+                </tbody>
+
+            </table>
+            <!-- Submit Button -->
+            <div class="mark-all-container">
+                <button id="attendance-submit" class="btn btn-success mx-auto w-75" type="submit">Submit</button></div>
+
+        </form>
+        <div id="form-status">
+
+        </div>
+    </div>
+
+
+
+    <!-- Attendance view -->
+    <div id="attendance-view" style="display:none;">
+        <!-- Button to switch to attendance mark -->
+        <button class="btn btn-light btn-block mt-3" onclick="switchAttendance();">Mark students attendance</button>
+
+        <!-- attendance view container -->
+        <div>
+
+            <!-- Date view container -->
+            <div class="jumbotron mt-3">
+                Showing date for <span id="dateView">{{date|to_date|date:"l jS, F Y"}}</span>
+            </div>
+
+            <!-- Attendance view table -->
+            <table class="table attendance-table table-hover">
+                <!-- Table head -->
+                <thead class="thead-light">
+                    <th style="width:15%;">No</th>
+                    <th>Full Name</th>
+                    <th>Status</th>
+                </thead>
+
+                <!-- Table body -->
+                <tbody>
+                    <!-- Table row -->
+                    <!-- badge-success should be used for a student that is present -->
+                    <!-- badge-danger should be used for a student that is absent -->
+                    <!-- First row 
+                        Shows present example
+                    -->
+                    {% for students in all_students %}
+                        {% if students in attendance %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td> <img src="" alt="" class="student-icon">
+                                    {{students.name}} </td>
+                                <td><span class="badge badge-success">Present</span></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td><img src="img/pic.jpg" alt="" class="student-icon">{{students.name}}</td>
+                                <td><span class="badge badge-danger">Absent</span></td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- View amount of present and absent students -->
+    <div class="d-flex">
+        <h6 class="mx-auto">Student Present : </h6>
+        <h6 class="mx-auto" id="presentNo">0</h6>
+        <h6 class="mx-auto">Student Absent : </h6>
+        <h6 class="mx-auto" id="absentNo">0</h6>
+    </div>
+
+
+</div>
+
+
+<script>
+    $(function () {
+        $("#mark-form").submit(function (event) {
+            event.preventDefault();
+            $("#form-status").html('<div class="mx-auto progressBar"></div>');
+
+            var $form = $(this);
+            $.ajax({
+                url: $form.attr("action"),
+                type: "POST",
+                data: $form.serialize(),
+                success: function (data) {
+                    $("#form-status").html('<div class="alert alert-success alert-dismissible fade show" role="alert"> <strong>Success..</strong>' + data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+                },
+                error: function(res,status,textStatus) {
+                    $("#form-status").html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong>Something went wrong. Attendance was not marked <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+
+                },
+            });
+        });
+    });
+
+$("#refresh").click(function () {
+    var refresh_btn = $(this);
+    var refresh_text = refresh_btn.next();
+
+    refresh_btn.addClass("fa-spin");
+    var url = null;
+    if (showing == "attendance_mark") {
+        url = "{% url 'students:attendance_page' 'mark-attendane' %}";
+    } else if (showing == "attendance_view") {
+        url = "{% url 'students:attendance_page' 'view-attendance' %}";
+    }
+
+    $.ajax({
+        url: url,
+        type: "GET",
+        timeout: 20000,
+        data: { date: '{{date}}' },
+        success: function (data) {
+            //main.innerHTML=data;
+            $("#main").html(data);
+            refresh_btn.removeClass("text-danger");
+            refresh_text.removeClass("text-danger");
+            refresh_text.text("Refresh");
+        },
+        error: function() {
+            refresh_btn.removeClass("fa-spin");
+            refresh_btn.addClass("text-danger");
+            refresh_text.addClass("text-danger");
+            refresh_text.text("Refresh failed");
+        }
+    });
+
+});
+
+var attendance_mark = document.getElementById('attendance-mark');
+var attendance_view = document.getElementById("attendance-view");
+
+{% if type == "view-attendance" %}
+    showing = "attendance_view";
+attendance_view.style.display = "block";
+attendance_mark.style.display = "none";
+    {% elif type == "mark-attendance" %}
+    showing = "attendance_mark";
+attendance_mark.style.display = "block";
+attendance_view.style.display = "none";
+    {% endif %}
+
+
+//For marking and counting attendance checkbox
+//Next three lines gets needed elements from dom.
+var student_checkbox = document.getElementsByClassName("student-checkbox");
+var present_no = document.getElementById("presentNo");
+var absent_no = document.getElementById("absentNo");
+var attendance_count = 0;
+{% if attendance %}
+    attendance_count = {{ attendance.count }};
+    {% endif %}
+absent_no.innerHTML = {{ all_students.count }}-attendance_count;
+present_no.innerHTML = attendance_count;
+//Getting date for view attendance
+//document.getElementById("dateView").innerHTML = "{{date}}";
+
+//Counting no of students present and absent
+for (var i = 0; i < student_checkbox.length; i++) {
+    student_checkbox[i].onclick = function () {
+        var present_count = parseInt(present_no.innerHTML);
+        var absent_count = parseInt(absent_no.innerHTML);
+        if (this.checked === true) {
+            present_count += 1;
+            absent_count -= 1;
+        } else {
+            present_count -= 1;
+            absent_count += 1;
+        }
+
+        present_no.innerHTML = present_count;
+        absent_no.innerHTML = absent_count;
+    };
+
+}
+//Counting students present
+function countPresent() {
+    var count = 0;
+    for (var i = 0; i < student_checkbox.length; i++) {
+        if (student_checkbox[i].checked === true) {
+            count++;
+        }
+    }
+
+    present_no.innerHTML = count;
+    absent_no.innerHTML = student_checkbox.length - count;
+}
+
+//Mark all funtion to mark and unmark all.
+function markAll(mark) {
+    for (var i = 0; i < student_checkbox.length; i++) {
+        if (mark) {
+            student_checkbox[i].checked = true;
+        } else {
+            student_checkbox[i].checked = false;
+        }
+    }
+    if (mark) {
+        present_no.innerHTML = student_checkbox.length;
+        absent_no.innerHTML = 0;
+    } else {
+        absent_no.innerHTML = student_checkbox.length;
+        present_no.innerHTML = 0;
+    }
+}
+//Toggle between mark attendance and view attendance page.
+
+function switchAttendance() {
+    if (showing === "attendance_mark") {
+        showing = "attendance_view";
+        attendance_view.style.display = "block";
+        attendance_mark.style.display = "none";
+    } else if (showing === "attendance_view") {
+        showing = "attendance_mark";
+        attendance_mark.style.display = "block";
+        attendance_view.style.display = "none";
+    }
+
+}
+
+//Showing date.
+function viewDay(value) {
+    $("#date-error").html('<div class="mx-auto progressBar text-primary text-sm"></div>');
+    var url = null;
+    if (showing == "attendance_mark") {
+        url = "{% url 'students:attendance_page' 'mark-attendane' %}";
+    } else if (showing == "attendance_view") {
+        url = "{% url 'students:attendance_page' 'view-attendance' %}";
+    }
+    $.ajax({
+        url: url,
+        type: "GET",
+        data: {
+            date: value,
+        },
+        success: function (data) {
+            $("#main").html(data);
+        },
+        error: function (res,status,textStatus) {
+            if(res.responseText){
+                $("#date-error").html(res.responseText);
+            }else{
+                $("#date-error").html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong>Something went wrong. Request Failed <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+            }
+        }
+    });
+}
+
+</script>

@@ -1,0 +1,133 @@
+{% load custom_utils %}
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+
+<head>
+  <!-- Mobile Specific Meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE-Edge">
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="img/fav.png" />
+  <!-- Author Meta -->
+  <meta name="author" content="colorlib" />
+  <!-- Meta Description -->
+  <meta name="description" content="" />
+  <!-- Meta Keyword -->
+  <meta name="keywords" content="" />
+  <!-- meta character set -->
+  <meta charset="UTF-8" />
+  <!-- Site Title -->
+  <title>Print student attendance</title>
+  
+<style>
+	h1,h3{
+		font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+		text-decoration: underline;
+		
+	}
+ 	th{
+ 		background-color:#222222;
+ 		color:white;
+ 		padding-left:5px;
+ 		padding-right:5px;
+ 		padding-top:5px;
+ 		padding-bottom:5px;
+ 	}
+ 	.text-center{
+ 		text-align:center;
+ 	}
+ 	
+ 	td{
+ 		text-align:center;
+ 		color:#463746;
+ 		padding-top:5px;
+ 		padding-bottom:5px;
+ 		border-bottom:2px dotted #A19B9B;
+ 	}
+ .student-name{
+ 	font-size:30px;
+ 	font-style:bold;
+ }
+ .present{
+ 	background-color:#239000;
+ 	color:white;
+ 	border-radius:5px;
+ 	padding-right:5px;
+ 	padding-left:5px;
+ 	padding-top:5px;
+ 	padding-bottom:5px;
+ }
+ .absent{
+ 	background-color:#CD1414;
+ 	color:white;
+ 	border-radius:5px;
+	padding-right:5px;
+ 	padding-left:5px;
+ 	padding-top:5px;
+ 	padding-bottom:5px;
+ 	
+ }
+ @media print {
+	body {
+		-webkit-print-color-adjust: exact;
+		
+	}
+	table{
+		page-break-inside: auto;
+	}
+	
+	tr{
+		page-break-inside: avoid;
+		page-break-after: auto;
+		
+	}
+	
+ }
+
+</style>
+</head>
+
+<body>
+
+<div style="display: flex; flex-direction: column;" id="performance-div">
+	
+<!-- Attendance Table -->
+<h1 class="mv-space " style="text-align:center;">{{student.name}} Attendance</h1>
+
+			<h3 class="text-center">Class : {{student.Class.class_name}}</h3>
+			<h3 class="text-center">Teacher : {{student.Class.teacher}}</h3>
+		
+			<h3 class="text-center">School : {{student.Class.school.school_name}}</h3>
+	
+						<table id="attendance-table" style="width: 100%;">
+							<thead >
+								<th>No</th>
+								<th>Date</th>
+								<th>Status</th>
+								
+							</thead>
+							<tbody id="attendance-table-body">
+						
+									{% for each_attendance in attendance %}
+						 {% if student in each_attendance.present_students.all %}
+					<tr >
+					<td>{{forloop.counter}}</td>
+					<td>
+						{{each_attendance.date|date:"l jS, F Y"}} </td>
+						<td><span class="present">Present</span></td></tr>
+						{% else %}
+							<tr >
+					<td>{{forloop.counter}}</td>
+					<td>{{each_attendance.date|date:"l jS, F Y"}}</td><td><span class="absent">Absent</span></td>
+				</tr>
+					{% endif %}
+					{% endfor %}
+		
+								
+							</tbody>				
+						</table>
+</body>
+<script>
+	print();
+</script>
+</html>

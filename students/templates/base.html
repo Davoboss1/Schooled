@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+			<title>Student page.</title>
+	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" >
+			<link rel="stylesheet" href="{% static 'css/style.css' %}">
+				<link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+	</head>
+	<body>
+		<!-- NavBar -->
+		<nav class="navbar navbar-expand-large navbar-light bg-light"> 		
+			<a href="" class="navbar-brand">SchoolWebapp</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button> 
+		</nav>
+		<!-- EndNav -->
+		<div class="container">
+			{% if messages %}
+				{% for message in messages%}
+					<div class="alert alert-{{message.tags}}">
+						{{message}}
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
+		{% block content %}
+		
+		{% endblock%}
+		
+		
+		<script src="{% static 'js/jquery-3.3.1.slim.min.js' %}">
+</script>
+<script src="{% static 'js/popper.min.js' %}">
+</script>
+<script src="{% static 'js/bootstrap.min.js' %}">
+</script>
+<script src="{% static 'js/custom-js.js' %}"></script>
+{% block javascript %}
+<script>
+	$('.list-group-item').click(function(){
+		$('.loadMorebtn').children("span").removeClass("fa-spin");
+	});
+	$('.loadMorebtn').click(function(){
+			$('.loadMorebtn').children("span").addClass("fa-spin");
+	});
+	$('.deleteBtn').click(function(){
+		$("#modalsubject").text($(this).prev().prev().text()+" "+ $(this).prev().text());
+		
+	});
+</script>
+{% endblock %}
+	</body>
+</html>

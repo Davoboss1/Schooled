@@ -1,0 +1,48 @@
+<div class="mx-auto w-100" id="notif">
+	<div class="w-100 border d-flex p-3">
+		<h5 class="mr-auto">Notifications</h5> <span
+			class="badge badge-danger badge-pill text-center my-auto">{{total_no}}</span>
+	</div>
+	{% for activity in activity_log %}
+	<blockquote class="generic-blockquote mt-3" style="background-color:#f2f2f2;">
+		<h6>Date : {{activity.Activity_date_and_time.date}}</h6>
+		<hr>
+		<h6>Time : {{activity.Activity_date_and_time.time}}</h6>
+		<hr>
+		<b class="text-dark">{{activity.Activity_info}}</b>
+	</blockquote>
+	{% endfor %}
+</div>
+<div class="d-flex">
+	<button class="genric-btn info mx-auto circle w-100 mt-2" id="load-more-btn" data-page-no="2"
+		style="max-width:300px;"> Load more</button>
+
+</div>
+<script>
+	$("#unviewed-notifications-count").html("0");
+	//Loads more notifications
+	$("#load-more-btn").click(function () {
+		var btn = $(this);
+		btn.text("Loading....");
+		var page = btn.attr("data-page-no");
+		$.ajax({
+			url: "{% url 'notifications' %}" + $("#selected-school").val() + "/",
+			data: { page: page },
+			timeout: 15000,
+			success: function (data) {
+				btn.text("Load More");
+				$("#notif").append(data);
+				btn.attr("data-page-no", parseInt(page) + 1)
+			},
+			error: function (res, status, statusText) {
+				if (res.responseText == "EMPTY") {
+					//If error response is EMPTY hide load more button
+					btn.css("display", "none");
+				}
+				else {
+					btn.text("Loading Failed, Retry.");
+				}
+			}
+		});
+	});
+</script>

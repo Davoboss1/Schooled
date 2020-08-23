@@ -1,0 +1,139 @@
+<div class="d-flex border-left border-right border-dark p-1 mx-auto" >
+    <img class="rounded" src="{% if school.image %}{{school.image.url}}{% endif %}" alt="" style="width:150px; height:150px;">
+    <div >
+        <h6 class="ml-3"><u class="text-dark">School Name</u> : <strong>{{school.school_name}} </strong>
+        </h6>
+        <h6 class="ml-3 mt-3"><u class="text-dark">Motto</u> : <strong>{{school.motto}}</strong>
+        </h6>
+        <h6 class="ml-3 mt-3"><u class="text-dark">School Owner</u> : <strong>{{user.get_full_name}} </strong>
+        </h6>
+    </div>
+</div> 		 			 		
+<div class="d-flex flex-column mt-3 mx-auto w-100" >
+    <button class="genric-btn primary radius w-75 mx-auto" data-toggle="collapse" data-target="#more-profile-info" >Show More <span class="fas fa-angle-down" ></span></button>	
+    <div class="collapse my-2 w-100" id="more-profile-info">
+        <div class="card text-center">
+            <div class="card-header bg-light text-dark"> School Information </div> 
+            <div class="card-body text-dark border border-light">
+
+
+                <h6 class="mb-2"><u class="text-dark">School Address </u></h6>
+                <b  class="text-dark">{{school.school_address}}</b>
+                <h6 class="mb-2"><u class="text-dark">School Type </u></h6>
+                <b class="text-dark">{{school.type}}</b>
+
+                <h6 class="mb-2"><u class="text-dark">Email </u></h6>
+                <b class="text-dark">{{school.school_email}}</b>
+                <h6 class="mb-2"><u class="text-dark">Approved </u></h6>
+                <b class="text-dark">{{school.approved}}</b>
+            </div> 
+
+            <div class="card-footer text-muted d-flex flex-column">Last Updated on {{school.update_at.date}}
+                <button class="genric-btn info w-50 mx-auto update-info" data-type="school">
+                    Update
+                </button>
+            </div> 
+        </div>
+
+        <div class="card text-center my-2">
+            <div class="card-header bg-dark text-white"> School Statistics </div> 
+            <div class="card-body text-dark border">
+
+                <h6 class="mb-2"><u class="text-dark">No of  classes </u></h6>
+                <b  class="text-dark">{{school.class_set.all.count }}</b>
+                <h6 class="mb-2"><u class="text-dark">No of students </u></h6>
+                <b class="text-dark">{{students_no }}</b>
+
+                <h6 class="mb-2"><u class="text-dark">No of Teachers </u></h6>
+                <b class="text-dark">{{teachers_no}}</b>
+                <h6 class="mb-2"><u class="text-dark">Government Approved</u></h6>
+                <b  class="text-dark">{{school.approved }}</b>
+            </div> 
+
+            <div class="card-footer text-muted d-flex flex-column">Information generated automatically
+
+            </div> 
+        </div>
+
+        <div class="card text-center">
+            <div class="card-header bg-light text-dark"> School Owner Information </div> 
+            <div class="card-body text-dark border border-light">
+
+
+                <h6 class="mb-2"><u class="text-dark">Name</u></h6>
+                <b  class="text-dark">{{user.get_full_name}}</b>
+                <h6 class="mb-2"><u class="text-dark">Residential Address</u></h6>
+                <b class="text-dark">{{user.schooluser.admin.address}}</b>
+
+                <h6 class="mb-2"><u class="text-dark">Email </u></h6>
+                <b class="text-dark">
+                    {{user.email}}</b>
+                <h6 class="mb-2"><u class="text-dark">Phone no </u></h6>
+                <b class="text-dark">
+                    {{user.schooluser.admin.phone_no}}</b>
+
+                <h6 class="mb-2"><u class="text-dark">Sex</u></h6>
+                <b class="text-dark">
+                    {{user.schooluser.admin.sex}}</b>
+
+                <h6 class="mb-2"><u class="dark">State of origin</u></h6>
+                <b class="text-dark">
+                    {{user.schooluser.admin.state_of_origin}}</b>
+
+                <h6 class="mb-2"><u class="text-dark">Date of birth</u></h6>
+                <b class="text-dark">
+                    {{user.schooluser.admin.date_of_birth}}</b>
+            </div> 
+
+            <div class="card-footer text-muted d-flex flex-column">Last Updated on {{user.schooluser.admin.update_at}}
+                <button class="genric-btn info w-50 mx-auto update-info" data-type="admin">
+                    Update
+                </button>
+            </div> 
+        </div>
+
+
+    </div> 		 			 				
+
+</div>
+
+<!-- Update modal -->
+<!-- Modal -->
+<div class="modal fade"  id="update-modal" tabindex="-1" role="dialog" aria-labelledby="updateModalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalTitle">Update</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body d-flex" id="update-modal-body"> ...
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(".update-info").click(function(){
+        $("#update-modal").modal("show");
+        $("#update-modal-body").html("<div class='progressBar mx-auto'> </div>");
+        $.ajax({
+            url : "{% url 'school_profile' %}" + document.getElementById("selected-school").value +"/",
+            type: "get",
+            data:{
+                type:$(this).attr("data-type"),
+            },
+            success:function(data){
+                $("#update-modal-body").html(data);
+            },
+            error:function(){
+
+            },
+        });
+
+    });
+</script>

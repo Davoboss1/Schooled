@@ -1,0 +1,155 @@
+<div id="attendance-div{{student.pk}}">
+    <h5 class="text-center border-bottom mb-3 pb-2">{{student.name}}</h5>
+
+    <!-- Input for particular date container-->
+    <h4 class="mt-2 text-center">Show Attendance for :</h4>
+    <div class="d-flex my-3" >
+        <div class="d-flex date-container ml-0" style="width:40%;">
+            <span class="fas fa-calendar vcenter ml-2" > 
+            </span>
+                <input class="date-input choose-date" type="date" id="start-date" value="{{start_date}}">
+        </div>
+        <div class="d-flex date-container ml-2" style="width:40%;">
+            <span class="fas fa-calendar vcenter ml-2" > 
+            </span>
+                <input class="date-input choose-date" type="date" id="end-date" value="{{end_date}}">
+        </div>
+        <div class="d-flex mx-2" style="width:20%;">
+            <button class="btn btn-dark radius" id="check-attendance">
+                <span class="fas fa-search" ></span>
+            </button>
+        </div>
+    </div>
+    <!-- Attendance view table -->
+    <div id="attendance-status{{student.pk}}"></div>
+    <table class="table attendance-table table-hover">
+        <!-- Table head -->
+        <thead class="thead-light">
+            <th style="width:15%;">No</th>
+            <th>Date</th>
+            <th>Status</th>
+        </thead>
+
+        <!-- Table body -->
+        <tbody >
+            <!-- Table row -->
+            <!-- badge-success should be used for a student that is present -->
+            <!-- badge-danger should be used for a student that is absent -->
+            <!-- First row 
+                Shows present example
+            -->
+            {% for each_attendance in attendance %}
+                {% if student in each_attendance.present_students.all %}
+                    <tr >
+                        <td>{{forloop.counter}}</td>
+                        <td>
+                            {{each_attendance.date|date:"l jS, F Y"}} </td>
+                        <td><span class="badge badge-success">Present</span></td></tr>
+                {% else %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{each_attendance.date|date:"l jS, F Y"}}</td><td><span class="badge badge-danger">Absent</span></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+
+
+        </tbody>
+
+    </table>
+
+    <!-- pagination -->
+    <div class="row py-3 border-top border-bottom" >
+        <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;" >
+            {% if attendance.has_previous %}
+                <button class="genric-btn primary mx-auto attendance-pagination-handler" data-page="{{attendance.previous_page_number}}">
+                    <span class="fa fa-angle-left mr-1"></span>Prev </button>
+            {% endif %}
+        </div>
+        <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
+            <select class="form-control mx-auto attendance-pagination-handler" style="max-width: 100px;">
+                {% for page_no in attendance.paginator.page_range %}
+                    <option {% if page_no == attendance.number %}selected{% endif %}>{{page_no}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;" >
+            {% if attendance.has_next %}
+                <button class="genric-btn primary mx-auto attendance-pagination-handler " data-page="{{attendance.next_page_number}}" >Next <span class="fa fa-angle-right ml-1"></span></button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    $("button.attendance-pagination-handler").click(function(){
+        var page_no = $(this).attr("data-page");
+        fetch_attendance(page_no);
+    });
+
+$("select.attendance-pagination-handler").change(function(){
+    var page_no = $(this).val();
+    fetch_attendance(page_no);
+});
+
+//Function that fetches attendance by page
+function fetch_attendance(page_no){
+    var body = 	$("#attendance-div{{student.pk}}");
+    //Add loader to body
+    $("#attendance-status{{student.pk}}").html('<div class="mx-auto  my-3 progressBar"></div>');
+    //Get start_date and end_date input
+    var start_date = "{{start_date}}";
+    var end_date = "{{end_date}}";
+    //Assign page no to get request object
+    var data = {
+        attendance_page:page_no
+    };
+    //Check if start_date and end_date are not empty
+    //If not append start_date and end_date to get request object
+    if(start_date && end_date){
+        data.start_date = start_date;
+        data.end_date = end_date;
+    }
+     //Ajax request
+    $.ajax({
+        url : "{% url 'students:view_only_attendance' student.pk %}",
+        data : data,
+        success : function(data){
+            //Change body to data
+            body.html(data);
+        },
+        error : function(req,status,error){
+            //Write error message on body
+            $("#attendance-status{{student.pk}}").html('<div class="alert alert-danger alert-dismissible fade show" role="alert" > <strong>Error!</strong> Something went wrong. Attendance was not fetched. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+        }
+    });
+}
+
+//Date search
+$("#check-attendance").click(function(){
+
+    var body = 	$("#attendance-div{{student.pk}}");
+    $("#attendance-status{{student.pk}}").html('<div class="mx-auto  my-3 progressBar"></div>');
+    $.ajax({
+        url : "{% url 'students:view_only_attendance' student.pk %}",
+        data : {
+            start_date : $("#start-date").val(),
+            end_date : $("#end-date").val()
+        },
+        success : function(data){
+            if(data=="DoesNotExist"){
+
+                $("#attendance-status{{student.pk}}").html('<div class="alert alert-danger alert-dismissible fade show" role="alert" id="attendance-alert"> <strong>Error!</strong> Attendance for date requested does not exist. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+            }else{
+                body.html(data);
+            }
+        },
+        error : function(req,status,error){
+            $("#attendance-status{{student.pk}}").html('<div class="alert alert-danger alert-dismissible fade show" role="alert" > <strong>Error!</strong> Something went wrong. Attendance was not fetched. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+        }
+    });
+
+});
+
+
+</script>

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+{% load static %}
+{% load crispy_forms_tags %}
+
+<head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="img/fav.png" />
+    <!-- Author Meta -->
+    <meta name="author" content="colorlib" />
+    <!-- Meta Description -->
+    <meta name="description" content="" />
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="" />
+    <!-- meta character set -->
+    <meta charset="UTF-8" />
+    <!-- Site Title -->
+    <title>Schooled. The school management application</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:900|Roboto:400,400i,500,700"
+        rel="stylesheet" />
+    <!--
+            CSS
+            =============================================
+        -->
+    <link rel="stylesheet" href="{% static 'css/linearicons.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/nice-select.css'%}">
+    <link rel="stylesheet" href="{% static 'css/hexagons.min.css'%}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css'%}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/themify-icons/0.1.2/css/themify-icons.css" />
+    <link rel="stylesheet" href="{% static 'css/main.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+
+    {% block style %}
+    <style>
+        @media screen and (min-width:768px) {
+            #main {
+
+                max-height: 90vh;
+                overflow-y: auto;
+                padding-top: 7%;
+                width: 100%;
+            }
+
+            #main>* {
+                max-width: 400px;
+                width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #main>div[class~=modal] {
+                max-width: 100%;
+                width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .block-list,
+            #teacher-tools,
+            #teacherProfile {
+                max-height: 90vh;
+                overflow-y: auto;
+                padding-top: 7%;
+            }
+        }
+
+        #register-form .form-group {
+            margin-right: auto;
+            margin-left: auto;
+            display: flex;
+            flex-direction: column;
+            max-width: 350px;
+        }
+
+        .column-form .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .student-view {
+            border: 1px dotted #E2DBDB;
+            border-radius: 5px;
+            font-size: 15px;
+            color: black;
+        }
+
+        .no-space {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    {% endblock %}
+</head>
+
+<body>
+    <!-- ================ Start Header Area ================= -->
+    <header class="default-header" id="main-nav">
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #04091e;">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'accounts:accounts_handler' %}">
+                    <h3 class="brand-name">Schooled</h3>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="lnr lnr-menu"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-end align-items-center"
+                    id="navbarSupportedContent" style="background-color: #04091e;">
+                    <ul class="navbar-nav">
+                        <li>
+                            <div class="input-group-icon mx-3 d-flex flex-column">
+                                <div class="icon"><i class="fas fa-search" aria-hidden="true"></i></div>
+                                <input type="text" name="address" placeholder="Search Website"
+                                    onfocus="this.placeholder " onblur="this.placeholder = 'Search Website'" disabled
+                                    class="single-input rounded">
+
+                            </div>
+                        </li>
+                        <li><a href="{% url 'homepage' %}">Home</a></li>
+                        <!-- Dropdown -->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                Navigate To
+                            </a>
+                            <div class="dropdown-menu">
+                                {% if request.user.schooluser.level == "Teacher" %}
+                                <a class="dropdown-item" onclick="animateScrollToId('#teacher-tools');"
+                                    data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
+                                <a class="dropdown-item" onclick="animateScrollToId('#teacherProfile');"
+                                    data-toggle="collapse" data-target="#navbarSupportedContent">Profile </a>
+                                <a class="dropdown-item" onclick="animateScrollToId('#main');" data-toggle="collapse"
+                                    data-target="#navbarSupportedContent">Workspace</a>
+                                {% elif request.user.schooluser.level == "Admin" %}
+                                <a class="dropdown-item" onclick="animateScrollToId('#admin-tools');"
+                                    data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
+                                <a class="dropdown-item" onclick="animateScrollToId('#main');" data-toggle="collapse"
+                                    data-target="#navbarSupportedContent">Workspace</a>
+                                {% else %}
+
+                                {% endif %}
+                                <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent"
+                                    onclick="animateScrollToId('#page-footer');">Footer</a>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            {% if user.is_authenticated %}
+                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                Logged In
+                            </a>
+                            <div class="dropdown-menu">
+
+                                <a class="dropdown-item" href="{% url 'accounts:logout' %}">Log Out</a>
+                            </div>
+                            {% else %}
+                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                Login/Register
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'accounts:login' %}">Login</a>
+                                <a class="dropdown-item" href="{% url 'accounts:register' %}">Register school</a>
+                            </div>
+                            {% endif %}
+                        </li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contacts.html">Contacts</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </header>
+    <!-- ================ End Header Area ================= -->
+
+    {% block content %}
+    <!-- ================ start banner Area ================= -->
+    <section class="home-banner-area">
+        <!-- Header area -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="main-header">
+                    <h2 class="text-white text-center" id="school-banner">
+                        {{user.schooluser.admin.schools.first.school_name}}
+                    </h2>
+                    <h6 class="text-white py-2 mt-3 text-center border-top border-bottom" id="school-motto-banner">{{user.schooluser.admin.schools.first.motto}}</h6>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ================ End banner Area ================= -->
+
+    <!-- ================ Start Body Area ================= -->
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="mx-auto py-3 my-3 col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3 border">
+                    <h3>
+                        Select current school :
+                    </h3>
+                    <select class="form-control my-3" id="selected-school">
+                        {% for school in schools %}
+                        <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}"
+                            value="{{school.pk}}">
+                            {{school.school_name}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div class="d-flex mt-2">
+                        <button class="btn btn-success mr-2"
+                            onclick="document.getElementById('body-row').style.display='none'; document.getElementById('new-sch-cont').style.display='flex';">
+                            Create new school
+                        </button>
+                        <button class="btn btn-danger ml-2" id="delete-school-btn">
+                            Delete school
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="body-row">
+                <!-- Admin List -->
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 bg-light thick-horizontal-border" id="admin-tools">
+                    <!-- main list -->
+                    <ul class="block-list my-3">
+                        <li data-history="view-school-profile" data-url="{% url 'school_profile' %}">School Profile</li>
+                        <li data-history="view-performance" data-url="{% url 'class_list' 'view_performance' %}">View
+                            Performance </li>
+                        <li data-history="view-attendance" data-url="{% url 'class_list' 'view_attendance' %}">View
+                            Attendance</li>
+                        <li data-history="view-student-information"
+                            data-url="{% url 'class_list' 'view_student_info' %}">View Students Information</li>
+                        <li data-history="view-manage-teachers" data-url="{% url 'class_list' 'manage_teachers' %}">
+                            Manage Teachers</li>
+                        <li data-history="view-manage-parents" data-url="{% url 'class_list' 'manage_parents' %}">Manage
+                            Parents</li>
+                        <li data-history="view-messages" data-url="{% url 'message_list' %}">Messages <span
+                                class="badge badge-dark badge-pill ml-3"
+                                id="unread-messages-count">{{unread_msg_count}}</span></li>
+                        <li data-history="view-notifications" data-url="{% url 'notifications' %}">Notifications <span
+                                class="badge badge-dark badge-pill ml-3"
+                                id="unviewed-notifications-count">{{unviewed_notifications_count}}</span></li>
+                        <li data-history="view-request-for-changes" data-url="{% url 'coming_soon' %}">Request for
+                            changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
+                        <li data-history="view-post-and-news" data-url="{% url 'coming_soon' %}">Post and News</li>
+                    </ul>
+                </div>
+                <!-- Main Right Area -->
+                <div class="col-12 col-sm-12 col-md-8 col-lg-8 py-3 d-flex flex-column">
+                    <div class="d-flex flex-column" id="main">
+                        <h4 class="text-center">No Current Work</h4>
+                        <span class="fas fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
+                            class="text-center">Nothing to show</small>
+                    </div>
+                </div>
+                <!--End of Col container -->
+            </div>
+            <div class="" style="display:none;" id="new-sch-cont">
+                <div class="mx-auto">
+                    <button class="btn btn-outline-primary ml-3"
+                        onclick="document.getElementById('new-sch-cont').style.display='none'; document.getElementById('body-row').style.display='flex';">
+                        <span class="fa fa-angle-left mr-2"></span>
+                        Go back to workspace and menu
+                    </button>
+                    <form method="post" style="max-width:350px;" class="m-3" id="new-school-form">
+                        {% csrf_token %}
+                        {{schoolform|crispy}}
+                        <div class="form-group">
+                            <label for="customFile1">School Logo</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="school-image" id="customFile1"
+                                    onchange="document.getElementById('file-label1').innerHTML='File selected sucessfully';"
+                                    accept="image/*">
+                                <label class="custom-file-label" for="customFile1" id="file-label1">Choose file</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-info ">
+                            Create new school
+                        </button>
+                        <div class="my-2" id="new-school-status">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    {% endblock %}
+    <!-- ================ End Body Area -->
+    <!-- ================ start footer Area ================= -->
+    <footer class="footer-area section-gap" id="page-footer">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-6 col-lg-6 d-flex flex-column">
+
+                    <a class="text-white mt-3 mx-auto" href="{% url 'accounts:accounts_handler' %}"
+                        style="font-size:30px;"><span class="fas fa-school mr-3"></span> Schooled</a>
+                    <blockquote class="generic-blockquote bg-dark mt-2 mb-3 text-white p-2">Schooled helps the data
+                        management of a school. With this application the school is able to manage students,teachers and
+                        parents/guardians effortlessly.</blockquote>
+                    <div class="footer-profile my-3">
+                        <img class="rounded-circle"
+                            src="{{user.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+
+                        <div class="my-1">
+                            <h6 class="text-white mt-1">Name : {{user.get_full_name|default:"Guest"}}</h6>
+                            <h6 class="text-white mt-1">User Type : {{user.schooluser.level|default:"Guest"}}</h6>
+                            {% if user.schooluser.level == "Admin" %}
+                            <h6 class="text-white mt-1">School :
+                                {{user.schooluser.admin.schools.first.school_name}}
+                            </h6>
+                            {% elif user.schooluser.level == "Teacher" %}
+                            <h6 class="text-white mt-1">Schools :
+                                {{request.user.schooluser.teacher.teacher_class.school.school_name}}
+                            </h6>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <a class="mx-auto w-50" href="{% url 'accounts:logout' %}">
+                        <button class="btn btn-outline-light my-3 w-100">
+                            Log out
+                        </button>
+                    </a>
+
+                    <h4 class="text-white text-center my-3">Thank you for using schooled.</h4>
+
+                </div>
+                <div class="col-12 col-sm-12 col-md-6 col-md-6">
+                    <h5 class="text-white text-center">For any information or issues</h5>
+                    <h5 class="text-white text-center">Contact us </h5>
+                    <nav class="nav flex-column my-3">
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fas fa-envelope mr-2"></span>
+                            Email </a>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-whatsapp mr-2"></span>
+                            Whatsapp </a>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-linkedin mr-2"></span>
+                            LinkedIn </a>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-facebook mr-2"></span>
+                            Facebook </a>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-instagram mr-2"></span>
+                            Instagram </a>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-twitter mr-2"></span>
+                            Twitter </a>
+
+                    </nav>
+                    <h5 class="text-white text-center">For more information about this application</h5>
+                    <h5 class="text-center mt-2"><a href="" class="text-info">Click here.</a></h5>
+                </div>
+                <h5 class="text-white mx-auto my-3">Schooled © 2019. All rights reserved</h5>
+            </div>
+        </div>
+    </footer>
+    <!-- ================ End footer Area ================= -->
+    {% block default_scripts %}
+
+    <script src="{% static 'js/sweetalert.js' %}"></script>
+
+    <script src="{% static 'js/tippy.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery-3.4.1.min.js'%}"></script>
+    <script src="{% static 'js/vendor/popper.min.js'%}"></script>
+    <script src="{% static 'js/vendor/bootstrap.min.js'%}"></script>
+    <script type="text/javascript"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
+    <script src="{% static 'js/jquery.ajaxchimp.min.js'%}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+    <script src="{% static 'js/parallax.min.js'%}"></script>
+    <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+    <script src="{% static 'js/jquery.sticky.js'%}"></script>
+    <script src="{% static 'js/hexagons.min.js'%}"></script>
+    <script src="{% static 'js/jquery.counterup.min.js'%}"></script>
+    <script src="{% static 'js/waypoints.min.js'%}"></script>
+    <script src="{% static 'js/main.js'%}"></script>
+    <script src="{% static 'js/utils.js' %}"></script>
+    {% endblock %}
+    {% block script %}
+    <script>
+
+
+        //Create new school event handler
+        $("#new-school-form").submit(function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var formdata = new FormData(this);
+            var status = $("#new-school-status");
+            status.html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="mx-auto">Submiting...</small></div>');
+            $.post({
+                url: "{% url 'create_new_school' %}",
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    //Create option element and add newly created school to it
+                    var option = document.createElement("option");
+                    option.textContent = data.name;
+                    option.value = data.pk;
+                    option.setAttribute("data-motto", data.motto);
+                    document.getElementById("selected-school").append(option);
+                    status.html('<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Success</strong> New School has been created successfully.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                },
+                error: function (res) {
+                    if (res.responseText) {
+                        status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Failed!</strong> Sorry, But the form was not submitted. <hr> <h4 class="text-center"><u class="text-dark"> Reasons </u></h4>' + res.responseText + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                    } else {
+                        status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Failed!</strong> Ooops, Sorry we could not connect to the server.Please recheck your connection and try again.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                    }
+
+                }
+            });
+        });
+
+        $("#delete-school-btn").click(function () {
+            var btn = $(this);
+            var sch_select = $("#selected-school")[0];
+            Swal.mixin({
+                icon: 'error',
+                confirmButtonText: 'Confirm &rarr;',
+                confirmButtonColor: '#d33',
+                showCloseButton: true,
+                showCancelButton: true,
+                progressSteps: ['1', '2']
+            }).queue([
+                {
+                    confirmButtonText: 'Yes &rarr;',
+                    html: ' <h4 class="text-danger">Are you sure you want to permernently delete school</h4> <hr> <b class="text-danger">You will lose all school records and data and this process cannot be undone.</b>'
+                },
+                {
+                    title: 'Verify it\'s you',
+                    html: '<b class="text-danger">Enter your password to confirm delete.</b>',
+                    input: 'password',
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (password) {
+                        btn.html("Deleting school...");
+                        this.disabled = true;
+                        return $.ajax({
+                            type: "POST",
+                            url: "{% url 'delete_school' %}",
+                            data: { csrfmiddlewaretoken: "{{csrf_token}}", sch_pk: sch_select.value, password: password },
+                            timeout: 15000,
+                            success: function (data) {
+                                var sch_name = sch_select[sch_select.selectedIndex].textContent;
+                                sch_select.remove(sch_select.selectedIndex);
+                                btn.html("Delete school");
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: sch_name,
+                                    text: "School has been deleted successfully"
+                                });
+                            },
+                            error: function (res, status, textStatus) {
+                                var msg = "";
+                                if (res.responseText == "WP") {
+                                    msg = "Wrong password entered."
+                                } else {
+                                    msg = "Error. Something went wrong."
+                                }
+                                Swal.fire({
+                                    icon: 'error',
+                                    html: '<b class="text-danger">' + msg + '</b>',
+                                });
+                                btn[0].disabled = false;
+                                btn.html("Delete school");
+                            }
+                        });
+                    }
+                }
+            ]);
+
+        });
+        var request_body = function (arg) {
+
+            var item = null;
+            if (!(arg.target)) {
+                item = arg;
+            } else {
+                item = this;
+            }
+            var list = $(".block-list li");
+            for (var i = 0; i < list.length; i++) {
+                list[i].className = null;
+            }
+            item.className = "active";
+
+            $('html, body').animate({
+                scrollTop: ($("#main").offset().top - 50)
+            }, 1000);
+
+            document.getElementById("main").innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
+
+            $.ajax({
+                url: item.getAttribute("data-url") + document.getElementById("selected-school").value + "/",
+                type: "GET",
+                success: function (data) {
+                    $("#main").html(data);
+                },
+                error: function (response, status, error) {
+                    $("#main").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
+                },
+            });
+
+        };
+
+        $(".block-list li").click(request_body);
+
+        //history management
+        (function history_management() {
+            var li_items = document.querySelectorAll(".block-list li");
+            li_items.forEach(function (item, index) {
+                item.id = "item-" + index;
+                item.onclick = setHistory;
+            });
+
+            var last_page = "";
+            var browser_history = [];
+            var current_history = null;
+            var history_id = 1;
+            function setHistory(e) {
+                var text = this.getAttribute("data-history");
+                var obj = { history: text, item_id: this.id, history_id: history_id++ };
+                history.pushState(obj, "List url", text);
+                browser_history.push(obj);
+                last_page = text;
+
+            }
+            window.onpopstate = function (event) {
+                if (event.state == null) { return; }
+                if (!confirm("Are you sure you want to go leave session ?")) {
+                    if (current_history == null) {
+                        current_history = browser_history[0];
+                    }
+
+                    history.pushState(current_history, "List url", current_history.history);
+                    $('html, body').animate({
+                        scrollTop: ($("#main").offset().top - 50)
+                    }, 1000);
+                } else {
+                    var current_item = document.getElementById(event.state.item_id);
+                    request_body(current_item);
+                    current_history = event.state;
+                }
+
+            };
+        })();
+
+        $("#selected-school").change(function (e) {
+            var notif_count = this.options[this.selectedIndex].getAttribute("data-notif-count");
+            var sch_motto = this.options[this.selectedIndex].getAttribute("data-motto");
+            var school_name = this.options[this.selectedIndex].textContent;
+            $("#unviewed-notifications-count").html(notif_count);
+            $("#school-banner").text(school_name);
+            $("#school-motto-banner").text(sch_motto);
+        });
+    </script>
+    {% endblock %}
+</body>
+
+</html>

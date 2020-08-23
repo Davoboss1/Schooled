@@ -1,0 +1,488 @@
+{% extends "admins/school_owner_admin_page.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block style %}
+<style>
+	.parent-form,.pwd-form {
+		display: flex;
+		flex-direction: column;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 400px;
+	}
+	
+</style>
+{% endblock %}
+{% block content %}
+<!-- ================ start banner Area ================= -->
+<section class="home-banner-area">
+	<!-- Header area -->
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-header" >
+				<h2 class="text-white text-center">Welcome Parents/Guardian.</h2>
+				<div class="mt-3 border-top border-bottom d-flex py-3">
+					<h6 class="text-white text-center w-50">Username : {{request.user.get_username}}</h6>
+					<h6 class="text-white text-center w-50">Full name : {{request.user.get_full_name}}</h6>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+</section>
+<!-- ================ End banner Area ================= -->
+<div class="container-fluid" style="max-width:1000px;padding:0; ">
+
+	<div class="card text-center my-3" >
+		<div class="card-header" style="margin:0; padding:0;">
+
+			<ul class="nav nav-tabs card-header-tabs" role="tablist" style="margin:1%;">
+				<li class="nav-item w-25">
+					<a class="nav-link active" href="#my-wards-tab" data-toggle="tab">My wards</a>
+				</li>
+				<li class="nav-item w-25">
+					<a class="nav-link" href="#view-profile-tab" data-toggle="tab">View Profile</a>
+				</li>
+				<li class="nav-item w-25">
+					<a class="nav-link" href="#edit-profile-tab" data-toggle="tab">Edit Profile</a>
+				</li>
+				<li class="nav-item w-25">
+					<a class="nav-link" href="#messages-tab" data-toggle="tab">Messages
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="card-body tab-content" style="padding-left:0; padding-right:0;">
+			<div class="tab-pane fade show active mx-3" id="my-wards-tab" role="tabpanel">
+
+				{% for child in parent.student_set.all %}
+				<div class="student-view mb-3">
+					<img src="{{child.photo.url}}" class="rounded" alt="Photo"
+						style="max-width:500px; max-height:300px;">
+					<div class="d-flex flex-column mt-2">
+						<ul class="py-3 border-top">
+							<li class="py-2">
+								<strong>Name : </strong> <strong> {{child.name}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>Address : </strong> <strong> {{child.address}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>Class : </strong> <strong> {{child.Class.class_name}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>Teacher : </strong> <strong><a class="school-info-btn" href="#school-info"
+										data-toggle="modal" data-type="teacher"
+										data-lookup="{{child.Class.teacher.school_user.user.get_username}}">{{child.Class.teacher.full_name}}</a></strong>
+							</li>
+							<li class="py-2">
+								<strong>School : </strong> <strong><a class="school-info-btn" href="#school-info"
+										data-toggle="modal" data-type="school" data-lookup="{{child.Class.school.pk}}">
+										{{child.Class.school}}</a></strong>
+							</li>
+							<li class="py-2">
+								<strong>Age : </strong> <strong> {{child.age}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>Date of birth : </strong> <strong> {{child.date_of_birth}}</strong>
+							</li>
+						</ul>
+
+						<div class="d-flex flex-column my-3">
+							<button class="genric-btn primary radius mx-auto show-modal-btn" data-pk="{{child.pk}}">
+								View Attendance
+							</button>
+							<button class="genric-btn primary radius mx-auto mt-3 show-modal-btn"
+								data-type="view-performance" data-pk="{{child.pk}}">
+								View Performance
+							</button>
+						</div>
+
+
+						<small class="border-top border-bottom py-3">Information provided by school</small>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+			<!-- Start of View profile tab -->
+			<div class="student-view tab-pane fade mx-3" id="view-profile-tab" role="tabpanel">
+				<div class="student-view mb-3">
+					<img src="{{parent.school_user.profile_picture.url}}" alt="Photo">
+					<div class="d-flex flex-column mt-2">
+						<ul class="py-3 border-top border-bottom">
+							<li class="py-2">
+								<strong>Name : </strong> <strong> {{parent.full_name}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>Username : </strong> <strong> {{request.user.get_username}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>Address : </strong> <strong> {{parent.address}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>Date of birth : </strong> <strong> {{parent.date_of_birth}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>Sex : </strong> <strong> {{parent.sex}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>State of Origin : </strong> <strong> {{parent.state_of_origin}}</strong>
+							</li>
+							</li>
+							<li class="py-2">
+								<strong>Phone_no : </strong> <strong> {{parent.phone_no}}</strong>
+							</li>
+							<li class="py-2">
+								<strong>Email : </strong> <strong> {{request.user.email}}</strong>
+							</li>
+						</ul>
+
+					</div>
+				</div>
+			</div>
+			<!-- end of View profile tab -->
+			<!-- Start of edit profile tab -->
+			<div class="student-view tab-pane fade mx-3" id="edit-profile-tab" role="tabpanel">
+
+				<div class="accordion" id="edit-profile-accordion">
+					<!-- Username and name edit card -->
+					<div class="card">
+						<div class="card-header no-space">
+							<button type="button" class="genric-btn primary w-100" style="max-width:500px;"
+								data-toggle="collapse" data-target="#edit-username-collapse" aria-expanded="true"
+								aria-controls="edit-username-collapse">
+								Change username
+							</button>
+						</div>
+						<div class="collapse" id="edit-username-collapse" data-parent="#edit-profile-accordion">
+							<div class="card-body">
+								<form method="post">
+									{% csrf_token %}
+									<input name="type" value="Username" type="hidden">
+									<div class="parent-form">
+
+										<div class="form-group">
+											<label for="username">Username</label>
+											<input class="form-control" id="username" name="username"
+												value="{{request.user.get_username}}" type="text">
+										</div>
+										<div class="form-group">
+											<label for="firstname">First name</label>
+											<input class="form-control" id="firstname" name="first_name"
+												value="{{request.user.first_name}}" type="text">
+										</div>
+										<div class="form-group">
+											<label for="lastname">Last name</label>
+											<input class="form-control" id="lastname" name="last_name"
+												value="{{request.user.last_name}}" type="text">
+										</div>
+
+										<div class="form-group">
+											<label for="email">Email</label>
+											<input class="form-control" name="email" id="email"
+												value="{{request.user.email}}" type="email">
+										</div>
+									</div>
+									<button class="genric-btn success radius w-100 mx-auto" style="max-width:300px;"
+										type="submit">Change</button>
+								</form>
+							</div>
+						</div>
+
+					</div>
+					<!-- end of user name card -->
+					<!-- Password edit card -->
+					<div class="card my-2">
+						<div class="card-header no-space">
+							<button type="button" class="genric-btn primary w-100" style="max-width:500px;"
+								data-toggle="collapse" data-target="#edit-password-collapse" aria-expanded="true"
+								aria-controls="edit-password-collapse">
+								Change Password
+							</button>
+						</div>
+						<div class="collapse" id="edit-password-collapse" data-parent="#edit-profile-accordion">
+							<div class="card-body">
+								<form method="post" class="item-auto pwd-form" >
+									{% csrf_token %}
+									<input name="type" value="Password" type="hidden">
+									{{password_change_form|crispy}}
+
+									<button class="genric-btn success radius mx-auto w-100" style="max-width:300px;"
+										type="submit">Change</button>
+								</form>
+							</div>
+						</div>
+
+					</div>
+					<!-- end of Password card -->
+
+					<!-- Information edit card -->
+					<div class="card my-2">
+						<div class="card-header no-space">
+							<button type="button" class="genric-btn primary w-100" style="max-width:500px;"
+								data-toggle="collapse" data-target="#edit-info-collapse" aria-expanded="true"
+								aria-controls="edit-info-collapse">
+								Change Details
+							</button>
+						</div>
+						<div class="collapse" id="edit-info-collapse" data-parent="#edit-profile-accordion">
+							<div class="card-body">
+								<form method="post" class="parent-form">
+									{% csrf_token %}
+									<input name="type" value="Info" type="hidden">
+									{{parent_form|crispy}}
+									<button class="genric-btn success radius mx-auto w-100" style="max-width:300px;"
+										type="submit">Change</button>
+								</form>
+							</div>
+						</div>
+
+					</div>
+					<!-- end of Information card -->
+
+
+				</div>
+				<!-- End of accordion -->
+			</div>
+			<!-- end of edit profile tab -->
+			<!-- Start of View profile tab -->
+			<div class="student-view tab-pane fade" id="messages-tab" role="tabpanel">
+				<div class="m-3 d-flex flex-column" style="text-align:left;" id="main"></div>
+			</div>
+			<!-- end of View profile tab -->
+		</div>
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalTitle"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title my-auto" id="detailsModalTitle"></h4>
+
+				<div class="dropdown">
+					<button type="button" style="background:white; border:none;" id="dropdown-menu-button"
+						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<img src="{% static 'img/option.png' %}" class="fa-rotate-90" alt=""
+							style="width:50px; height:50px;">
+					</button>
+
+					<div class="dropdown-menu" aria-labelledby="dropdown-menu-button">
+
+						<a class="dropdown-item" href="#" data-dismiss="modal" aria-label="Close">Close</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" onclick="download_pdf()">Download</a>
+						<a class="dropdown-item" onclick="print_pages()">Print</a>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body d-flex flex-column" id="modalBody">
+
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+<div id="term-body" style="display:none;">
+	<div class="d-flex flex-column">
+		<div class="d-flex">
+			<h6 class="w-50 ">Year</h6>
+			<h6 class="w-50">Term</h6>
+		</div>
+		<div class="d-flex my-2 mx-1"><select class="form-control" name="year"
+				id="year">{% for term in terms %}{% ifchanged %}<option value="{{term.year}}">{{term.session}}</option>
+				{% endifchanged %}
+				{% endfor %}
+			</select>
+			<select class="ml-1 form-control" name="term" id="term">
+				<option {% if terms.first.term == "1st Term"%}selected{% endif %}>1st Term</option>
+				<option {% if terms.first.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
+				<option {% if terms.first.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
+			</select>
+			<button class=" ml-2 btn btn-dark " id="fetch-termly-performance" onclick="fetch_performance(this)"><span
+					class="fas fa-redo"></span></button>
+		</div>
+	</div>
+</div>
+
+<!-- School info modal -->
+<div class="modal fade" id="school-info" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="school-info-title"></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="school-info-body">
+
+			</div>
+
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+	$(function () {
+		$("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small>Fetching conversations.....</small></div>');
+		$.get("{% url 'message_list' %}", {}).done(function (data) {
+			$("#main").html(data);
+		});
+	});
+	var pk;
+	var type;
+	function download_pdf() {
+		if (type == "view-performance") {
+			var year = $("#year").val();
+			var term = $("#term").val();
+			window.location.href = "http://{{request.get_host}}{% url 'students:convert_performance_to_pdf' %}" + pk + "/" + year + "/" + term + "/";
+
+		}
+		else {
+			var start_date = $("#start-date").val();
+			var end_date =  $("#end-date").val();
+			window.location.href = "http://{{request.get_host}}{% url 'students:convert_attendance_to_pdf' %}" + pk + "/"+start_date+"/"+end_date+"/";
+		}
+	}
+
+	function print_pages(){
+		if (type == "view-performance") {
+			var year = $("#year").val();
+			var term = $("#term").val();
+			window.location.href = "http://{{request.get_host}}{% url 'students:print_performance' %}" + pk + "/" + year + "/" + term + "/";
+
+		}
+		else {
+			var start_date = $("#start-date").val();
+			var end_date =  $("#end-date").val();
+			window.location.href = "http://{{request.get_host}}{% url 'students:print_attendance' %}" + pk + "/"+start_date+"/"+end_date+"/";
+		}
+	}
+	$(".show-modal-btn").click(function () {
+		$("#detailsModal").modal("show");
+		var body = $("#modalBody");
+		body.html("<div class='progressBar mx-auto'></div>");
+		pk = $(this).attr("data-pk");
+		type = $(this).attr("data-type");
+		if (type == "view-performance") {
+			var url = "{% url 'students:view_only_performance' %}" + pk + "/";
+			$("#detailsModalTitle").html("Wards performance");
+			var data = {
+				year: "{{term.year}}",
+				term: "{{term.term}}",
+			};
+		} else {
+			$("#detailsModalTitle").html("Wards attendance");
+			var url = "{% url 'students:view_only_attendance' %}" + pk + "/";
+		}
+
+		$.ajax({
+			url: url,
+			type: "get",
+			data: data,
+			success: function (data) {
+				if (type == "view-performance") {
+					body.html("");
+					body.append($("#term-body").html());
+					body.append(data);
+				}
+				else {
+					body.html(data);
+				}
+			},
+			error: function (req, status, error) {
+				alert(error);
+			},
+		});
+	});
+
+	$("form").submit(function (event) {
+		event.preventDefault();
+		var form = $(this);
+		$("#update-status").remove();
+		form.append("<div class='progressBar mx-auto my-3' id='update-status'> </div>");
+		$.ajax({
+			url: "{% url 'parents:update' %}",
+			type: "POST",
+			data: form.serialize(),
+			success: function (data) {
+				//If response value is success.
+				//write the success alert to the form.
+				$("#update-status").remove();
+				if (data == "Success") {
+					form.append('<div class="alert alert-success alert-dismissible fade show mt-3" role="alert" id="update-status"> <strong>Success!</strong> Data has been updated successfully. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+
+				}
+				else if (data == "Redirect") {
+					window.location.href = "{% url 'accounts:login' %}";
+				}
+				else {
+					form.append('<div class="alert alert-danger alert-dismissible fade show mt-3" id="update-status" role="alert"> <strong >Failed!</strong>' + data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+				}
+			},
+			error: function (request, status, error) {
+				$("#update-status").remove();
+				form.append("<div class='d-flex flex-column' id='update-status'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
+
+			},
+		});
+	});
+
+	function fetch_performance(This) {
+
+		var span_icon = $($(This).find("span")[0]);
+		span_icon.addClass("fa-spin");
+		$.ajax({
+			url: "{% url 'students:view_only_performance' %}" + pk + "/",
+			type: "GET",
+			data: {
+				page: 1,
+				year: $("#year").val(),
+				term: $("#term").val(),
+			},
+			success: function (data) {
+				span_icon.removeClass("fa-spin");
+				if (data == "DOE_ERROR") {
+					$("#performance-div").html('<div class="alert alert-warning my-3" role="alert"> <h6 class="text-center">Term selected does not exist. </div></h6>');
+				} else {
+					$("#performance-div").html(data);
+				}
+			},
+			error: function (response, status, error) {
+				span_icon.removeClass("fa-spin");
+			}
+		});
+	}
+
+	//School information 
+	$(".school-info-btn").click(function () {
+		var btn = $(this);
+		var lookup = btn.attr("data-lookup");
+		var type = btn.attr("data-type");
+		$("#school-info-title").html(btn.html() + " Information");
+		var body = $("#school-info-body");
+		body.html("<div class='progressBar mx-auto my-3'></div>");
+		var url = "{% url 'show_profile' %}" + type + "/" + lookup + "/";
+		$.get({
+			url: url,
+			success: function (data) {
+				body.html(data);
+			},
+			error: function (res, status, jqXHR) {
+				body.html('<div class="alert alert-danger alert-dismissible fade show my-3" role="alert"> <strong >Failed!</strong> Something went wrong. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button></div>');
+			}
+		});
+	});
+</script>
+{% endblock %}

@@ -1,0 +1,244 @@
+{% load static %}
+<!-- Profile page -->
+<!-- To be used with modal -->
+<div id="profile">
+	<!-- Profile picture -->
+	<img class="rounded" src="{{student.photo.url}}" alt="" style="max-width:50%; max-height:50%; float:right;"
+>
+	{% if request.user.schooluser.level == "Teacher" %}
+	<div class="form-group w-50 border p-2 mr-1">
+		<label for="customFile">Photo</label>
+		<div class="custom-file"> <input type="file" name="photo" accept="image/*" class="custom-file-input"
+				id="student-photo" onchange="document.getElementById('file-label').innerHTML='Selected';"> <label
+				class="custom-file-label" for="customFile" id="file-label">Choose file</label> </div>
+		<small id="upload-status"></small>
+	</div>
+	{% endif %}
+	<!--List of user details. -->
+	<ul>
+		<li>
+			<h6><u class="text-dark">Full Name</u></h6>
+			<b>{{student.name}}</b>
+		</li>
+		<li>
+			<h6><u class="text-dark">Date Of Birth</u></h6>
+			<b>{{student.date_of_birth}}</b>
+		</li>
+		<li>
+			<h6><u class="text-dark">Age</u></h6>
+			<b >{{student.age}}</b>
+		</li>
+		<li>
+			<h6><u class="text-dark">Class</u></h6>
+			<b>{{student.Class.class_name}}</b>
+		</li>
+		<li>
+			<h6><u class="text-dark">Home Address</u></h6>
+			<b>{{student.address}}.</b>
+		</li>
+		<li>
+			<h6><u class="text-dark">Sex</u></h6>
+			<b>{{student.sex}}</b>
+		</li>
+		<li>
+			<h6><u class="text-dark">State of origin</u></h6>
+			<b>{{student.state_of_origin}}</b>
+		</li>
+		<li>
+			<h3 class="text-center"><u class="text-dark mt-2">Parents</u></h3>
+			<table class="table table-bordered">
+				<thead class="thead-dark">
+					<th>
+						Name
+					</th>
+					<th>
+						Username
+					</th>
+				</thead>
+				<tbody>
+					{% for parent in student.parents.all %}
+					<tr>
+						<td>
+							{{parent.full_name|default:"No name yet"}}
+						</td>
+						<td>
+							{{parent.school_user.user.get_username}}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</li>
+		<li>
+			<h6><u class="text-dark">Teacher</u></h6>
+			<b>{{student.Class.teacher}}</b>
+		</li>
+		<li>
+			<h6><u class="text-dark">Email</u></h6>
+			<b>{{student.email}}</b>
+		</li>
+		<li>
+			<h6><u class="text-dark">Phone number</u></h6>
+			<b>{{student.phone_no}}</b>
+		</li>
+
+	</ul>
+	<div class="d-flex flex-column">
+		<div class="d-flex">
+			<h6 class="w-50 ">Year</h6>
+			<h6 class="w-50">Term</h6>
+		</div>
+		<div class="d-flex my-2 mx-1">
+			<select class="form-control" name="year" id="year">{% for term in terms %}
+				{% ifchanged %}
+				<option value="{{term.year}}">{{term.session}}</option>
+				{% endifchanged %}
+				{% endfor %}
+			</select>
+			<select class="ml-1 form-control" name="term" id="term">
+
+				<option {% if terms.first.term == "1st Term"%}selected{% endif %}>1st Term</option>
+				<option {% if terms.first.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
+				<option {% if terms.first.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
+			</select>
+			<button class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span class="fas fa-redo"></span></button>
+		</div>
+
+	</div>
+	<div class="btn-group w-100 mt-1 mb-3" role="group" aria-label="get performance"> <button type="button"
+			class="genric-btn info radius w-50 mx-3" onclick="download_pdf('P')">Download</button> <button type="button"
+			class="genric-btn info radius w-50 mx-3" onclick="print_performance()">Print</button> </div>
+	<!-- Performance part -->
+	<div id="performance-view">
+
+	</div>
+	<hr>
+	<!-- Attendance part -->
+	<div class="btn-group w-100 mt-1 mb-3" role="group" aria-label="get performance"> <button type="button"
+			class="genric-btn info radius w-50 mx-3" onclick="download_pdf('A')">Download</button>
+			<button class="genric-btn info radius w-50 mx-3" onclick="print_attendance()">Print</button> </div>
+	<div id="attendance-view">
+
+	</div>
+</div>
+
+<script>
+ 	
+	$(function () {
+		var pk = "{{student.pk}}";
+		$("#performance-view").html("<div class='progressBar mx-auto'></div>");
+		$.ajax({
+			url: "{% url 'students:view_only_performance' %}" + pk + "/",
+			type: "get",
+			data: {
+				year: "{{term.year}}",
+				term: "{{term.term}}",
+			},
+			success: function (data) {
+				$("#performance-view").html(data);
+			},
+			error: function (req, status, error) {
+				$("#performance-view").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
+			}
+		});
+		//Attendance ajax request
+		$("#attendance-view").html("<div class='progressBar mx-auto'></div>");
+		$.ajax({
+			url: "{% url 'students:view_only_attendance' %}" + pk + "/",
+			type: "get",
+			success: function (data) {
+				$("#attendance-view").html(data);
+			},
+			error: function (req, status, error) {
+				$("#attendance-view").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
+			}
+		});
+
+	});
+	//Upload image event handler
+	var uploadStatus = $("#upload-status");
+	$("#student-photo").on("change", function () {
+		uploadStatus.html("Uploading.....");
+		var files = this.files;
+		var formdata = new FormData();
+		formdata.append("photo", files[0]);
+		formdata.append("csrfmiddlewaretoken", "{{csrf_token}}");
+		formdata.append("pk", "{{student.pk}}");
+		$.ajax({
+			url: "{% url 'students:handle_uploads' %}",
+			type: "POST",
+			data: formdata,
+			processData: false,
+			contentType: false,
+			success: function (response, status, jqxhr) {
+				uploadStatus.css("color", "green");
+				uploadStatus.html("Uploaded.");
+
+			},
+			error: function (response, status, jqxhr) {
+				uploadStatus.css("color", "red");
+				uploadStatus.html("Failed.");
+
+			}
+		}
+		);
+	});
+
+	$("#fetch-termly-performance").click(function (event) {
+		var span_icon = $($(this).find("span")[0]);
+		span_icon.addClass("fa-spin");
+
+		$.ajax({
+			url: "{% url 'students:view_only_performance' student.pk %}",
+			type: "GET",
+			data: {
+				page: 1,
+				year: $("#year").val(),
+				term: $("#term").val(),
+			},
+			success: function (data) {
+				span_icon.removeClass("fa-spin");
+				if (data == "DOE_ERROR") {
+					$("#performance-view").html('<div class="alert alert-warning my-3" role="alert"> <h6 class="text-center">Term selected does not exist. </div></h6>');
+				} else {
+					$("#performance-view").html(data);
+				}
+			},
+			error: function (response, status, error) {
+				span_icon.removeClass("fa-spin");
+			}
+		});
+	});
+
+	function download_pdf(type) {
+		if (type == "P") {
+			var year = $("#year").val();
+			var term = $("#term").val();
+			window.location.href = "http://{{request.get_host}}{% url 'students:convert_performance_to_pdf' %}" + "{{student.pk}}" + "/" + year + "/" + term + "/";
+		}
+		else if (type == "A") {
+			var start_date = $("#start-date").val();
+			var end_date =  $("#end-date").val();
+			if(start_date && end_date){
+				window.location.href = "http://{{request.get_host}}{% url 'students:convert_attendance_to_pdf'  student.pk %}"+start_date+"/"+end_date+"/";
+			}else{
+				window.location.href = "http://{{request.get_host}}{% url 'students:convert_attendance_to_pdf'  student.pk %}";
+			}
+		}
+	}
+	function print_performance() {
+		var year = $("#year").val();
+		var term = $("#term").val();
+		window.location.href = "http://{{request.get_host}}{% url 'students:print_performance' %}" + "{{student.pk}}" + "/" + year + "/" + term + "/";
+	}
+
+	function print_attendance(){
+		var start_date = $("#start-date").val();
+		var end_date =  $("#end-date").val();
+		if(start_date && end_date){
+			window.location.href = "{% url 'students:print_attendance' student.pk %}"+start_date+"/"+end_date+"/";
+		}else{
+			window.location.href = "{% url 'students:print_attendance' student.pk %}";
+		}
+	}
+	</script>

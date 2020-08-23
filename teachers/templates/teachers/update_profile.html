@@ -1,0 +1,79 @@
+{% load crispy_forms_tags %}
+	<form class="update-profile-form" method="post" id="update-profile-form">
+								{% csrf_token %}
+								<div class="form-row">
+									
+								<div class="form-group col-md-6 col-lg-6">
+									<label for="username">Username</label>
+									<input class="form-control" id="username" name="username" value="{{request.user.get_username}}" type="text">
+								</div>
+								<div class="form-group col-md-6 col-lg-6">
+									<label for="firstname">First name</label>
+									<input class="form-control" id="firstname" name="first_name" value="{{request.user.first_name}}" type="text">
+								</div>
+								<div class="form-group col-md-6 col-lg-6">
+									<label for="lastname">Last name</label>
+									<input class="form-control" id="lastname" name="last_name" value="{{request.user.last_name}}" type="text">
+								</div>
+								
+								<div class="form-group col-md-6 col-lg-6">
+									<label for="email">Email</label>
+									<input class="form-control" name="email" id="email" value="{{request.user.email}}" type="email">
+								</div>
+								</div>
+								<h4 class="mt-2">Change profile picture</h4>
+								<input class="form-control my-2 custom-file-select" name="profile-picture" accept="image/*" type="file">
+								<h4>Change Password</h4>
+							<button class="my-3 genric-btn primary radius w-100" id="change-password-btn" type="button">Change Password</button>
+								<h4>Change Teacher Information</h4>
+								{{teacher_form | crispy }}
+								
+								<button class="genric-btn success radius w-100 update-confirm-btn" type="submit" >Change</button>
+	</form>							
+	<form class="update-profile-form mx-auto" style="max-width:300px; display:none;" method="post" id="password-form" >
+		{% csrf_token %}
+		{{ password_change_form | crispy }}
+				<button class="genric-btn success radius w-100 update-confirm-btn" type="submit" >Change</button>
+	</form>
+		<script>
+			$("#change-password-btn").click(function(event){			
+			var btn = $(".update-confirm-btn");
+			btn.html("Update");
+				$("#update-profile-form").css("display","none");
+					$("#password-form").css("display","block");
+			});
+
+		$(".update-profile-form").submit(function(event){
+			event.preventDefault();
+			var form_data = new FormData(this);
+			var btn = $(".update-confirm-btn");
+            var form = $(this);
+			btn.html("Updating...");
+			$.ajax({
+				url : "{% url 'update_profile' %}",
+				type : "POST",
+				data : form_data,
+				processData : false,
+				contentType : false,
+				success : function(data){
+						//If response value is success.
+				//write the success alert to the form.
+				$("#update-status").remove();
+				if(data=="Success"){
+					btn.html("Updated.");
+					
+                }else if(data=="REDIRECT"){
+                    window.location.href = "{% url 'accounts:login' %}";
+                }
+                else{
+					form.append('<div class="alert alert-danger alert-dismissible fade show mt-3" id="update-status" role="alert"> <strong >Failed!</strong>'+data+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+				}
+				},
+				error : function(req,status,error){
+					btn.html("Failed.");
+				},
+			});
+			
+		});
+		
+	</script>

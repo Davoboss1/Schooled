@@ -1,0 +1,117 @@
+{% extends 'admins/school_owner_admin_page.html' %}
+{% block style %}
+<style>
+	.div-300 {
+		height: 300px;
+	}
+</style>
+{% endblock %}
+{% block content %}
+<!-- ================ start banner Area ================= -->
+<section class="home-banner-area">
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-header" >
+				<h1 class="text-white text-center" style="margin-top:150px;">
+					Welcome to Schooled
+				</h1>
+				<h6 class="text-white mx-auto mt-3" style="text-align:center;">
+					The software that makes your work easier
+				</h6>
+			</div>
+			
+		</div>
+	</div>
+</section>
+<!-- ================ End banner Area ================= -->
+
+<!-- ================ Start project introduction Area ================= -->
+<section>
+	<div class="container-fluid">
+		<div class="row">
+			<!-- Start short project description area -->
+			<div class="col-md-6 col-lg-6">
+				<div class="border bordered-dark rounded d-flex flex-column mt-5 mb-5 ml-2 mr-2 div-300">
+					<h3 class="mx-auto mb-3">What is schooled ?</h3>
+
+					<p class="mb-1 text-center"> An application that helps schools, teachers,parents/guardians</p>
+					<p class="mb-1 text-center">
+						communicate and share information with each other.
+					</p>
+					<p class="mb-1 text-center">
+						And it also provides tools for management
+					</p>
+					<p class="mb-1 text-center">
+						of school and student activities.
+					</p>
+
+					<button class="genric-btn info radius  w-50 m-auto mb-2">
+						Read more
+					</button>
+				</div>
+			</div>
+			<!-- End short project description area -->
+			
+			<!-- Start getting started area -->
+			<div class="col-md-6 col-lg-6">
+				<div class="border bordered-dark rounded d-flex flex-column my-5 mx-2 div-300">
+					<h3 class="text-center mb-3">Getting started...</h3>
+					<p class="text-center mb-1">Are you a school owner/admin?</p>
+					<p class="text-center mb-1">And you want to use this application ?</p>
+
+					<p class="text-center mb-1">Please kindly register your school</p>
+					<div class="d-flex flex-column my-auto" style="overflow:hidden;">
+						<a class="genric-btn info radius  w-50 mx-auto mb-2"
+							href="{% url 'accounts:register' %}">Register school</a>
+					</div>
+				</div>
+			</div>
+			<!-- End getting started area -->
+			
+			<!-- Start login area -->
+			<div class="col-md-6 col-lg-6">
+				<div class="border bordered-dark rounded d-flex flex-column mt-5 mb-5 ml-2 mr-2 div-300">
+					<h3 class="my-3 text-center" >Are you an existing user...</h3>
+					<h4 class="my-1 text-center">Click button below to login ?</h4>
+					<a class="genric-btn info radius w-50 m-auto"
+						href="{% url 'accounts:login' %}">Login</a>
+				</div>
+			</div>
+			<!-- End login area -->
+			
+			<!-- Start contact area -->
+			<div class="col-md-6 col-lg-6">
+				<div class="border bordered-dark rounded d-flex flex-column mt-5 mb-5 ml-2 mr-2 div-300">
+					<h2 class="my-3 text-center"> Schooled Contact.</h2>
+					<h4 class="my-1 text-center">Contact us.</h4>
+					<div class="d-flex p-3 bg-info m-auto">
+						<div class="mx-auto">
+							<a href="">
+								<span class="fas fa-2x fa-envelope text-white ml-1 mb-1"></span>
+							</a>
+							<a href="">
+								<span class="fab fa-2x fa-facebook  text-white ml-1 mb-1"></span>
+							</a>
+							<a href="">
+								<span class="fab fa-2x fa-twitter  text-white ml-1 mb-1"></span>
+							</a>
+							<a href="">
+								<span class="fab fa-2x fa-instagram  text-white ml-1 mb-1"></span>
+							</a>
+							<a href="">
+								<span class="fab fa-2x fa-linkedin text-white ml-1 mb-1"></span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>			
+			<!-- End contact area -->		
+		</div>
+	</div>
+
+</section>
+<!-- End project introduction area  -->
+{% endblock %}
+{% block script %}
+{% endblock %}

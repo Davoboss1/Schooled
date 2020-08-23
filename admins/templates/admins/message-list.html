@@ -1,0 +1,161 @@
+{% load custom_filter %}
+<div class="d-flex flex-column mw-100">
+<button class="genric-btn primary radius mx-auto" type="button" data-toggle="collapse" data-target="#newConvo"
+    aria-expanded="false" aria-controls="newConvo">
+    New Conversation
+</button>
+<div class="collapse" id="newConvo">
+    <div class="card card-body my-2 ">
+        <form id="newConvoForm" class="d-flex flex-column mx-auto w-100" style="max-width:400px;">
+            {% csrf_token %}
+            <input type="hidden" name="convo" value="">
+            <input type="hidden" name="sender" value="{{user.get_username}}">
+            <label for="username-entry">
+                <h5>Username</h5>
+            </label>
+            <input name="username-entry" id="username-entry" class="form-control" placeholder="Enter Username"
+                type="text" required>
+            <label class="my-2" for="subject-entry">
+                <h5>Conversation subject</h5>
+            </label>
+            <input name="subject-entry" id="subject-entry" class="form-control" placeholder="Enter Subject" type="text">
+            <label class="my-2" for="message-entry">
+                <h5>Message</h5>
+            </label>
+            <textarea name="message-entry" id="message-entry" class="form-control py-3"
+                placeholder="Enter first message" required></textarea>
+            <button class="genric-btn primary mt-3 mx-auto" id="start-convo-button" type="submit">
+                Start Conversation
+            </button>
+        </form>
+    </div>
+</div>
+
+
+
+<div class="row">
+    {% for conversation in conversations %}
+
+    {% if conversation.reciever.get_username == user.get_username %}
+    {% with recipent=conversation.sender|get_user %}
+    <div class="col-12 col-lg-6 my-2">
+        <div class="comment-list border rounded">
+            <div class="single-comment single-reviews justify-content-between d-flex">
+                <div class="user justify-content-between d-flex w-100">
+                    <div class="thumb">
+                        <img class="rounded-circle icon_50x50" alt="" src="{{recipent.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+                    </div>
+                    <div class="desc w-100 ml-2">
+                        <div class="d-flex">
+                            <h5 class="my-2" style="width: 85%;"><b class="text-dark">{{recipent.get_full_name|default:"Unavailable user"}}</b>
+                                <div class="mt-1">
+                                    <u class="text-dark">{{recipent.schooluser.level|default:"Unavailable"}}</u>
+                                </div>
+                            </h5>
+                            <span style="width: 15%;"><span
+                                    class="badge badge-pill badge-primary">{{conversation.msg_count}}</span></span>
+                        </div>
+                        <div class="d-flex w-100">
+                            <p class="comment mr-1">
+                                {{conversation.subject}}
+                            </p>
+                            <button class="genric-btn primary radius ml-auto mt-auto chat-btn"
+                                data-convo-pk="{{conversation.pk}}">Chat</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endwith %}
+    {% else %}
+
+    {% with recipent=conversation.reciever %}
+    <div class="col-12 col-lg-6 my-2">
+        <div class="comment-list border rounded">
+            <div class="single-comment single-reviews justify-content-between d-flex">
+                <div class="user justify-content-between d-flex w-100">
+                    <div class="thumb">
+                        <img class="rounded-circle icon_50x50" alt="" src="{{recipent.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+                    </div>
+                    <div class="desc w-100 ml-2">
+                        <div class="d-flex">
+                            <h5 class="my-2" style="width: 85%;"><b class="text-dark">{{recipent.get_full_name}}</b>
+                                <div class="mt-1">
+                                    <u class="text-dark">{{recipent.schooluser.level}}</u>
+                                </div>
+                            </h5>
+                            <span style="width: 15%;"><span
+                                    class="badge badge-pill badge-primary">{{conversation.msg_count}}</span></span>
+
+                        </div>
+
+                        <div class="d-flex w-100">
+                            <p class="comment mr-1">
+                                {{conversation.subject}}
+                            </p>
+                            <button class="genric-btn primary radius ml-auto mt-auto chat-btn"
+                                data-convo-pk="{{conversation.pk}}">Chat</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endwith %}
+
+    {% endif  %}
+    {% endfor %}
+
+</div>
+</div>
+<script>
+    //Set unread messages number to 0
+    $("#unread-messages-count").html("0");
+    //New conversarion event hander
+    $("#newConvoForm").submit(function (event) {
+        event.preventDefault();
+        //Get message value
+        var message = $("#message-entry").val();
+        //Trim message whitespace and check if contain messages(Prevents empty messages from being sent).
+        if (message.trim().length < 1) {
+            return;
+        }
+        var form = $(this);
+        $("#start-convo-button").html("Creating Conversation....");
+        $("#newConvoStatus").remove();
+        $.post({
+
+            url: "{% url 'message_list' %}",
+            data: form.serialize(),
+            success: function (data) {
+                //On success after conversation created.
+                //Refresh page 
+                $("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small>Reloading page.....</small></div>');
+                $.get("{% url 'message_list' %}", {}).done(function (data) {
+                    $("#main").html(data);
+                });
+            },
+            error: function (res) {
+                //Error message
+                $("#start-convo-button").html("Failed. Retry");
+                if (res.responseText === undefined) {
+                    $("#start-convo-button").before('<div class="alert alert-danger alert-dismissible fade show my-2" id="newConvoStatus" role="alert"><strong>Failed.</strong> Something went wrong. Please retry<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times</span></button></div>');
+                } else {
+                    $("#start-convo-button").before('<div class="alert alert-danger alert-dismissible fade show my-2" id="newConvoStatus" role="alert"><strong>Failed.</strong>' + res.responseText + '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times</span></button></div>');
+                }
+            }
+        });
+    });
+//Routes user to message page
+    $(".chat-btn").click(function (e) {
+        var convo_pk = $(this).attr("data-convo-pk");
+        $("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Getting messages.....</small></div>');
+        $.get("{% url 'messages' %}" + convo_pk + "/", {}).done(function (data) {
+            $("#main").html(data);
+        });
+    });
+
+</script>

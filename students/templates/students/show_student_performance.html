@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+
+<head>
+  <!-- Mobile Specific Meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="img/fav.png" />
+  <!-- Author Meta -->
+  <meta name="author" content="colorlib" />
+  <!-- Meta Description -->
+  <meta name="description" content="" />
+  <!-- Meta Keyword -->
+  <meta name="keywords" content="" />
+  <!-- meta character set -->
+  <meta charset="UTF-8" />
+  <!-- Site Title -->
+  <title>Eclipse Education</title>
+  
+<style>
+	h1,h3{
+		font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+		text-decoration: underline;
+		
+	}
+ 	th{
+ 		background-color:#222222;
+ 		color:white;
+ 		padding-left:5px;
+ 		padding-right:5px;
+ 		padding-top:5px;
+ 		padding-bottom:5px;
+ 	}
+ 	.text-center{
+ 		text-align:center;
+ 	}
+ 	
+ 	td{
+ 		text-align:center;
+ 		color:#463746;
+ 		padding-top:5px;
+ 		padding-bottom:5px;
+ 		border-bottom:2px dotted #A19B9B;
+ 	}
+ .student-name{
+ 	font-size:30px;
+ 	font-style:bold;
+ }
+ @media print {
+	body {
+		-webkit-print-color-adjust: exact;
+		
+	}
+	table{
+		page-break-inside: auto;
+	}
+	
+	tr{
+		page-break-inside: avoid;
+		page-break-after: auto;
+		
+	}
+	
+ }
+</style>
+</head>
+
+<body>
+
+<div id="performance-div">
+	
+<!-- Performance Table -->
+<h1 class="mv-space " style="font-family:monospace; text-align:center;">{{student.name}} Performance</h1>
+
+			<h3 class="text-center">Class : {{student.Class.class_name}}</h3>
+			<h3 class="text-center">Teacher : {{student.Class.teacher}}</h3>
+			
+				<h3 class="text-center">Session : {{term.session}}</h3>
+			<h3 class="text-center">Term : {{term.term}}</h3>
+			<h3 class="text-center">School : {{student.Class.school.school_name}}</h3>
+	
+						<table style="width: 100%;">
+							<thead >
+								<th>Subject</th>
+								<th>Test Score</th>
+								<th>Exam Score</th>
+								<th>Total Score</th>
+								<th>Comment</th>
+							</thead>
+							<tbody >
+								{% if performance %}
+							{% for performance in performance %}
+								<tr>
+									<td>{{performance.subject}}</td>
+									<td>{{performance.test}}</td>
+									<td>{{performance.exam}}</td>
+									<td>{{performance.total}}</td>
+									<td>{{performance.comment}}</td>
+								</tr>			
+								{% endfor %}
+								{% else %}
+									<h4 class="text-center my-3">No Performance for this term</h4>
+								{% endif %}
+							</tbody>				
+						</table>
+						<script>
+							print();
+						</script>
+</body>
+
+</html>

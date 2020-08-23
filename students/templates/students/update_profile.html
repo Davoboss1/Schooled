@@ -1,0 +1,31 @@
+{% load crispy_forms_tags %}
+	<form method="post" id="update-profile-form">
+								{% csrf_token %}
+								<div class="form-row">
+									
+								<div class="form-group col-md-6 col-lg-3">
+									<label for="username">Username</label>
+									<input class="form-control" id="username" name="username" value="{{request.user.get_username}}" type="text">
+								</div>
+								<div class="form-group col-md-6 col-lg-3">
+									<label for="firstname">First name</label>
+									<input class="form-control" id="firstname" name="first_name" value="{{request.user.first_name}}" type="text">
+								</div>
+								<div class="form-group col-md-6 col-lg-3">
+									<label for="lastname">Last name</label>
+									<input class="form-control" id="lastname" name="last_name" value="{{request.user.last_name}}" type="text">
+								</div>
+								
+								<div class="form-group col-md-6 col-lg-3">
+									<label for="email">Email</label>
+									<input class="form-control" name="email" id="email" value="{{request.user.email}}" type="email">
+								</div>
+								</div>
+								<h4>Change Password</h4>
+								{{password_change_form | crispy }}
+								<h4>Change Teacher Information</h4>
+								{{teacher_form | crispy }}
+								
+								<button class="genric-btn success radius w-100" type="submit" id="update-confirm-btn">Change</button>
+	</form>							
+	

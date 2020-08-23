@@ -1,0 +1,372 @@
+{% load crispy_forms_tags %}
+{# Type variable is used to identify what type of page was requested #}
+{% if type == "view_performance" %}
+{# if type is view_performance add an add session container above class list container #}
+<button class="genric-btn primary my-3 mx-auto w-100"  type="button" data-toggle="collapse"
+    data-target="#newSession" aria-expanded="false" aria-controls="newSession">
+    New Session
+</button>
+<div class="collapse mb-3 mx-auto w-100" id="newSession">
+    <div class="card card-body">
+        <div class="jumbotron bg-light p-0" >
+            <table class="table table-bordered text-dark">
+                <thead>
+                    <th scope="col">Current Session</th>
+                    <th scope="col">Current Term</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            {{current_term.year}}
+                        </td>
+                        <td>
+                            {{current_term.term}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <strong>If current sesssion and term at your school is not the same with the above current session and term.
+                Please create new session</strong>
+        </div>
+        <div class="d-flex">
+            <h4 class="w-50 pl-3" >Year</h4>
+            <h4 class="w-50 pl-3" >Term</h4>
+        </div>
+        <div class="d-flex mt-2">
+            <div class="w-50 pr-3" >
+                <select class="form-control" id="session-years">
+                </select>
+            </div>
+            <div class="w-50 pl-3" >
+                <select class="form-control" id="session-term">
+                    <option> 1st Term
+                    </option>
+                    <option> 2nd Term
+                    </option>
+                    <option> 3rd Term
+                    </option>
+                </select>
+            </div>
+        </div>
+        <button class="genric-btn primary mt-2" id="add-session">Create new Session</button>
+
+
+    </div>
+</div>
+{% endif %}
+{% if type == "manage_teachers" %}
+{# if type is manage_teachers add an add teacher container above class list container #}
+<div class="d-flex flex-column my-3">
+    <div class="d-flex">
+        <a href="#add-teachers" data-toggle="collapse" class="genric-btn info circle w-75 mx-auto text-center"
+            style="font-size:15px;">Add Teachers<span class="lnr lnr-arrow-down ml-3"></span></a>
+
+    </div>
+    <div class="collapse card mt-3" id="add-teachers">
+        <form method="post" class="w-100 my-1 mx-auto" style="max-width:300px;" action="{% url 'teacher_create' %}"
+            id="add-teachers-form">
+            {% csrf_token %}
+            <input type="hidden" name="sch_pk" value="{{school.pk}}">
+            <h4>User Information</h4>
+            {{ userform | crispy }}
+            {{userform.errors}}
+            <div class="form-group">
+                <label for="fname">First name <span class="asteriskField">*</span></label>
+                <input class="form-control" id="fname" name="firstname" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="lname">Last name <span class="asteriskField">*</span></label>
+                <input class="form-control" id="lname" name="lastname" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email <span class="asteriskField">*</span></label>
+                <input class="form-control" id="email" name="email" type="email" required>
+            </div>
+            <hr>
+            <div class="form-group">
+                <label for="class">Class <span class="asteriskField">*</span></label>
+                <input class="form-control" id="class" name="class" type="text" required>
+            </div>
+            <hr>
+            <div class="d-flex">
+                <button type="submit" class="genric-btn success w-75 mx-auto text-center">Add teacher</button>
+
+            </div>
+        </form>
+        <div id="form-status" class="my-2">
+
+        </div>
+    </div>
+
+</div>
+{% endif %}
+<!-- List of all classes area-->
+
+            
+            
+<div class="accordion mx-auto w-100"  id="itemAccordion">
+    <ul class="list-group">
+        <li class="list-group-item d-flex align-items-center text-dark pr-0">
+            <span class="w-25">Class</span> 
+            <b class="dark-red w-50 text-center">No of students</b>
+            <span class="w-25 text-right mr-2"><span class="btn btn-light fas fa-edit" data-checked="false" id="edit-class"></span></span>
+        </li>
+        {% for class in classes %}
+        <li class="list-group-item list-group-item-action d-flex align-items-center class-list"
+             data-toggle="collapse" data-target="#class-collapse{{class.pk}}"
+            data-url="{{url}}{{class.pk}}/">
+            <strong class="w-25">{{class.class_name}}</strong>
+            <span class="w-50 text-center"><span class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>
+            <span class="w-25 text-right"><span class="fas fa-angle-down drop-icon"></span></span>
+            <input class="form-control w-25" value="{{class.class_name}}" style="display: none;">
+            <span class="w-50 text-center" style="display: none;"><span class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>  
+            <span class="w-25 text-right" style="display: none;"><span class="badge badge-success badge-pill edit-class-btn" data-pk="{{class.pk}}"><span class="fas fa-check"></span></span></span>
+            
+        </li>
+
+        <!-- li toggles this container -->
+        <!-- Collapse Container -->
+        {# Collapse containers are identified by appending class primary key to id #}
+        <div class="collapse" id="class-collapse{{class.pk}}" data-parent="#itemAccordion" style="margin:0;padding:0;">
+            <div class="card card-body"></div>
+        </div>
+        {% endfor %}
+
+    </ul>
+</div>
+{% if type == "manage_teachers" %}
+<script>
+    $(function () {
+        //Add teacher form submit event
+        $("#add-teachers-form").submit(function (event) {
+            event.preventDefault();
+            //Element that shows submit status
+            var status = $("#form-status");
+            //Add loader to status
+            status.html('<div class="mx-auto progressBar"></div>');
+            //Select form in jquery
+            var $form = $(this);
+            //Ajax request
+            $.ajax({
+                url: $form.attr("action"),
+                type: "POST",
+                data: $form.serialize(),
+                success: function (data) {
+                    //if response is successful.
+                    //It returns text success
+                    if (data == "success") {
+                        //On successful request
+                        //Show success message, reset form, remove all error indications in html
+                        status.html('<div class="alert alert-success alert-dismissible fade show" role="alert"> <strong>Success..</strong> You have successfully registered this teacher.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+                        $form.trigger("reset");
+                        $form.find("input").removeClass("is-valid");
+                        $form.find("input").removeClass("is-invalid");
+                        $("span.error-span").remove();
+
+                    }
+                    else if (data == "UniqueError") {
+                        //write error message
+                        status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong> Class and teacher already exists. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+                    }
+                    else {
+                        //If it was any other response. Its probably json.
+                        //Show error messsage
+                        //Parse json and append error message to identified inputs 
+                        status.html('<div class="alert alert-danger fade show" role="alert"> <strong>Failed..</strong> Invalid form inputs detected, Please recheck your form and provide valid input.</div>');
+                        $("span.error-span").remove();
+                        var all_input_container = $('div[id^="div_id_"]');
+                        for (var i = 0; i < all_input_container.length; i++) {
+                            var input = $(all_input_container[i]).find("input");
+                            $(input[0]).attr("class", "textinput textInput form-control is-valid");
+
+                        }
+                        var response = JSON.parse(data);
+                        var responseNames = Object.keys(response);
+                        for (var i = 0; responseNames.length; i++) {
+                            responsearr = response[responseNames[i]];
+                            var responsehtml = $("#div_id_" + responseNames[i]);
+                            var input = responsehtml.find("input");
+                            $(input[0]).attr("class", "textinput textInput form-control is-invalid");
+
+                            for (var inc = 0; inc < responsearr.length; inc++) {
+
+                                var errorhtml = "<span class=\"error-span text-danger\" >" + responsearr[inc].message + "</span>";
+                                responsehtml.append(errorhtml);
+                            }
+                        }
+                        window.document.location.href = "#add-teachers";
+                    }
+
+
+                },
+                error: function (data) {
+                    //Error message
+                    status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong>Something went wrong. Form was not submitted <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+
+                },
+            });
+        });
+    });					
+</script>
+{% endif %}
+{% if type == "view_performance" %}
+<script>
+    //Create next 5 years in session select element
+    var year = new Date().getFullYear();
+    var session_select = document.getElementById("session-years");
+    for (var i = 0; i <= 5; i++) {
+        var option = document.createElement("option");
+        option.appendChild(document.createTextNode(year + i + "/" + (year + i + 1)));
+        option.value = year + i;
+        session_select.appendChild(option);
+    }
+    //Add session event handler
+    $("#add-session").click(function () {
+        //Get year and term value from thier elements
+        var year = $("#session-years").val();
+        var term = $("#session-term").val();
+        //Select add session button
+        var btn = $(this);
+        btn.html("Creating...");
+        //Remove session status. (To avoid duplicate error message on another request)
+        $("#session-status").remove();
+        //Ajax request
+        $.ajax({
+            url: "{% url 'add_sessions' %}" + $("#selected-school").val() + "/",
+            type: "Post",
+            timeout: 10000,
+            data: { csrfmiddlewaretoken: "{{csrf_token}}", year: year, term: term },
+            success: function (data) {
+                btn.html("Create new Session");
+                //Create success message and add it before add session button
+                btn.before('<div class="alert alert-success alert-dismissible fade show mt-3" role="alert" id="session-status"><strong>Success!</strong> Session Added Successfully.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            },
+            error: function (res, status, jqxhr) {
+                btn.html("Create new Session");
+                //Create error message and add it before add session button
+                if (res.responseText == "IAE") {
+                    btn.before('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" id="session-status"><strong>Failed!</strong> Session already exists.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                } else {
+                    btn.before('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" id="session-status"><strong>Failed!</strong> Something went wrong, Please try again.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                }
+            }
+        });
+
+    });
+</script>
+{% endif %}
+<script>
+    //Fetches data and appends it under class list
+    //Mainly fetches data for class 
+    function requestData() {
+        var This = this;
+        var collapse = $(This.getAttribute("data-target"));
+
+        if (collapse.find("div").html() == "") {
+            collapse.html('<div class="mx-auto my-3 progressBar"></div>');
+            //Ajax Request
+            $.ajax({
+                url: This.getAttribute("data-url"),
+                type: "GET",
+                success: function (data) {
+                    collapse.html(data);
+                },
+                error: function (data) {
+                    collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Failed!</strong> Something went wrong, The request you made was not successful. Please try again <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                }
+            });
+
+        }
+
+    }
+    
+    var class_list = $(".class-list");
+    class_list.on("click",requestData);
+    //Switch to edit class part
+    $("#edit-class").click(function(e) {
+        
+        var btn = $(this);
+        //Get check from state from html custom attribute
+        var checked = btn.attr("data-checked");
+        //Get list container (UL element)
+        var list = btn.parent().parent().parent();
+        //Get list items (LI elements)
+        var list_items = list.children();
+        //Variables that contain display style for li elements
+        var first_half,second_half;
+        //If checked
+        if(checked == "true"){
+            //Switch icon
+            btn.removeClass("fa-times");
+            btn.addClass("fa-edit");
+            //Change data-checked attribute
+            btn.attr("data-checked","false");
+            //Set display style value
+            first_half = "block";
+            second_half = "none";
+        }else{
+            //Switch icon
+            btn.removeClass("fa-edit");
+            btn.addClass("fa-times");
+            //Change data-checked attribute
+            btn.attr("data-checked","true");
+            //Set display style value
+            first_half = "none";
+            second_half = "block";
+        }
+        //Loop over all list_items (LI elements)
+        for(var i = 1;i<list_items.length;i++){
+            //Only execute code below if element is li
+            if(list_items[i].tagName == "LI"){
+                //Get list item (LI element)
+                var list_item = $(list_items[i]);
+                //Disable list item 
+                if(checked=="true"){
+                    list_items[i].disabled = false;
+                }else{
+                    list_items[i].disabled = true;
+                }
+                //Get list children
+                var children = list_item.children();
+                //Get half of children length; (Children length = 6, half_no = 3)
+                var half_no = children.length / 2;
+                //Loop over li children
+                for(var j = 0; j<children.length;j++){
+                    //If first half li elements
+                    if(j<half_no){
+                        //Apply style for first half elements
+                        children[j].style.display = first_half;
+                    }else{
+                        //Apply style for second half elements
+                        children[j].style.display = second_half;
+                    }
+                }
+            }
+        }
+    });
+
+    $(".edit-class-btn").click(function (e) {
+        var btn = $(this);
+        var icon = btn.children().first()[0];
+        var list = btn.parent().parent();
+        var input = $(list.find("input")[0]);
+        btn.removeClass("badge-danger");
+        icon.className = "fas fa-spinner fa-spin";
+
+        $.ajax({
+            url: "{% url 'update_class' %}",
+            type: "Post",
+            timeout: 20000,
+            data: {csrfmiddlewaretoken:"{{csrf_token}}",class_pk:btn.attr("data-pk"),class_name:input.val()},
+            success: function(data){
+                icon.className = "fas fa-check";
+                //Set normal class name element to new class value
+                list.children().first().html(input.val());
+            },
+            error: function(res,textStatus,errorThrown){
+                icon.className = "fas fa-refresh";
+                btn.addClass("badge-danger");
+            }
+        });
+    })
+</script>

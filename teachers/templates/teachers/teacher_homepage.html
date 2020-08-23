@@ -1,0 +1,364 @@
+{% extends 'admins/school_owner_admin_page.html' %}
+{% load static %}
+{% block style %}
+<style>
+	@media screen and (min-width:768px){
+	#main{
+	
+	max-height:90vh;
+	overflow-y:auto;
+	padding-top:30px;
+	}
+	
+	#teacher-tools, #teacherProfile{
+	max-height:90vh;
+	overflow-y:auto;
+	padding-top:30px;
+	background-color: #04091e;
+}
+}
+#teacher-tools, #teacherProfile{
+	background-color: #04091e;
+}
+@media screen and (max-width:767px){
+	#main{
+	padding-top:15%;
+	}
+}
+
+#register-form .form-group{
+	display:flex;
+	flex-direction:column;
+}
+.column-form .form-group{
+	display:flex;
+	flex-direction:column;
+}
+
+.student-view{
+	border:1px dotted #E2DBDB;
+	border-radius:5px;
+	font-size:15px;
+	color:black;
+}
+.no-space{
+	margin:0;
+	padding:0;
+}
+
+</style>
+{% endblock %}
+{% block content %}
+  <!-- ================ start banner Area ================= -->
+  <section class="home-banner-area">
+	<div class="container-fluid" >
+		<div class="row">
+			<div class="main-header">
+				<h2 class="text-white text-center" >
+					Welcome {{request.user.get_full_name}}
+				</h2>
+				<h3 class="text-center my-3">
+					<u class="text-white">School: {{request.user.schooluser.teacher.teacher_class.school.school_name}}</u>
+				</h3>
+      		</div>
+        
+		</div>
+    </div>
+ </section>
+  
+  
+  
+  <section >
+  	
+    <div class="container-fluid" >
+		<div class="row">
+      	
+			<div class="col-12 col-sm-12 col-md-3 col-lg-3" id="teacher-tools" >
+				<h2 style="text-align:center; color:white;">Teacher Tools</h2>
+				<!-- Teacher tools list-->
+					<!-- Onclick event requests data-url attribute value and applies it in div with Id main. -->
+				<ul class="list-group my-3" id="toolsList">
+					<li class="list-group-item tools-list" data-history="show-add-student-information" data-url="{% url 'students:update' %}" >
+						<h6  class="student-list-link">Add Student Information.</h6>
+						<span class="badge badge-info badge-pill" >Show</span>
+					</li>
+					<li class="list-group-item tools-list" data-history="show-edit-student-information" data-url="{% url 'students:edit_students' %}" >
+						<h6  class="student-list-link">Edit Student Information.</h6>
+						<span class="badge badge-info badge-pill" >Show</span>
+					</li>
+					<li class="list-group-item tools-list" data-history="show-student-information" data-url="{% url 'view_student_info' %}" >
+						<h6  class="student-list-link">View Student Information.</h6>
+						<span class="badge badge-info badge-pill" >Show</span>
+					</li>
+					<li class="list-group-item tools-list" data-history="show-view-student-performance" data-url="{% url 'students:performance_page' 'view-performance' %}">
+						<h6  class="student-list-link">View Student Performance.</h6>
+						<span class="badge badge-info badge-pill" >Show</span>
+					</li>
+					<li class="list-group-item tools-list" data-history="show-edit-student-performance"  data-url="{% url 'students:performance_page' 'edit-performance' %}">
+						<h6  class="student-list-link">Edit Student Performance</h6>
+						<span class="badge badge-info badge-pill" >Show</span>
+					</li>
+					<li class="list-group-item tools-list" data-history="show-mark-student-attendance" data-url="{% url 'students:attendance_page' 'mark-attendance' %}">
+						<h6  class="student-list-link">Mark Student Attendance.</h6>
+						<span class="badge badge-info badge-pill" >Show</span>
+					</li>
+					<li class="list-group-item tools-list" data-history="show-view-student-attendance" data-url="{% url 'students:attendance_page' 'view-attendance' %}">
+						<h6  class="student-list-link">View Student Attendance</h6>
+						<span class="badge badge-info badge-pill" >Show</span>
+					</li>
+                    <li class="list-group-item tools-list" data-history="show-messages" data-url="{% url 'message_list' %}">
+						<h6  class="student-list-link">Messages</h6>
+						<span class="badge badge-danger badge-pill" id="unread-messages-count">{{unread_msg_count}}</span>
+						<span class="badge badge-info badge-pill" >Show</span>
+					</li>			
+				</ul>
+				<!-- end of list -->
+			<!-- Recent Activities-->
+				<h2 class="text-center mb-2">
+					<u class="text-info">Recent Activities</u>
+				</h2>
+				
+				<!-- Recent activities list -->
+				<ul class="unordered-list">
+				{% for activity in activity_logs|slice:":10" %}
+					<li class="text-myinfo">{{activity.Activity_info}}</li>
+				{% endfor %}
+				</ul>			
+			</div>
+			
+			<div class="col-12 col-sm-12 col-md-6 col-lg-6 d-flex flex-column px-2" id="main" >  		
+			
+				<h4 class="mx-auto">No Current Work</h4>
+				<div class="m-auto d-flex flex-column"><span class="fas fa-signal mx-auto" style="font-size:40px;"></span><small>Nothing to show</small></div>
+			</div>
+      		
+      
+      <!-- Teacher information part. -->
+			<div class="col-12 col-sm-12 col-md-3 col-lg-3" id="teacherProfile">
+				<div class="d-flex flex-column p-3">
+					<h2 class="mx-auto mb-3"><u class="text-white">Teacher Info</u></h2>
+					<div class="d-flex">
+						<img class="rounded" src="{{user.schooluser.profile_picture.url}}" style="width:50px; height:50px;" alt="">
+						<ul class="profile-list">
+							<li>
+								<b>Username:</b>
+								<b>{{user}}</b>		
+							</li>
+							<li>
+								<b>User Type: </b>
+								<b>{{user.schooluser.level}}	</b>
+							</li>
+						</ul>
+					</div>
+      	
+					<ul class="unordered-list profile-list">
+						<li>
+							<b>Full Name:</b>
+							<b>{{user.get_full_name}}</b>
+						</li>
+						<li>
+							<b>Date of birth:</b>
+							<b>{{user.schooluser.teacher.date_of_birth}}</b>
+						</li>
+						<li>
+							<b>Age : </b>
+							<b>{{user.schooluser.teacher.age}}</b>
+						</li>
+						<li>
+							<b>Address:</b>
+							<b>{{user.schooluser.teacher.address}}</b>
+						</li>
+						<li>
+							<b>State of Origin:</b>
+							<b>{{user.schooluser.teacher.state_of_origin}}</b>
+						</li>
+						<li>
+							<b>Email:</b>
+							<b>{{user.email}}</b>
+						</li>
+						<li>
+							<b>Phone no:</b>
+							<b>{{user.schooluser.teacher.phone_no}}</b>
+						</li>
+					</ul>
+					<h2 class="mx-auto my-3"><u class="text-white">School Info</u></h2>
+      		
+					<div class="d-flex">
+						<img class="rounded" src="	{% if user.schooluser.teacher.Class.school.image %}{{user.schooluser.teacher.Class.school.image.url}}{% endif %}" style="width:50px; height:50px;" alt="">
+						<ul class="profile-list">
+							<li>
+								<b>School Name: </b>
+								<b>{{user.schooluser.teacher.teacher_class.school.school_name}}	</b>	
+							</li>
+							<li>
+								<b>School Owner:</b>
+								<b>{{user.schooluser.teacher.teacher_class.school.admin.full_name}}	</b>     					
+							</li>
+      				
+						</ul>
+					</div>
+					<ul class="unordered-list profile-list">
+						<li>
+							<b>School Type: </b>
+							<b>{{user.schooluser.teacher.teacher_class.school.type}}</b>
+						</li>
+					</ul>
+					<h2 class="mx-auto my-3"><u class="text-white">Class Info</u></h2>
+					<ul class="unordered-list profile-list">
+						<li>
+							<b>Class: </b>
+							<b>{{user.schooluser.teacher.teacher_class.class_name}}</b>
+						</li>
+						<li>
+							<b>No of Students: </b>
+							<b>{{user.schooluser.teacher.teacher_class.student_set.all.count}}</b>
+						</li >
+						<li >
+							<b>Teacher: </b>
+							<b>{{user.get_full_name}} ({{user.username}})</b>
+						</li>
+      			
+					</ul>
+					<button class="btn btn-outline-light my-2" id="edit-profile-btn">
+						Edit Profile
+					</button>
+					
+				</div>
+
+
+
+			</div>
+    
+		</div>
+    </div>
+  </section>
+  
+  
+  
+  <!-- Modal -->
+  <div class="modal fade" id="update-profile-modal" tabindex="-1" role="dialog" aria-labelledby="update-profile-modal-title" aria-hidden="true">
+  	<div class="modal-dialog" role="document">
+  		<div class="modal-content">
+  			<div class="modal-header">
+  				<h5 class="modal-title" id="update-profile-modal-title">Update profile</h5>
+  				<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+  				</div>
+  				<div class="modal-body d-flex flex-column" id="edit-profile-modal-body">
+  					
+  					</div>
+  				
+  				</div>
+  			</div>
+  		</div>
+  
+{% endblock %}
+{% block script %}
+<script>
+  	
+  	//This script does the following.
+  	//1. Creates a click event for all elements with class name tools-list
+  	//2. Toogles the badge to show and hide.
+  	//e.g if a list is clicked the current list clicked is switched to hide. while other list are  switched to show.
+  	//3. Makes Ajax request to url in data-url attribute in html. and changes the content of the #main container to the response 
+var request_body = function(arg){
+	var item = null;
+	if(!(arg.target)){
+		item = arg;
+	}else{
+		item = this;
+	}
+	var list = $(".tools-list");
+	
+	for(var i = 0;i<list.length;i++){
+		if(i==7){
+		list[i].childNodes[5].className="badge badge-info badge-pill";
+		list[i].childNodes[5].innerHTML="Show";
+		}else{
+		list[i].childNodes[3].className="badge badge-info badge-pill";
+		list[i].childNodes[3].innerHTML="Show";
+		}
+	}
+		
+	if(item.childNodes[1].innerHTML == "Messages"){	
+		item.childNodes[5].className="badge badge-warning badge-pill";
+		item.childNodes[5].innerHTML="Hide";
+	}else{
+	item.childNodes[3].className="badge badge-warning badge-pill";
+	item.childNodes[3].innerHTML="Hide";
+	}
+	$('html, body').animate({
+        scrollTop: ($("#main").offset().top - 50)
+    }, 1000);
+ 	main.innerHTML='<div class="mx-auto my-3 d-flex flex-column"><div class="mx-auto progressBar"></div><small>Fetching requested items</small></div>';
+	
+	$.ajax({
+		url:item.getAttribute("data-url"),
+		type:"GET",
+		success:function(data){
+			 
+			//main.innerHTML=data;
+			$("#main").html(data);
+		},error:function(response,status,errror){
+			
+			$("#main").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
+		},
+	});
+	
+};  	
+	
+$(".tools-list").click(request_body);
+
+$("#edit-profile-btn").click(function(event){
+	$("#update-profile-modal").modal("show");
+	var body = $("#edit-profile-modal-body");
+	body.html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small>Fetching requested items</small></div>');
+	$.ajax({
+		url : "{% url 'update_profile' %}",
+		type : "GET",
+		success : function(data){
+			body.html(data);
+		},
+		error : function(req,status,error){
+			body.html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
+		},
+	});
+});
+
+	//history management
+	(function history_management(){
+	var li_items = document.querySelectorAll(".tools-list");
+	
+	for(var index = 0;index<li_items.length;index++){
+	item = li_items[index];
+	item.id = "item-"+index;
+	item.onclick = setHistory;
+	}
+	
+	var last_page = "";
+	var browser_history = [];
+	var current_history = null;	
+	var history_id = 1;
+	function setHistory(e){
+		var text = this.getAttribute("data-history");
+		var obj = {history : text,item_id : this.id,history_id : history_id++};
+		history.pushState(obj,"List url",text);
+		browser_history.push(obj);
+		last_page = text;
+	}
+	window.onpopstate = function(event){
+	   if(!confirm("Are you sure you want to go leave session ?")){
+	     if(current_history == null){
+		   current_history = browser_history[0];
+	  	}
+	   	history.pushState(current_history,"List url",current_history.history);
+	   }else{
+	   	var current_item = document.getElementById(event.state.item_id);
+	   	request_body(current_item);
+	   	current_history = event.state;
+	   }
+	};
+	
+	})();
+  </script>
+    
+{% endblock %}

@@ -1,0 +1,48 @@
+{% load static %}
+
+<h4 class="text-center">All Students</h4>
+<!-- Students List -->
+<div class="mx-auto w-100" style="max-width:400px;">
+<ul class="list-group "  id="student-info-list">
+	<!-- First list item shows column header -->
+	<li class="list-group-item d-flex">
+		<h6 style="width:10%;">No</h6>
+		<h6>Name</h6>
+	</li>
+	<!-- Actual first list item -->
+	{% for student in all_students %}
+	<li class="list-group-item d-flex" style="border-bottom:2px ridge #53375A;">
+		<input class="border-less" value="{{student.pk}}" style="display:none" readonly>
+		<h6 class="my-auto " style="width:10%">{{forloop.counter}}</h6>
+		<h6 class="my-auto">{{student.name}}</h6>
+		<div class="w-25">
+			<button class="view-info-button">View Info</button>
+		</div>
+	</li>
+	{% endfor %}
+</ul>
+</div>
+{% include "admins/profile-modal.html" %}
+	<script>
+		
+		
+		$(".view-info-button").click(function(){
+ 
+  		$("#profileModal").modal('show');
+  		var id = $(this).parent().prev().prev().prev().val();
+  		$("#profile-body").html("<div id=\"loader\" ><div class=\"d-flex flex-column \"><img src=\"{% static 'css/ajax-loader.gif' %}\" alt=\" \" class=\"mx-auto\"><small class=\"mx-auto\">Loading....</small></div></div>");
+		  $.ajax({
+			url:"{% url 'profile_page' %}"+id+"/",
+			type:"GET",
+			success: function(data){
+				document.getElementById("loader").style.display="none";
+				$("#profile-body").html(data);
+			},
+			failure: function(data){
+				document.getElementById("loader").style.display="none";
+				document.getElementById("profile-body").innerHTML="Request Failed";
+		},
+});
+
+});
+	</script>
