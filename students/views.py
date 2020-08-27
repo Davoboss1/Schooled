@@ -597,10 +597,3 @@ def csv_handler(request):
 		return response
 	
 
-
-
-
-
-
-
-
