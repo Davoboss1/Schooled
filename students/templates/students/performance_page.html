@@ -1,6 +1,32 @@
 {% load static %}
-<div class="my-1 mx-auto" style="max-width:400px;">
+
+<div class="my-1 mx-auto w-100" style="max-width:400px;">
 	<!-- Main Tabs -->
+	<div class="d-flex flex-column">
+		<button class="genric-btn primary radius mx-auto my-3" data-toggle="collapse" data-target="#importContainer" aria-expanded="false" aria-controls="importContainer" >Import</button>
+		<div class="collapse mb-3" id="importContainer">
+			<div class="card card-body">
+				<a class="text-center" href="{% url 'students:csv_handler' %}">Download csv template</a>
+				<div class="mx-auto d-flex">
+					<div class="custom-file mr-1" > <input type="file" class="custom-file-input" name="user-profile-picture"
+						id="csv_file"
+						onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected successfully' : this.nextElementSibling.innerHTML = 'Choose file')"
+						> <label class="custom-file-label" for="csv_file" id="file-label">Choose
+						csv file</label> </div>
+						<select class="custom-select ml-1" id="file-student-select">
+							<option disabled selected>Select student</option>
+							{% for student in students %}
+							<option value="{{student.pk}}">{{student.name}}</option>
+							{% endfor %}
+						  </select>
+				</div>
+				<div class="mt-3" id="csv-status"></div>
+				<button class="genric-btn info radius mt-2 mx-auto" id="upload-csv"> Upload</button>
+				
+			</div>
+		</div>
+	</div>
+	
 	<div class="d-flex flex-column mb-2">
 		<span class="fas fa-3x fa-redo-alt mx-auto" id="refresh"></span>
 		<small class="mx-auto">Refresh</small>
@@ -12,18 +38,19 @@
 		</div>
 		<div class="d-flex my-2 mx-3">
 
-			<select class="form-control" name="year" id="year" style="min-width: 100px;">{% for term in terms %}
+			<select class="form-control" name="year" id="year" style="min-width: 100px;">
+				{% for term in terms %}
 				{% ifchanged %}
-				<option value="{{term.year}}">{{term.session}}</option>
+				<option value="{{term.year}}" {% if current_term.year == term.year %}selected{% endif %}>{{term.session}}</option>
 				{% endifchanged %}
 				{% endfor %}
 			</select>
 
 			<select class="ml-3 form-control" name="term" id="term">
 
-				<option {% if terms.first.term == "1st Term"%}selected{% endif %}>1st Term</option>
-				<option {% if terms.first.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
-				<option {% if terms.first.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
+				<option {% if current_term.term == "1st Term"%}selected{% endif %}>1st Term</option>
+				<option {% if current_term.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
+				<option {% if current_term.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
 			</select>
 			<button class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span class="fas fa-redo"></span></button>
 		</div>
@@ -213,6 +240,39 @@
 				},
 				error: function (response, status, error) {
 					span_icon.removeClass("fa-spin");
+				}
+			});
+
+		});
+
+		$("#upload-csv").click(function(e) {
+			var btn = $(this);
+			var csv_file_select = document.getElementById("csv_file");
+			var student_select = $("#file-student-select");
+			var status = $("#csv-status");
+			if(!csv_file_select.files[0]){
+				status.html(write_alert("Please select csv file","danger"));
+				return;
+			}
+			btn.text("Uploading...");
+			var formdata = new FormData();
+			formdata.append("csrfmiddlewaretoken","{{csrf_token}}");
+			formdata.append("csv_file",csv_file_select.files[0]);
+			formdata.append("student_pk",student_select.val());
+			$.ajax({
+				url: "{% url 'students:csv_handler' %}",
+				type: "Post",
+				contentType: false,
+				processData: false,
+				data: formdata,
+				success: function(data){
+					btn.text("Upload");
+					status.html(write_alert(data));
+				},
+				error: function(res,textStatus,errorThrown){
+					status.html(write_alert("Something went wrong, an error occured.","danger"));
+					btn.text("Upload failed.");
+
 				}
 			});
 

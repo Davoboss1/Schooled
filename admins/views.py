@@ -173,7 +173,7 @@ def class_list(request,sch_pk,type):
 		
 	#Get a list of all classes in school
 	all_class = school.class_set.all()
-	return render(request,"admins/class-list.html",{"url":link_url,'user':request.user,'type':type,'form':form,'userform':user_form,"classes":all_class,"current_term":Term.objects.filter(school=school).first(),"school":school})
+	return render(request,"admins/class-list.html",{"url":link_url,'user':request.user,'type':type,'form':form,'userform':user_form,"classes":all_class,"current_term":Term.objects.filter(school=school,current_session=True).first(),"school":school})
 	
 #view that handles performance viewing for admin
 def view_performance(request,pk):
@@ -182,7 +182,9 @@ def view_performance(request,pk):
 	current_class = Class.objects.get(pk=pk,school__admin=admin)
 	#get all students in current_class
 	students_in_class = current_class.student_set.all()
-	context = {"all_students":students_in_class,"class_pk":pk,"terms":Term.objects.filter(school=current_class.school.pk),}
+	terms = Term.objects.filter(school=current_class.school.pk)
+	current_term = terms.get(current_session=True)
+	context = {"all_students":students_in_class,"class_pk":pk,"terms":terms,"current_term":current_term}
 
 	#Pagination
 	if "page" in request.GET.keys():
@@ -491,8 +493,9 @@ def notifications(request,sch_pk):
 def profile_page(request,pk):
 	student = Student.objects.get(pk=pk)
 	attendance = student.Class.attendance_set.all()
-	term= Term.objects.filter(school=student.Class.school).first()
-	return render(request,"admins/profile_page.html",{"student":student,"all_attendance" : attendance,"term":term,"terms":Term.objects.filter(school=student.Class.school),})
+	terms = Term.objects.filter(school=student.Class.school)
+	current_term = terms.get(current_session=True)
+	return render(request,"admins/profile_page.html",{"student":student,"all_attendance" : attendance,"current_term":current_term,"terms":terms,})
 
 
 # Create your views here.
@@ -523,9 +526,11 @@ def add_sessions(request,sch_pk):
 		school = School.objects.get(admin=request.user.schooluser.admin,pk=sch_pk)
 		term_obj = Term.objects.filter(school=school,year=year,term=term)
 		if term_obj.exists():
-			return HttpResponseServerError("IAE")
+			current_term = term_obj.first()
 		else:
-			Term.objects.create(school=school,year=year,term=term)
+			current_term = Term.objects.create(school=school,year=year,term=term)
+			
+		current_term.set_as_current()
 		return HttpResponse("Success")
 
 #View for showing teacher or admin profile

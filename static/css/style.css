@@ -1,4 +1,6 @@
 .main-header{
+	display: flex;
+	flex-direction: column;
 	height: 320px;
 	width: 100%;
     background-color: #04091e;
@@ -170,6 +172,9 @@ border-radius: 10px;
 }
 .hcenter{
 	margin: 0 auto;
+}
+.v-center{
+	vertical-align: middle;
 }
 #main{
 	padding:0;

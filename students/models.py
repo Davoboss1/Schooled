@@ -19,35 +19,28 @@ class Term(models.Model):
 	school = models.ForeignKey(School,on_delete=models.CASCADE) 
 	term = models.CharField(max_length=20,choices = term_choices)
 	year = models.SmallIntegerField()
+	current_session = models.BooleanField(default=False)
 	
 	@property
 	def session(self):		
 		return f"{self.year}/{self.year+1}"
 	def __str__(self):
 		return f"{self.session} Session : {self.term}"
+	def set_as_current(self):
+		terms = Term.objects.filter(school=self.school).exclude(pk=self.pk)
+		terms.update(current_session=False)
+		self.current_session = True
+		self.save()
 	def save(self,*args,**kwargs):
-		self.year = int(self.year)
-		if Term.objects.filter(school=self.school).exists():
-			current_term = Term.objects.filter(school=self.school).first()
-			if current_term.term == self.FIRST_TERM:
-				if self.term != self.SECOND_TERM:
-					raise ValidationError("Invalid value for next term")
-			elif current_term.term == self.SECOND_TERM:
-				if self.term != self.THIRD_TERM:
-					raise ValidationError("Invalid value for next term")
-			elif current_term.term == self.THIRD_TERM:
-				if self.term != self.FIRST_TERM:
-					raise ValidationError("Invalid value for next term")
-			if current_term.year != self.year:
-				if not Term.objects.filter(year=current_term.year,term=self.THIRD_TERM).exists():
-					raise ValidationError("Invalid value for next term")
-
+		if self.current_session:
+			if Term.objects.filter(school=self.school,current_session=True).exists():
+				raise ValidationError("A current session already exists, call set_as_current method to set it as current session")
 		super(Term,self).save(*args,**kwargs)
 
 
 	class Meta:
 		ordering = ["-year","-term"]
-		constraints = [models.UniqueConstraint(fields=["term","year","school"],name="unique_term"),models.CheckConstraint(check=models.Q(year__gte=Date.today().year),name="previous_year")]
+		constraints = [models.UniqueConstraint(fields=["term","year","school"],name="unique_term"),]
 
 	
 # Create your models here.
@@ -55,9 +48,11 @@ class Student(BasicInfo):
 	sex_choices=(('male','male'),
 		('female','female')
 	)
+	
 	name = models.CharField(max_length=100)
 	parents = models.ManyToManyField(Parent)
-	email = models.EmailField()
+	email = models.EmailField(blank=True,null=True)
+	phone_no= models.CharField(max_length=100,blank=True,null =True)
 	Class = models.ForeignKey(Class,on_delete=models.SET_NULL,null=True)
 	photo = models.ImageField(default='default.jpg', upload_to = 'Student_Pictures')
 	def __str__(self):
@@ -83,7 +78,7 @@ class Performance(models.Model):
 	('average','average'),
 	('fair','fair'),('poor','poor')
 	)
-	subject = models.CharField(max_length=40, help_text="Your Surname First")
+	subject = models.CharField(max_length=40)
 	student=models.ForeignKey(Student, on_delete=models.CASCADE )
 	Class = models.ForeignKey(Class,on_delete=models.CASCADE)
 	term = models.ForeignKey(Term,on_delete=models.CASCADE)

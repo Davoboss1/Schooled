@@ -17,7 +17,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            {{current_term.year}}
+                            {{current_term.session}}
                         </td>
                         <td>
                             {{current_term.term}}
@@ -26,7 +26,7 @@
                 </tbody>
             </table>
             <strong>If current sesssion and term at your school is not the same with the above current session and term.
-                Please create new session</strong>
+                Please select new session</strong>
         </div>
         <div class="d-flex">
             <h4 class="w-50 pl-3" >Year</h4>
@@ -35,6 +35,8 @@
         <div class="d-flex mt-2">
             <div class="w-50 pr-3" >
                 <select class="form-control" id="session-years">
+                    <option value="{{current_term.year}}">{{current_term.session}}</option>
+                    <option disabled>-----------</option>
                 </select>
             </div>
             <div class="w-50 pl-3" >
@@ -48,7 +50,7 @@
                 </select>
             </div>
         </div>
-        <button class="genric-btn primary mt-2" id="add-session">Create new Session</button>
+        <button class="genric-btn primary mt-2" id="add-session">Select Current Session</button>
 
 
     </div>
@@ -212,9 +214,9 @@
 {% if type == "view_performance" %}
 <script>
     //Create next 5 years in session select element
-    var year = new Date().getFullYear();
+    var year = new Date().getFullYear()-1;
     var session_select = document.getElementById("session-years");
-    for (var i = 0; i <= 5; i++) {
+    for (var i = 0; i <5; i++) {
         var option = document.createElement("option");
         option.appendChild(document.createTextNode(year + i + "/" + (year + i + 1)));
         option.value = year + i;
@@ -227,7 +229,7 @@
         var term = $("#session-term").val();
         //Select add session button
         var btn = $(this);
-        btn.html("Creating...");
+        btn.html("Selecting...");
         //Remove session status. (To avoid duplicate error message on another request)
         $("#session-status").remove();
         //Ajax request
@@ -237,12 +239,12 @@
             timeout: 10000,
             data: { csrfmiddlewaretoken: "{{csrf_token}}", year: year, term: term },
             success: function (data) {
-                btn.html("Create new Session");
+                btn.html("Select Current Session");
                 //Create success message and add it before add session button
-                btn.before('<div class="alert alert-success alert-dismissible fade show mt-3" role="alert" id="session-status"><strong>Success!</strong> Session Added Successfully.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                btn.before('<div class="alert alert-success alert-dismissible fade show mt-3" role="alert" id="session-status"><strong>Success!</strong> Session Selected Successfully.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
             },
             error: function (res, status, jqxhr) {
-                btn.html("Create new Session");
+                btn.html("Select Current Session");
                 //Create error message and add it before add session button
                 if (res.responseText == "IAE") {
                     btn.before('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" id="session-status"><strong>Failed!</strong> Session already exists.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');

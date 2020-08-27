@@ -5,17 +5,18 @@
 				<h6 class="w-50 ">Year</h6> <h6 class="w-50">Term</h6>
 				</div>		
 					<div class="d-flex my-2 mx-1" >
-				<select class="form-control" name="year" id="year">{% for term in terms %}
-				{% ifchanged %}
-						<option value="{{term.year}}">{{term.session}}</option>	
-						{% endifchanged %}
-						{% endfor %}
+				<select class="form-control" name="year" id="year">
+					{% for term in terms %}
+					{% ifchanged %}
+					<option value="{{term.year}}" {% if current_term.year == term.year %}selected{% endif %}>{{term.session}}</option>	
+					{% endifchanged %}
+					{% endfor %}
 					</select>
 					<select class="ml-1 form-control" name="term" id="term">
 				
-						<option {% if terms.first.term == "1st Term"%}selected{% endif %}>1st Term</option>
-						<option {% if terms.first.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
-						<option {% if terms.first.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
+						<option {% if current_term.term == "1st Term"%}selected{% endif %}>1st Term</option>
+						<option {% if current_term.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
+						<option {% if current_term.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
 					</select>
 					<button class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span class="fas fa-redo"></span></button>
 				</div>

@@ -289,28 +289,6 @@
 </div>
 
 
-<div id="term-body" style="display:none;">
-	<div class="d-flex flex-column">
-		<div class="d-flex">
-			<h6 class="w-50 ">Year</h6>
-			<h6 class="w-50">Term</h6>
-		</div>
-		<div class="d-flex my-2 mx-1"><select class="form-control" name="year"
-				id="year">{% for term in terms %}{% ifchanged %}<option value="{{term.year}}">{{term.session}}</option>
-				{% endifchanged %}
-				{% endfor %}
-			</select>
-			<select class="ml-1 form-control" name="term" id="term">
-				<option {% if terms.first.term == "1st Term"%}selected{% endif %}>1st Term</option>
-				<option {% if terms.first.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
-				<option {% if terms.first.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
-			</select>
-			<button class=" ml-2 btn btn-dark " id="fetch-termly-performance" onclick="fetch_performance(this)"><span
-					class="fas fa-redo"></span></button>
-		</div>
-	</div>
-</div>
-
 <!-- School info modal -->
 <div class="modal fade" id="school-info" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 	aria-hidden="true">
@@ -375,35 +353,26 @@
 		body.html("<div class='progressBar mx-auto'></div>");
 		pk = $(this).attr("data-pk");
 		type = $(this).attr("data-type");
+		var data = {};
 		if (type == "view-performance") {
 			var url = "{% url 'students:view_only_performance' %}" + pk + "/";
 			$("#detailsModalTitle").html("Wards performance");
-			var data = {
-				year: "{{term.year}}",
-				term: "{{term.term}}",
-			};
+			data.parent = "";
 		} else {
 			$("#detailsModalTitle").html("Wards attendance");
 			var url = "{% url 'students:view_only_attendance' %}" + pk + "/";
 		}
-
+		console.log("Request about to me made.")
 		$.ajax({
 			url: url,
 			type: "get",
 			data: data,
 			success: function (data) {
-				if (type == "view-performance") {
-					body.html("");
-					body.append($("#term-body").html());
-					body.append(data);
-				}
-				else {
-					body.html(data);
-				}
+				body.html(data);
 			},
 			error: function (req, status, error) {
-				alert(error);
-			},
+				body.html(write_alert("Something went wrong, your request failed. Please try again","danger"));
+			}
 		});
 	});
 
@@ -439,8 +408,7 @@
 		});
 	});
 
-	function fetch_performance(This) {
-
+	function fetch_termly_performance(This) {
 		var span_icon = $($(This).find("span")[0]);
 		span_icon.addClass("fa-spin");
 		$.ajax({

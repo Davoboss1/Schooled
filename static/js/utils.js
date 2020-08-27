@@ -9,7 +9,7 @@ function animateScrollToId(id) {
 
 function animateScrollToElem(elem) {
 	$('html, body').animate({
-		scrollTop: ($(elem).offset().top - 50)
+		scrollTop: $(elem)[0].offsetTop
 	}, 1000);
 }
 
@@ -20,7 +20,8 @@ window.onscroll = function () {
 	main_nav.style.opacity = "0.5";
 }
 
-function write_alert(msg,type="success"){
+function write_alert(msg,type){
+	if(type===undefined){type="success"}
         if(type=="danger"){
             type_m = "Error";
         }else{
@@ -30,7 +31,8 @@ function write_alert(msg,type="success"){
         return '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert"><strong>' + type_m + '!</strong> ' + msg + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 }
 
-function write_loader(msg=""){
+function write_loader(msg){
+	if(msg===undefined){msg=""}
     return '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="mx-auto">'+msg+'</small></div>';
 }
 
@@ -42,7 +44,8 @@ function check_file(input){
 	}
 }
 
-function post_data(url,data,elem,use_server_msg=false){
+function post_data(url,data,elem,use_server_msg){
+	if(use_server_msg===undefined){use_server_msg=false}
 	//Add loader
 	var elem_obj =$(elem);
 	elem_obj.html(write_loader("Submitting..."));
@@ -84,7 +87,8 @@ function send_request(url,type,data,func){
 	});
 }
 
-function post_form(url,form,status_elem,use_server_msg=false){
+function post_form(url,form,status_elem,use_server_msg){
+	if(use_server_msg===undefined){use_server_msg=false}
 	var $form = $(form);
 	if(status_elem===undefined){
 		$form.find("#form-status").remove();
@@ -122,7 +126,8 @@ function post_form(url,form,status_elem,use_server_msg=false){
 	});
 }
 
-function post_form_file(url,form,status_elem,use_server_msg=false){
+function post_form_file(url,form,status_elem,use_server_msg){
+	if(use_server_msg===undefined){use_server_msg=false}
 	var $form = $(form);
 	if(status_elem===undefined){
 		$form.find("#form-status").remove();
@@ -162,7 +167,10 @@ function post_form_file(url,form,status_elem,use_server_msg=false){
 	});
 }
 
-function get_data(url,data={},elem,status_elem,use_server_msg=false){
+function get_data(url,data,elem,status_elem,use_server_msg){
+	if(use_server_msg===undefined){use_server_msg=false}
+	if(data===undefined){data={}}
+
 	//Add loader
     if(status_elem!==undefined){
 	    var status_obj = $(status_elem);

@@ -53,7 +53,7 @@
                     {% for students in all_students %}
                         <tr>
                             <td>{{forloop.counter}}</td>
-                            <td><img src="#" alt="" class="student-icon">{{students.name}} </td>
+                            <td>{{students.name}} </td>
                             <td><input type="checkbox" class="student-checkbox" name="present" value="{{students.id}}"
                                                                                                {% if students in attendance %}checked{% endif %}></td>
                         </tr>
@@ -115,14 +115,14 @@
                         {% if students in attendance %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
-                                <td> <img src="" alt="" class="student-icon">
+                                <td> 
                                     {{students.name}} </td>
                                 <td><span class="badge badge-success">Present</span></td>
                             </tr>
                         {% else %}
                             <tr>
                                 <td>{{forloop.counter}}</td>
-                                <td><img src="img/pic.jpg" alt="" class="student-icon">{{students.name}}</td>
+                                <td>{{students.name}}</td>
                                 <td><span class="badge badge-danger">Absent</span></td>
                             </tr>
                         {% endif %}

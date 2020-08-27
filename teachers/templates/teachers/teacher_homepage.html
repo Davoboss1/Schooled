@@ -19,6 +19,8 @@
 }
 #teacher-tools, #teacherProfile{
 	background-color: #04091e;
+	border-bottom: 2px dotted white;
+	border-top: 2px dotted white;
 }
 @media screen and (max-width:767px){
 	#main{
@@ -74,7 +76,7 @@
 		<div class="row">
       	
 			<div class="col-12 col-sm-12 col-md-3 col-lg-3" id="teacher-tools" >
-				<h2 style="text-align:center; color:white;">Teacher Tools</h2>
+				<h2 class="text-center text-white" >Teacher Tools</h2>
 				<!-- Teacher tools list-->
 					<!-- Onclick event requests data-url attribute value and applies it in div with Id main. -->
 				<ul class="list-group my-3" id="toolsList">
@@ -346,11 +348,15 @@ $("#edit-profile-btn").click(function(event){
 		last_page = text;
 	}
 	window.onpopstate = function(event){
+		if (event.state == null) { return; }
 	   if(!confirm("Are you sure you want to go leave session ?")){
 	     if(current_history == null){
 		   current_history = browser_history[0];
 	  	}
-	   	history.pushState(current_history,"List url",current_history.history);
+		   history.pushState(current_history,"List url",current_history.history);
+		    $('html, body').animate({
+        		scrollTop: ($("#main").offset().top - 50)
+            }, 1000);
 	   }else{
 	   	var current_item = document.getElementById(event.state.item_id);
 	   	request_body(current_item);

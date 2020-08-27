@@ -95,6 +95,15 @@
             margin: 0;
             padding: 0;
         }
+
+        #new-user-body{
+            width: 100%;
+            text-align: left;
+            margin-top: 5%;
+        }
+        #new-user-body p{
+            font-size: 0.8em;
+        }
     </style>
     {% endblock %}
 </head>
@@ -147,6 +156,8 @@
                                 {% else %}
 
                                 {% endif %}
+                                <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent"
+                                    onclick="animateScrollToElem('header:first-of-type');">Header</a>
                                 <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent"
                                     onclick="animateScrollToId('#page-footer');">Footer</a>
                             </div>
@@ -225,7 +236,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row" id="body-row">
+            <div class="row" id="body-row" aria-busy=""
                 <!-- Admin List -->
                 <div class="col-12 col-sm-12 col-md-4 col-lg-4 bg-light thick-horizontal-border" id="admin-tools">
                     <!-- main list -->
@@ -276,7 +287,7 @@
                             <label for="customFile1">School Logo</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" name="school-image" id="customFile1"
-                                    onchange="document.getElementById('file-label1').innerHTML='File selected sucessfully';"
+                                    onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected successfully' : this.nextElementSibling.innerHTML = 'Choose file')"
                                     accept="image/*">
                                 <label class="custom-file-label" for="customFile1" id="file-label1">Choose file</label>
                             </div>
@@ -292,6 +303,7 @@
 
         </div>
     </section>
+    <article style=""></article>
 
     {% endblock %}
     <!-- ================ End Body Area -->
@@ -361,11 +373,40 @@
         </div>
     </footer>
     <!-- ================ End footer Area ================= -->
+
+    <div id="new-user" style="display: none;" >
+        <h1><u class="text-dark">Welcome to schooled</u></h1>
+        <p class="text-center my-2">Thank you for joining us</p>
+        <div id="new-user-body">
+            <b class="font-weight-bold">Hello {{user.get_full_name}}</b>          
+            <h3 class="text-center">Getting started.</h3>
+            <h4 class="text-center"><u class="text-dark">Teacher management</u></h4>
+            <div class="card p-2"><p>
+                You will need to create a class and a teacher profile for allow your teachers use this platform for your school.
+            </p>
+            <p>
+                You can do that by clicking on manage teachers, then click the add teachers button and fill in the form.
+                <br>
+                <small>You will provide a username and password for your teacher which the teacher will change after login.</small>
+            </p></div>
+            
+            <h4 class="text-center"><u class="text-dark">Session management</u></h4>
+            <div class="card p-2">
+                <p>
+                    You also need to specify the term/session your school is currently in for performances tp be added.
+                </p>
+                <p>
+                    That can be done by going to view performance and clicking the new session button and specify the term/session your school is currently in.
+                </p>
+                <small>Note: You will need to update this every term.</small>
+            </div>
+            
+        </div>
+        
+    </div>
     {% block default_scripts %}
 
     <script src="{% static 'js/sweetalert.js' %}"></script>
-
-    <script src="{% static 'js/tippy.js' %}"></script>
     <script src="{% static 'js/vendor/jquery-3.4.1.min.js'%}"></script>
     <script src="{% static 'js/vendor/popper.min.js'%}"></script>
     <script src="{% static 'js/vendor/bootstrap.min.js'%}"></script>
@@ -379,10 +420,12 @@
     <script src="{% static 'js/hexagons.min.js'%}"></script>
     <script src="{% static 'js/jquery.counterup.min.js'%}"></script>
     <script src="{% static 'js/waypoints.min.js'%}"></script>
+    <!--<script src="{% static 'js/tippy.js' %}"></script>-->
     <script src="{% static 'js/main.js'%}"></script>
     <script src="{% static 'js/utils.js' %}"></script>
     {% endblock %}
     {% block script %}
+
     <script>
 
 
@@ -514,10 +557,12 @@
         //history management
         (function history_management() {
             var li_items = document.querySelectorAll(".block-list li");
-            li_items.forEach(function (item, index) {
+            for(var index=0;index<li_items.length;index++){
+                item = li_items[index];
                 item.id = "item-" + index;
                 item.onclick = setHistory;
-            });
+            }
+            
 
             var last_page = "";
             var browser_history = [];
@@ -559,6 +604,13 @@
             $("#school-banner").text(school_name);
             $("#school-motto-banner").text(sch_motto);
         });
+
+    Swal.fire({
+        html: $("#new-user").html(),
+        showCloseButton: true,
+        showCancelButton: false,
+        showConfirmButton: false
+    });
     </script>
     {% endblock %}
 </body>

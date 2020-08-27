@@ -16,7 +16,7 @@ def parents_homepage(request):
 	parent_form = ParentForm(instance=parent)
 	
 	#rendering 
-	return render(request,"parents/parents_homepage.html",{"parent":parent,"password_change_form":password_change_form,"parent_form":parent_form,"term":term,"terms":Term.objects.all(),})
+	return render(request,"parents/parents_homepage.html",{"parent":parent,"password_change_form":password_change_form,"parent_form":parent_form})
 	
 #update parent info
 def update(request):

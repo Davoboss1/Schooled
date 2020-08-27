@@ -37,4 +37,5 @@ path("view-only-attendance/",views.view_only_attendance,name="view_only_attendan
 path("view-only-attendance/<pk>/",views.view_only_attendance,name="view_only_attendance"),
 path("view-only-performance/",views.view_only_performance,name="view_only_performance"),
 path("view-only-performance/<pk>/",views.view_only_performance,name="view_only_performance"),
+path("csv_handler",views.csv_handler,name="csv_handler")
 ]

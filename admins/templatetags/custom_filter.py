@@ -8,7 +8,7 @@ register = template.Library()
 @register.filter(name="current_term_filter")
 def current_term_filter(value):
 	try:
-		term = Term.objects.filter(school=value.Class.school).first()
+		term = Term.objects.get(school=value.Class.school,current_session=True)
 		performance = term.performance_set.filter(student=value)
 		return performance
 	except:

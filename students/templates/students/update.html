@@ -32,6 +32,22 @@
 </div>
 
 <script>
+	//Scrolls up to parent part
+	function scrolltoParent() {
+		//Get media query
+		var media = window.matchMedia("(min-width: 768px)");
+		//if media
+		//Scroll with diffrent containers
+		if(media.matches){
+			$('#main').animate({
+				scrollTop: ($("#add-parent")[0].offsetTop - 50)
+			}, 1000);
+		}else{
+			$('html,body').animate({
+				scrollTop: ($("#add-parent").offset().top - 50)
+			}, 1000);
+		}
+	}
 	var error_id_arr = [];
 		$(function(){
 				$("#student-form").submit(function(event){
@@ -59,16 +75,12 @@
 			if(data=="UNF"){
 				$("#parent-update-status").html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong> Parent Username does not exist.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
 				status.html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
-					$('#main').animate({
-						scrollTop: ($("#add-parent")[0].offsetTop - 50)
-					}, 1000);
+				scrolltoParent();
 			}
 			else if(data=="UNP"){
 				$("#parent-update-status").html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong> Username entered not a parent account<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');					
 				status.html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
-				$('#main').animate({
-					scrollTop: ($("#add-parent").offset()[0].offsetTop - 50)
-				}, 1000);
+				scrolltoParent();
 			}else{
 				//Parses from json
 				var errors = JSON.parse(data);

@@ -1,4 +1,5 @@
 import os
+import csv
 from django.shortcuts import render,redirect,get_object_or_404,Http404,HttpResponse,reverse
 from django.http.response import HttpResponseServerError
 from .models import Student, Performance, Attendance,Term
@@ -13,7 +14,7 @@ from django.contrib import messages
 from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
 from django.template.loader import render_to_string,get_template
-from django.template import Context
+from django.template import Context,Template
 from datetime import datetime,date,timedelta
 from django.core.paginator import Paginator
 from xhtml2pdf import pisa
@@ -28,6 +29,7 @@ def performance_page(request,type):
 	context={
 		'type':type,
 		"terms":Term.objects.filter(school=school),
+		'current_term':Term.objects.get(school=school,current_session=True)
 	}
 	#Pagination of students
 	if "page" in request.GET.keys():
@@ -72,7 +74,8 @@ def performance_page(request,type):
 		#create new attribute called termly_performance
 		student.termly_performance = filtered_performance
 		return HttpResponse(loadmore_performance(student.termly_performance,10,int(request.GET.get("page_no"))))
-		
+	context["students"] = request.user.schooluser.teacher.teacher_class.student_set.all()
+	print("Main context :",context)		
 	return render(request, 'students/performance_page.html', context)
 
 
@@ -291,19 +294,19 @@ def edit_students(request):
 
 #View for creating performance
 def p_create_or_update(request, student_id):
-	#info variable represents student
-	info = get_object_or_404(Student, pk= student_id)
-	term = Term.objects.filter(school=info.Class.school)
-
 	try:
+		teacher =  request.user.schooluser.teacher
+		#info variable represents student
+		info = Student.objects.get(Class__teacher=teacher,pk=student_id)
+		current_term = Term.objects.get(school=info.Class.school,current_session=True)
 		#get performance by subject
-		if not term.exists():
-			return HttpResponseServerError("SESSIONERROR")
-		selected_subject = term.first().performance_set.filter(student=info).get(subject=request.POST['subject'])
+		selected_subject = current_term.performance_set.filter(student=info).get(subject=request.POST['subject'])
+	except Term.DoesNotExist:
+		return HttpResponseServerError("SESSIONERROR")
 	except (Performance.DoesNotExist):
 		#if performance with added subject does not exist
 		#create new performance
-		selected_subject =info.performance_set.create(subject=request.POST['subject'], test=request.POST['test'], exam = request.POST['exam'],comment =request.POST['comment'],Class=request.user.schooluser.teacher.teacher_class,term=term.first())
+		selected_subject =info.performance_set.create(subject=request.POST['subject'], test=request.POST['test'], exam = request.POST['exam'],comment =request.POST['comment'],Class=request.user.schooluser.teacher.teacher_class,term=current_term)
 		#return success message
 		return HttpResponse("Performance Added Successfully")
 	else:
@@ -364,8 +367,14 @@ def handle_uploads(request):
 		
 #View shows attendance in student profile
 def view_only_attendance(request,pk):
+	schooluser = request.user.schooluser
 	#Get a student using primary key
-	student = Student.objects.get(pk=pk)
+	if schooluser.level == "Parent":
+		student =  schooluser.parent.student_set.get(pk=pk)
+	elif schooluser.level == "Admin":
+		student = Student.objects.get(Class__school__admin=schooluser.admin,pk=pk)
+	else:
+		student = schooluser.teacher.teacher_class.student_set.get(pk=pk)
 	#get attendance for the student class
 	attendance = student.Class.attendance_set.all()
 	#if date exists in request.Get
@@ -392,9 +401,48 @@ def view_only_attendance(request,pk):
 	
 #view shows performance in student profile
 def view_only_performance(request,pk):
-	student = Student.objects.get(pk=pk)
-	year = int(request.GET.get("year"))
-	term_text = request.GET.get("term")
+	schooluser = request.user.schooluser
+	if schooluser.level == "Parent":
+		student =  schooluser.parent.student_set.get(pk=pk)
+	elif schooluser.level == "Admin":
+		student = Student.objects.get(Class__school__admin=schooluser.admin,pk=pk)
+	else:
+		student = schooluser.teacher.teacher_class.student_set.get(pk=pk)
+	term_html = None
+	if "parent" in request.GET:
+		terms=Term.objects.filter(school=student.Class.school)
+		current_term = terms.get(current_session=True)
+		year = current_term.year
+		term_text = current_term.term
+		data = '''<div>
+					<div class="d-flex flex-column">
+						<div class="d-flex">
+							<h6 class="w-50 ">Year</h6>
+							<h6 class="w-50">Term</h6>
+						</div>
+						<div class="d-flex my-2 mx-1"><select class="form-control" name="year"
+								id="year">
+								{% for term in terms %}
+								{% ifchanged %}<option value="{{term.year}}" {% if current_term.year == term.year %}selected{% endif %}>{{term.session}}</option>
+								{% endifchanged %}
+								{% endfor %}
+							</select>
+							<select class="ml-1 form-control" name="term" id="term">
+								<option {% if current_term.term == "1st Term"%}selected{% endif %}>1st Term</option>
+								<option {% if current_term.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
+								<option {% if current_term.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
+							</select>
+							<button class=" ml-2 btn btn-dark " id="fetch-termly-performance" onclick="fetch_termly_performance(this)"><span
+									class="fas fa-redo"></span></button>
+						</div>
+					</div>
+				</div>
+			'''
+		term_html = Template(data).render(Context({"current_term":current_term,"terms":terms}))
+	else:
+		year = int(request.GET.get("year"))
+		term_text = request.GET.get("term")
+
 	#try to get term object
 	try:
 		term = Term.objects.get(school=student.Class.school,year=year,term=term_text)
@@ -407,7 +455,8 @@ def view_only_performance(request,pk):
 	performance = student.termly_performance
 	paginator = Paginator(performance,10)
 	performance = paginator.get_page(request.GET.get("page"))
-	return render(request,"students/view_only_performance.html",{"student":student,"performance":performance,"terms":Term.objects.filter(school=student.Class.school),})		
+	print(term_html)
+	return render(request,"students/view_only_performance.html",{"student":student,"performance":performance,"terms":Term.objects.filter(school=student.Class.school),"term_html":term_html})		
 	
 def link_callback(uri,rel):
 	sUrl = settings.STATIC_URL
@@ -499,3 +548,59 @@ def convert_performance_to_pdf(request,pk,year,term):
 		return HttpResponse("An Error Occurred")
 	return response
 	
+
+#Handles performance csv_handler
+def csv_handler(request):
+	if request.method == "POST":
+		#Get neccessary data
+		teacher = request.user.schooluser.teacher
+		current_class = teacher.teacher_class
+		student = Student.objects.get(Class=current_class,pk=request.POST.get("student_pk"))
+		#Get school current term
+		term = Term.objects.get(school=current_class.school,current_session=True)
+		csv_file = request.FILES["csv_file"]
+		#Check if uploaded file is greater than 100kb
+		if csv_file.size > 100000:
+			#Return file too big message
+			return HttpResponse("File size too big")
+		#Read csv file
+		csv_file = csv_file.read()
+		#Convert from bytes to string and splitlines to enable csvreader to read
+		csv_file = csv_file.decode("utf-8").splitlines()
+		#Csv reader
+		csv_reader = csv.DictReader(csv_file)
+		#Line count var to count number of lines
+		line_count = 0
+		for row in csv_reader:
+			#Perform no action on first line
+			if line_count == 0:
+				pass
+			else:
+				#Try to get performance if it exists or create new one
+				try:
+					performance = term.performance_set.get(subject=row["subject"],student=student)
+					performance.test = row["test_score"]
+					performance.exam = row["exam_score"]
+					performance.comment = row["comment"]
+					performance.save()
+				except:
+					performance = Performance.objects.create(term=term,Class=current_class,student=student,subject=row["subject"],test=row["test_score"],exam=row["exam_score"],comment=row["comment"])
+
+			line_count+=1
+		#Return success message with number of performances added(line_count-1 because the first line is not counted)
+		return HttpResponse(f"{line_count-1} performances for {student.name} added successfully.")
+	else:
+		response = HttpResponse(content_type="text/csv")
+		response['Content-Disposition'] = 'attachment; filename="template.csv"'
+		writer = csv.writer(response)
+		writer.writerow(['subject','test_score','exam_score','comment'])
+		return response
+	
+
+
+
+
+
+
+
+

@@ -1,0 +1,1822 @@
+FUNCTION  coc#client#get_channel()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/client.vim line 127
+Called 653 times
+Total time:   0.037546
+ Self time:   0.037546
+
+count  total (s)   self (s)
+  653              0.008864   if s:is_vim
+                                return a:client['channel']
+  653              0.004022   endif
+  653              0.010070   return a:client['chan_id']
+
+FUNCTION  AutoPairsSpace()
+    Defined: ~/.vim/plugged/auto-pairs/plugin/auto-pairs.vim line 423
+Called 12 times
+Total time:   0.028027
+ Self time:   0.022057
+
+count  total (s)   self (s)
+   12              0.000372   if !b:autopairs_enabled
+                                return "\<SPACE>"
+   12              0.000088   end
+                            
+   12   0.007508   0.001539   let [before, after, ig] = s:getline()
+                            
+  120              0.002396   for [open, close, opt] in b:AutoPairsList
+  108              0.001445     if close == ''
+                                  continue
+  108              0.000655     end
+  108              0.005384     if before =~ '\V'.open.'\v$' && after =~ '^\V'.close
+                                  if close =~ '\v^[''"`]$'
+                                    return "\<SPACE>"
+                                  else
+                                    return "\<SPACE>\<SPACE>".s:Left
+                                  end
+  108              0.000714     end
+  120              0.001165   endfor
+   12              0.000200   return "\<SPACE>"
+
+FUNCTION  <SNR>86_CountITags()
+    Defined: /data/data/com.termux/files/usr/share/nvim/runtime/indent/html.vim line 281
+Called 1 time
+Total time:   0.001520
+ Self time:   0.000609
+
+count  total (s)   self (s)
+                              "{{{
+                              " Store the result in s:curind and s:nextrel.
+    1              0.000021   let s:curind = 0  " relative indent steps for current line [unit &sw]:
+    1              0.000016   let s:nextrel = 0  " relative indent steps for next line [unit &sw]:
+    1              0.000015   let s:block = 0		" assume starting outside of a block
+    1              0.000015   let s:countonly = 1	" don't change state
+    1   0.001387   0.000477   call substitute(a:text, '<\zs/\=' . s:tagname . '\>\|<!--\[\|\[endif\]-->\|<!--\|-->', '\=s:CheckTag(submatch(0))', 'g')
+    1              0.000027   let s:countonly = 0
+
+FUNCTION  ale#linter#Get()
+    Defined: ~/.vim/plugged/ale/autoload/ale/linter.vim line 476
+Called 1 time
+Total time:   0.003547
+ Self time:   0.001799
+
+count  total (s)   self (s)
+    1              0.000026     let l:possibly_duplicated_linters = []
+                            
+                                " Handle dot-separated filetypes.
+    2              0.000089     for l:original_filetype in split(a:original_filetypes, '\.')
+    1   0.000845   0.000119         let l:filetype = ale#linter#ResolveFiletype(l:original_filetype)
+    1   0.000546   0.000116         let l:linter_names = s:GetLinterNames(l:original_filetype)
+    1   0.000690   0.000099         let l:all_linters = ale#linter#GetAll(l:filetype)
+    1              0.000019         let l:filetype_linters = []
+                            
+    1              0.000097         if type(l:linter_names) is v:t_string && l:linter_names is# 'all'
+    1              0.000024             let l:filetype_linters = l:all_linters
+                                    elseif type(l:linter_names) is v:t_list
+                                        " Select only the linters we or the user has specified.
+                                        for l:linter in l:all_linters
+                                            let l:name_list = [l:linter.name] + l:linter.aliases
+                            
+                                            for l:name in l:name_list
+                                                if index(l:linter_names, l:name) >= 0
+                                                    call add(l:filetype_linters, l:linter)
+                                                    break
+                                                endif
+                                            endfor
+                                        endfor
+    1              0.000016         endif
+                            
+    1              0.000038         call extend(l:possibly_duplicated_linters, l:filetype_linters)
+    2              0.000039     endfor
+                            
+    1              0.000028     let l:name_list = []
+    1              0.000020     let l:combined_linters = []
+                            
+                                " Make sure we override linters so we don't get two with the same name,
+                                " like 'eslint' for both 'javascript' and 'typescript'
+                                "
+                                " Note that the reverse calls here modify the List variables.
+    1              0.000036     for l:linter in reverse(l:possibly_duplicated_linters)
+                                    if index(l:name_list, l:linter.name) < 0
+                                        call add(l:name_list, l:linter.name)
+                                        call add(l:combined_linters, l:linter)
+                                    endif
+    1              0.000012     endfor
+                            
+    1              0.000028     return reverse(l:combined_linters)
+
+FUNCTION  HtmlIndent_FindTagStart()
+    Defined: /data/data/com.termux/files/usr/share/nvim/runtime/indent/html.vim line 844
+Called 1 time
+Total time:   0.000550
+ Self time:   0.000550
+
+count  total (s)   self (s)
+                              "{{{
+                              " Avoids using the indent of a continuation line.
+                              " Moves the cursor.
+                              " Return two values:
+                              " - the matching line number or "lnum".
+                              " - a flag indicating whether we found the end of a tag.
+                              " This method is global so that HTML-like indenters can use it.
+                              " To avoid matching " > " or " < " inside a string require that the opening
+                              " "<" is followed by a word character and the closing ">" comes after a
+                              " non-white character.
+    1              0.000119   let idx = match(getline(a:lnum), '\S>\s*$')
+    1              0.000021   if idx > 0
+    1              0.000033     call cursor(a:lnum, idx)
+    1              0.000252     let lnum = searchpair('<\w', '' , '\S>', 'bW', '', max([a:lnum - b:html_indent_line_limit, 0]))
+    1              0.000020     if lnum > 0
+    1              0.000022       return [lnum, 1]
+                                endif
+                              endif
+                              return [a:lnum, 0]
+
+FUNCTION  <SNR>86_get_tag()
+    Defined: /data/data/com.termux/files/usr/share/nvim/runtime/indent/html.vim line 268
+Called 1 time
+Total time:   0.000179
+ Self time:   0.000179
+
+count  total (s)   self (s)
+                              "{{{
+    1              0.000037   let i = get(s:indent_tags, a:tagname)
+    1              0.000038   if (i == 1 || i == -1) && get(b:hi_removed_tags, a:tagname) != 0
+                                return 0
+    1              0.000008   endif
+    1              0.000013   if i == 0
+                                let i = get(b:hi_tags, a:tagname)
+    1              0.000009   endif
+    1              0.000012   return i
+
+FUNCTION  ctrlp#utils#writecache()
+    Defined: ~/.vim/plugged/ctrlp.vim/autoload/ctrlp/utils.vim line 63
+Called 1 time
+Total time:   0.002016
+ Self time:   0.001883
+
+count  total (s)   self (s)
+    1   0.000235   0.000101 	if isdirectory(ctrlp#utils#mkdir(a:0 ? a:1 : s:cache_dir))
+    1              0.001752 		sil! cal writefile(a:lines, a:0 >= 2 ? a:2 : ctrlp#utils#cachefile())
+    1              0.000015 	en
+
+FUNCTION  <SNR>51_addtomrufs()
+    Defined: ~/.vim/plugged/ctrlp.vim/autoload/ctrlp/mrufiles.vim line 70
+Called 1 time
+Total time:   0.001436
+ Self time:   0.001436
+
+count  total (s)   self (s)
+    1              0.000229 	let fn = fnamemodify(a:fname, get(g:, 'ctrlp_tilde_homedir', 0) ? ':p:~' : ':p')
+    1              0.000072 	let fn = exists('+ssl') ? tr(fn, '/', '\') : fn
+    1              0.000128 	let abs_fn = fnamemodify(fn,':p')
+    1              0.000702 	if ( !empty({s:in}) && fn !~# {s:in} ) || ( !empty({s:ex}) && fn =~# {s:ex} ) || !empty(getbufvar('^' . abs_fn . '$', '&bt')) || !filereadable(abs_fn)
+                            		retu
+    1              0.000010 	en
+    1              0.000067 	let idx = index(s:mrufs, fn, 0, !{s:cseno})
+    1              0.000032 	if idx
+                            		cal filter(s:mrufs, 'v:val !='.( {s:cseno} ? '#' : '?' ).' fn')
+                            		cal insert(s:mrufs, fn)
+                            		if {s:soup} && idx < 0
+                            			cal s:savetofile(s:mergelists())
+                            		en
+    1              0.000008 	en
+
+FUNCTION  ale#FileTooLarge()
+    Defined: ~/.vim/plugged/ale/autoload/ale.vim line 24
+Called 1 time
+Total time:   0.000120
+ Self time:   0.000120
+
+count  total (s)   self (s)
+    1              0.000064     let l:max = getbufvar(a:buffer, 'ale_maximum_file_size', get(g:, 'ale_maximum_file_size', 0))
+                            
+    1              0.000035     return l:max > 0 ? (line2byte(line('$') + 1) > l:max) : 0
+
+FUNCTION  coc#util#cursor()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/util.vim line 90
+Called 64 times
+Total time:   0.010134
+ Self time:   0.010134
+
+count  total (s)   self (s)
+   64              0.003225   let pos = getcurpos()
+   64              0.003651   let content = pos[2] == 1 ? '' : getline('.')[0: pos[2] - 2]
+   64              0.002169   return [pos[1] - 1, strchars(content)]
+
+FUNCTION  coc#rpc#request()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/rpc.vim line 88
+Called 3 times
+Total time:   0.068006
+ Self time:   0.000588
+
+count  total (s)   self (s)
+    3   0.000439   0.000199   if !coc#rpc#ready()
+                                return ''
+    3              0.000020   endif
+    3   0.067483   0.000305   return s:client['request'](a:method, a:args)
+
+FUNCTION  coc#_hide()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc.vim line 94
+Called 19 times
+Total time:   0.001311
+ Self time:   0.001311
+
+count  total (s)   self (s)
+   19              0.000837   if !pumvisible() | return | endif
+    6              0.000248   call feedkeys("\<C-e>", 'in')
+
+FUNCTION  <SNR>15_TextChanged()
+    Defined: ~/.vim/plugged/colorizer/autoload/colorizer.vim line 341
+Called 51 times
+Total time:   0.171116
+ Self time:   0.017473
+
+count  total (s)   self (s)
+   51              0.001706   if !exists('w:colormatches')
+                                return
+   51              0.000380   endif
+   51              0.008130   echomsg "TextChanged"
+   51   0.159649   0.006006   call s:PreviewColorInLine('.')
+
+FUNCTION  <SNR>44_getline()
+    Defined: ~/.vim/plugged/auto-pairs/plugin/auto-pairs.vim line 139
+Called 13 times
+Total time:   0.007566
+ Self time:   0.007566
+
+count  total (s)   self (s)
+   13              0.000531   let line = getline('.')
+   13              0.000416   let pos = col('.') - 1
+   13              0.000427   let before = strpart(line, 0, pos)
+   13              0.000315   let after = strpart(line, pos)
+   13              0.000258   let afterline = after
+   13              0.000181   if g:AutoPairsMultilineClose
+   13              0.000261     let n = line('$')
+   13              0.000314     let i = line('.')+1
+   13              0.000238     while i <= n
+   13              0.000669       let line = getline(i)
+   13              0.000316       let after = after.' '.line
+   13              0.002075       if !(line =~ '\v^\s*$')
+   13              0.000172         break
+                                  end
+                                  let i = i+1
+   13              0.000158     endwhile
+   13              0.000097   end
+   13              0.000341   return [before, after, afterline]
+
+FUNCTION  ctrlp#utils#readfile()
+    Defined: ~/.vim/plugged/ctrlp.vim/autoload/ctrlp/utils.vim line 44
+Called 1 time
+Total time:   0.000938
+ Self time:   0.000938
+
+count  total (s)   self (s)
+    1              0.000111 	if filereadable(a:file)
+    1              0.000727 		let data = readfile(a:file)
+    1              0.000039 		if empty(data) || type(data) != 3
+                            			unl data
+                            			let data = []
+    1              0.000008 		en
+    1              0.000012 		retu data
+                            	en
+                            	retu []
+
+FUNCTION  <SNR>86_CheckCustomTag()
+    Defined: /data/data/com.termux/files/usr/share/nvim/runtime/indent/html.vim line 370
+Called 1 time
+Total time:   0.000158
+ Self time:   0.000158
+
+count  total (s)   self (s)
+                              "{{{
+                              " Returns 1 if ctag is the tag for a custom element, 0 otherwise.
+                              " a:ctag can be "tag" or "/tag" or "<!--" or "-->"
+    1              0.000030   let pattern = '\%\(\w\+-\)\+\w\+'
+    1              0.000079   if match(a:ctag, pattern) == -1
+    1              0.000016     return 0
+                              endif
+                              if matchstr(a:ctag, '\/\ze.\+') == "/"
+                                " closing tag
+                                if s:block != 0
+                                  " ignore ctag within a block
+                                  return 1
+                                endif
+                                if s:nextrel == 0
+                                  let s:curind -= 1
+                                else
+                                  let s:nextrel -= 1
+                                endif
+                              else
+                                " opening tag
+                                if s:block != 0
+                                  return 1
+                                endif
+                                let s:nextrel += 1
+                              endif
+                              return 1
+
+FUNCTION  coc#_do_complete()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc.vim line 69
+Called 37 times
+Total time:   0.013142
+ Self time:   0.013142
+
+count  total (s)   self (s)
+   37              0.006396   let g:coc#_context = { 'start': a:start, 'candidates': a:items, 'preselect': a:preselect}
+   37              0.003449   if mode() =~# 'i' && &paste != 1
+   37              0.001863     call feedkeys("\<Plug>CocRefresh", 'i')
+   37              0.000627   endif
+
+FUNCTION  coc#util#get_complete_option()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/util.vim line 551
+Called 19 times
+Total time:   0.035268
+ Self time:   0.035268
+
+count  total (s)   self (s)
+   19              0.001026   let disabled = get(b:, 'coc_suggest_disable', 0)
+   19              0.000472   if disabled | return | endif
+   19              0.000621   let blacklist = get(b:, 'coc_suggest_blacklist', [])
+   19              0.000397   let pos = getcurpos()
+   19              0.000388   let l:start = pos[2] - 1
+   19              0.000445   let line = getline(pos[1])
+   58              0.008531   for char in reverse(split(line[0: l:start - 1], '\zs'))
+   58              0.002372     if l:start > 0 && char =~# '\k'
+   39              0.001375       let l:start = l:start - strlen(char)
+   19              0.000121     else
+   19              0.000143       break
+   39              0.000207     endif
+   58              0.001639   endfor
+   19              0.000631   let input = pos[2] == 1 ? '' : line[l:start : pos[2] - 2]
+   19              0.000460   if !empty(blacklist) && index(blacklist, input) >= 0
+                                return
+   19              0.000113   endif
+   19              0.007247   let synname = synIDattr(synID(pos[1], l:start, 1),"name")
+   19              0.006759   return { 'word': matchstr(line[l:start : ], '^\k\+'), 'input': empty(input) ? '' : input, 'line': line, 'filetype': &filetype, 'filepath': expand('%:p'), 'bufnr': bufnr('%'), 'linenr': pos[1], 'colnr' : pos[2], 'col': l:start, 'synname': synname, 'changedtick': b:changedtick, 'blacklist': blacklist,}
+
+FUNCTION  ctrlp#mrufiles#cachefile()
+    Defined: ~/.vim/plugged/ctrlp.vim/autoload/ctrlp/mrufiles.vim line 137
+Called 1 time
+Total time:   0.000120
+ Self time:   0.000120
+
+count  total (s)   self (s)
+    1              0.000047 	if !exists('s:cadir') || !exists('s:cafile')
+                            		let s:cadir = ctrlp#utils#cachedir().ctrlp#utils#lash().'mru'
+                            		let s:cafile = s:cadir.ctrlp#utils#lash().'cache.txt'
+    1              0.000008 	en
+    1              0.000013 	retu s:cafile
+
+FUNCTION  AutoPairsDelete()
+    Defined: ~/.vim/plugged/auto-pairs/plugin/auto-pairs.vim line 303
+Called 1 time
+Total time:   0.006506
+ Self time:   0.004910
+
+count  total (s)   self (s)
+    1              0.000047   if !b:autopairs_enabled
+                                return "\<BS>"
+    1              0.000010   end
+                            
+    1   0.001747   0.000151   let [before, after, ig] = s:getline()
+   10              0.000238   for [open, close, opt] in b:AutoPairsList
+    9              0.000703     let b = matchstr(before, '\V'.open.'\v\s?$')
+    9              0.001952     let a = matchstr(after, '^\v\s*\V'.close)
+    9              0.000289     if b != '' && a != ''
+                                  if b[-1:-1] == ' '
+                                    if a[0] == ' '
+                                      return "\<BS>\<DELETE>"
+                                    else
+                                      return "\<BS>"
+                                    end
+                                  end
+                                  return s:backspace(b).s:delete(a)
+    9              0.000084     end
+   10              0.000102   endfor
+                            
+    1              0.000018   return "\<BS>"
+                              " delete the pair foo[]| <BS> to foo
+                              for [open, close, opt] in b:AutoPairsList
+                                let m = s:matchend(before, '\V'.open.'\v\s*'.'\V'.close.'\v$')
+                                if len(m) > 0
+                                  return s:backspace(m[2])
+                                end
+                              endfor
+                              return "\<BS>"
+
+FUNCTION  HtmlIndent()
+    Defined: /data/data/com.termux/files/usr/share/nvim/runtime/indent/html.vim line 962
+Called 1 time
+Total time:   0.016311
+ Self time:   0.005299
+
+count  total (s)   self (s)
+                              "{{{
+    1              0.000086   if prevnonblank(v:lnum - 1) < 1
+                                " First non-blank line has no indent.
+                                return 0
+    1              0.000010   endif
+                            
+    1              0.000054   let curtext = tolower(getline(v:lnum))
+    1              0.000028   let indentunit = shiftwidth()
+                            
+    1              0.000032   let b:hi_newstate = {}
+    1              0.000027   let b:hi_newstate.lnum = v:lnum
+                            
+                              " When syntax HL is enabled, detect we are inside a tag.  Indenting inside
+                              " a tag works very differently. Do not do this when the line starts with
+                              " "<", it gets the "htmlTag" ID but we are not inside a tag then.
+    1              0.000101   if curtext !~ '^\s*<'
+    1              0.001364     normal! ^
+    1              0.000368     let stack = synstack(v:lnum, col('.'))  " assumes there are no tabs
+    1              0.000036     let foundHtmlString = 0
+    1              0.000073     for synid in reverse(stack)
+                                  let name = synIDattr(synid, "name")
+                                  if index(b:hi_insideStringNames, name) >= 0
+                                    let foundHtmlString = 1
+                                  elseif index(b:hi_insideTagNames, name) >= 0
+                                    " Yes, we are inside a tag.
+                                    let indent = s:InsideTag(foundHtmlString)
+                                    if indent >= 0
+                                      " Do not keep the state. TODO: could keep the block type.
+                                      let b:hi_indent.lnum = 0
+                                      return indent
+                                    endif
+                                  endif
+    1              0.000021     endfor
+    1              0.000014   endif
+                            
+                              " does the line start with a closing tag?
+    1              0.000175   let swendtag = match(curtext, '^\s*</') >= 0
+                            
+    1              0.000073   if prevnonblank(v:lnum - 1) == b:hi_indent.lnum && b:hi_lasttick == b:changedtick - 1
+                                " use state (continue from previous line)
+    1              0.000011   else
+                                " start over (know nothing)
+    1   0.010940   0.000242     let b:hi_indent = s:FreshState(v:lnum)
+    1              0.000018   endif
+                            
+    1              0.000024   if b:hi_indent.block >= 2
+                                " within block
+                                let endtag = s:endtags[b:hi_indent.block]
+                                let blockend = stridx(curtext, endtag)
+                                if blockend >= 0
+                                  " block ends here
+                                  let b:hi_newstate.block = 0
+                                  " calc indent for REST OF LINE (may start more blocks):
+                                  call s:CountTagsAndState(strpart(curtext, blockend + strlen(endtag)))
+                                  if swendtag && b:hi_indent.block != 5
+                                    let indent = b:hi_indent.blocktagind + s:curind * indentunit
+                                    let b:hi_newstate.baseindent = indent + s:nextrel * indentunit
+                                  else
+                                    let indent = s:Alien{b:hi_indent.block}()
+                                    let b:hi_newstate.baseindent = b:hi_indent.blocktagind + s:nextrel * indentunit
+                                  endif
+                                else
+                                  " block continues
+                                  " indent this line with alien method
+                                  let indent = s:Alien{b:hi_indent.block}()
+                                endif
+    1              0.000008   else
+                                " not within a block - within usual html
+    1              0.000031     let b:hi_newstate.block = b:hi_indent.block
+    1              0.000013     if swendtag
+                                  " The current line starts with an end tag, align with its start tag.
+                                  call cursor(v:lnum, 1)
+                                  let start_lnum = HtmlIndent_FindStartTag()
+                                  if start_lnum > 0
+                                    " check for the line starting with something inside a tag:
+                                    " <sometag               <- align here
+                                    "    attr=val><open>     not here
+                                    let text = getline(start_lnum)
+                                    let angle = matchstr(text, '[<>]')
+                                    if angle == '>'
+                                      call cursor(start_lnum, 1)
+                                      normal! f>%
+                                      let start_lnum = line('.')
+                                      let text = getline(start_lnum)
+                                    endif
+                            
+                                    let indent = indent(start_lnum)
+                                    if col('.') > 2
+                                      let swendtag = match(text, '^\s*</') >= 0
+                                      call s:CountITags(text[: col('.') - 2])
+                                      let indent += s:nextrel * shiftwidth()
+                                      if !swendtag
+                                        let indent += s:curind * shiftwidth()
+                                      endif
+                                    endif
+                                  else
+                                    " not sure what to do
+                                    let indent = b:hi_indent.baseindent
+                                  endif
+                                  let b:hi_newstate.baseindent = indent
+    1              0.000006     else
+    1   0.000436   0.000122       call s:CountTagsAndState(curtext)
+    1              0.000017       let indent = b:hi_indent.baseindent
+    1              0.000026       let b:hi_newstate.baseindent = indent + (s:curind + s:nextrel) * indentunit
+    1              0.000007     endif
+    1              0.000006   endif
+                            
+    1              0.000017   let b:hi_lasttick = b:changedtick
+    1              0.000030   call extend(b:hi_indent, b:hi_newstate, "force")
+    1              0.000012   return indent
+
+FUNCTION  <SNR>15_PreviewColorInLine()
+    Defined: ~/.vim/plugged/colorizer/autoload/colorizer.vim line 316
+Called 51 times
+Total time:   0.153644
+ Self time:   0.035461
+
+count  total (s)   self (s)
+   51              0.002118   let line = getline(a:where)
+  204              0.003778   for Func in s:ColorFinder
+  153   0.133520   0.015338     let ret = Func(line, a:where)
+                                " returned a list of a list: color as #rrggbb, text pattern to highlight
+  153              0.002194     for r in ret
+                                  call s:SetMatcher(r[0], r[1])
+  153              0.001208     endfor
+  204              0.001644   endfor
+
+FUNCTION  ale#events#QuitEvent()
+    Defined: ~/.vim/plugged/ale/autoload/ale/events.vim line 14
+Called 1 time
+Total time:   0.000250
+ Self time:   0.000171
+
+count  total (s)   self (s)
+                                " Remember when ALE is quitting for BufWrite, etc.
+    1   0.000227   0.000148     call setbufvar(a:buffer, 'ale_quitting', ale#events#ClockMilliseconds())
+
+FUNCTION  djangoplus#htmldjango_indent()
+    Defined: ~/.vim/plugged/django-plus.vim/autoload/djangoplus.vim line 294
+Called 1 time
+Total time:   0.018367
+ Self time:   0.002056
+
+count  total (s)   self (s)
+    1              0.000070   if a:0 && a:1 == '.'
+                                let v:lnum = line('.')
+    1              0.000019   elseif a:0 && a:1 =~ '^\d'
+                                let v:lnum = a:1
+    1              0.000010   endif
+    1              0.000125   let vcol = col('.')
+                            
+    1              0.000043   call cursor(v:lnum,vcol)
+                            
+    1   0.016536   0.000225   exe 'let ind = '.b:djangoplus_indentexpr
+                            
+    1              0.000027   let lnum = prevnonblank(v:lnum-1)
+    1              0.000020   let pnb = getline(lnum)
+    1              0.000018   let cur = getline(v:lnum)
+                            
+    1              0.000017   let tagstart = '.*' . '{%-\?\s*'
+    1              0.000020   let tagend = '.*-\?%}' . '.*'
+                            
+    1              0.000015   let blocktags = s:default_tags_pat
+    1              0.000026   let buffer_tags = get(b:, 'blocktags', '')
+    1              0.000017   if !empty(buffer_tags)
+                                let blocktags .= '\|'.buffer_tags
+    1              0.000006   endif
+    1              0.000021   let blocktags = '\('.blocktags.'\)'
+                            
+    1              0.000168   let pnb_blockstart = pnb =~# tagstart . blocktags . tagend
+    1              0.000145   let pnb_blockend   = pnb =~# tagstart . 'end' . blocktags . tagend
+    1              0.000475   let pnb_blockmid   = pnb =~# tagstart . s:midtags . tagend
+                            
+    1              0.000103   let cur_blockstart = cur =~# tagstart . blocktags . tagend
+    1              0.000100   let cur_blockend   = cur =~# tagstart . 'end' . blocktags . tagend
+    1              0.000071   let cur_blockmid   = cur =~# tagstart . s:midtags . tagend
+                            
+    1              0.000020   if pnb_blockstart && !pnb_blockend && pnb_blockstart != pnb_blockend
+                                let ind = ind + &sw
+    1              0.000018   elseif pnb_blockmid && !pnb_blockend && pnb_blockmid != pnb_blockstart && pnb_blockmid != pnb_blockend
+                                let ind = ind + &sw
+    1              0.000007   endif
+                            
+    1              0.000014   if cur_blockend && !cur_blockstart && cur_blockend != cur_blockstart
+                                let ind = ind - &sw
+    1              0.000015   elseif cur_blockmid && cur_blockmid != cur_blockstart && cur_blockmid != cur_blockend
+                                let ind = ind - &sw
+    1              0.000005   endif
+                            
+    1              0.000011   return ind
+
+FUNCTION  <SNR>15_RgbColor()
+    Defined: ~/.vim/plugged/colorizer/autoload/colorizer.vim line 246
+Called 51 times
+Total time:   0.023916
+ Self time:   0.023916
+
+count  total (s)   self (s)
+   51              0.000984   let ret = []
+   51              0.000722   let place = 0
+   51              0.001148   let colorpat = '\<rgb(\v\s*(\d+(\%)?)\s*,\s*(\d+%(\2))\s*,\s*(\d+%(\2))\s*\)'
+   51              0.000562   while 1
+   51              0.004717     let foundcolor = matchlist(a:str, colorpat, place)
+   51              0.001008     if empty(foundcolor)
+   51              0.000441       break
+                                endif
+                                let place = matchend(a:str, colorpat, place)
+                                if foundcolor[2] == '%'
+                                  let r = foundcolor[1] * 255 / 100
+                                  let g = foundcolor[3] * 255 / 100
+                                  let b = foundcolor[4] * 255 / 100
+                                else
+                                  let r = foundcolor[1]
+                                  let g = foundcolor[3]
+                                  let b = foundcolor[4]
+                                endif
+                                if r > 255 || g > 255 || b > 255
+                                  break
+                                endif
+                                let pat = printf('\<rgb(\v\s*%s\s*,\s*%s\s*,\s*%s\s*\)', foundcolor[1], foundcolor[3], foundcolor[4])
+                                if foundcolor[2] == '%'
+                                  let pat = substitute(pat, '%', '\\%', 'g')
+                                endif
+                                let l:color = printf('#%02x%02x%02x', r, g, b)
+                                call add(ret, [l:color, pat])
+   51              0.000987   endwhile
+   51              0.000632   return ret
+
+FUNCTION  ale#Var()
+    Defined: ~/.vim/plugged/ale/autoload/ale.vim line 186
+Called 3 times
+Total time:   0.000478
+ Self time:   0.000478
+
+count  total (s)   self (s)
+    3              0.000126     let l:full_name = 'ale_' . a:variable_name
+    3              0.000163     let l:vars = getbufvar(str2nr(a:buffer), '', {})
+                            
+    3              0.000128     return get(l:vars, l:full_name, g:[l:full_name])
+
+FUNCTION  ale#events#ClockMilliseconds()
+    Defined: ~/.vim/plugged/ale/autoload/ale/events.vim line 10
+Called 1 time
+Total time:   0.000079
+ Self time:   0.000079
+
+count  total (s)   self (s)
+    1              0.000068     return float2nr(reltimefloat(reltime()) * 1000)
+
+FUNCTION  <SNR>55_request()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/client.vim line 134
+Called 3 times
+Total time:   0.067178
+ Self time:   0.066699
+
+count  total (s)   self (s)
+    3   0.000478   0.000277   let channel = coc#client#get_channel(self)
+    3              0.000095   if empty(channel) | return '' | endif
+    3              0.000025   try
+    3              0.000032     if s:is_vim
+                                  let res = ch_evalexpr(channel, [a:method, a:args], {'timeout': 60 * 1000})
+                                  if type(res) == 1 && res ==# ''
+                                    throw 'request '.a:method. ' '.string(a:args).' timeout after 60s'
+                                  endif
+                                  let [l:errmsg, res] =  res
+                                  if !empty(l:errmsg)
+                                    throw l:errmsg
+                                  else
+                                    return res
+                                  endif
+    3              0.000019     else
+    3   0.065194   0.064915       return call('rpcrequest', [channel, a:method] + a:args)
+                                endif
+                              catch /.*/
+                                if v:exception =~# 'E475'
+                                  if get(g:, 'coc_vim_leaving', 0) | return | endif
+                                  echohl Error | echom '['.self.name.'] server connection lost' | echohl None
+                                  let name = self.name
+                                  call s:on_exit(name, 0)
+                                  execute 'silent do User ConnectionLost'.toupper(name[0]).name[1:]
+                                elseif v:exception =~# 'E12'
+                                  " neovim's bug, ignore it
+                                else
+                                  echohl Error | echo 'Error on request ('.a:method.'): '.v:exception | echohl None
+                                endif
+    3              0.000033   endtry
+
+FUNCTION  ale#util#InSandbox()
+    Defined: ~/.vim/plugged/ale/autoload/ale/util.vim line 284
+Called 2 times
+Total time:   0.000258
+ Self time:   0.000258
+
+count  total (s)   self (s)
+    2              0.000023     try
+    2              0.000094         let &l:equalprg=&l:equalprg
+                                catch /E48/
+                                    " E48 is the sandbox error.
+                                    return 1
+    2              0.000019     endtry
+                            
+    2              0.000021     return 0
+
+FUNCTION  <SNR>51_chop()
+    Defined: ~/.vim/plugged/ctrlp.vim/autoload/ctrlp/mrufiles.vim line 38
+Called 1 time
+Total time:   0.000096
+ Self time:   0.000096
+
+count  total (s)   self (s)
+    1              0.000072 	if len(a:mrufs) > {s:max} | cal remove(a:mrufs, {s:max}, -1) | en
+    1              0.000013 	retu a:mrufs
+
+FUNCTION  <SNR>15_RgbaColor()
+    Defined: ~/.vim/plugged/colorizer/autoload/colorizer.vim line 278
+Called 51 times
+Total time:   0.031486
+ Self time:   0.031486
+
+count  total (s)   self (s)
+   51              0.001665   if has("gui_running")
+                                let rgb_bg = s:RgbBgColor()
+   51              0.000370   else
+                                " translucent colors would display incorrectly, so ignore the alpha value
+   51              0.000728     let rgb_bg = []
+   51              0.000345   endif
+   51              0.000556   let ret = []
+   51              0.000566   let place = 0
+   51              0.000555   let percent = 0
+   51              0.001304   let colorpat = '\<rgba(\v\s*(\d+(\%)?)\s*,\s*(\d+%(\2))\s*,\s*(\d+%(\2))\s*,\s*(-?[.[:digit:]]+)\s*\)'
+   51              0.000522   while 1
+   51              0.005575     let foundcolor = matchlist(a:str, colorpat, place)
+   51              0.001038     if empty(foundcolor)
+   51              0.000378       break
+                                endif
+                                if foundcolor[2] == '%'
+                                  let percent = 1
+                                endif
+                                let rgb = s:Rgba2Rgb(foundcolor[1], foundcolor[3], foundcolor[4], foundcolor[5], percent, rgb_bg)
+                                if empty(rgb)
+                                  break
+                                endif
+                                let place = matchend(a:str, colorpat, place)
+                                if empty(rgb_bg)
+                                  let pat = printf('\<rgba(\v\s*%s\s*,\s*%s\s*,\s*%s\s*,\ze\s*(-?[.[:digit:]]+)\s*\)', foundcolor[1], foundcolor[3], foundcolor[4])
+                                else
+                                  let pat = printf('\<rgba(\v\s*%s\s*,\s*%s\s*,\s*%s\s*,\s*%s0*\s*\)', foundcolor[1], foundcolor[3], foundcolor[4], foundcolor[5])
+                                endif
+                                if percent
+                                  let pat = substitute(pat, '%', '\\%', 'g')
+                                endif
+                                let l:color = printf('#%02x%02x%02x', rgb[0], rgb[1], rgb[2])
+                                call add(ret, [l:color, pat])
+   51              0.000964   endwhile
+   51              0.000626   return ret
+
+FUNCTION  <SNR>86_CountTagsAndState()
+    Defined: /data/data/com.termux/files/usr/share/nvim/runtime/indent/html.vim line 293
+Called 1 time
+Total time:   0.000314
+ Self time:   0.000314
+
+count  total (s)   self (s)
+                              "{{{
+                              " Store the result in s:curind and s:nextrel.  Update b:hi_newstate.block.
+    1              0.000047   let s:curind = 0  " relative indent steps for current line [unit &sw]:
+    1              0.000014   let s:nextrel = 0  " relative indent steps for next line [unit &sw]:
+                            
+    1              0.000017   let s:block = b:hi_newstate.block
+    1              0.000128   let tmp = substitute(a:text, '<\zs/\=' . s:tagname . '\>\|<!--\[\|\[endif\]-->\|<!--\|-->', '\=s:CheckTag(submatch(0))', 'g')
+    1              0.000016   if s:block == 3
+                                let b:hi_newstate.scripttype = s:GetScriptType(matchstr(tmp, '\C.*<SCRIPT\>\zs[^>]*'))
+    1              0.000008   endif
+    1              0.000015   let b:hi_newstate.block = s:block
+
+FUNCTION  ale#Queue()
+    Defined: ~/.vim/plugged/ale/autoload/ale.vim line 129
+Called 1 time
+Total time:   0.006726
+ Self time:   0.000786
+
+count  total (s)   self (s)
+    1              0.000019     if a:0 > 2
+                                    throw 'too many arguments!'
+    1              0.000009     endif
+                            
+    1              0.000034     let l:buffer = get(a:000, 1, v:null)
+                            
+    1              0.000021     if l:buffer is v:null
+    1              0.000026         let l:buffer = bufnr('')
+    1              0.000009     endif
+                            
+    1              0.000026     if type(l:buffer) isnot v:t_number
+                                    throw 'buffer_number must be a Number'
+    1              0.000008     endif
+                            
+    1   0.001495   0.000102     if ale#ShouldDoNothing(l:buffer)
+                                    return
+    1              0.000008     endif
+                            
+                                " Default linting_flag to ''
+    1              0.000040     let l:should_lint_file = get(a:000, 0) is# 'lint_file'
+                            
+    1              0.000017     if s:lint_timer != -1
+                                    call timer_stop(s:lint_timer)
+                                    let s:lint_timer = -1
+    1              0.000008     endif
+                            
+    1              0.000014     if a:delay > 0
+                                    let s:lint_timer = timer_start(   a:delay,   function('s:Lint', [l:buffer, l:should_lint_file]))
+    1              0.000009     else
+    1   0.004777   0.000230         call s:Lint(l:buffer, l:should_lint_file, 0)
+    1              0.000009     endif
+
+FUNCTION  ctrlp#utils#mkdir()
+    Defined: ~/.vim/plugged/ctrlp.vim/autoload/ctrlp/utils.vim line 56
+Called 1 time
+Total time:   0.000133
+ Self time:   0.000133
+
+count  total (s)   self (s)
+    1              0.000077 	if exists('*mkdir') && !isdirectory(a:dir)
+                            		sil! cal mkdir(a:dir, 'p')
+    1              0.000008 	en
+    1              0.000013 	retu a:dir
+
+FUNCTION  <SNR>52_SyncAutocmd()
+    Defined: ~/.vim/plugged/coc.nvim/plugin/coc.vim line 211
+Called 3 times
+Total time:   0.068719
+ Self time:   0.000713
+
+count  total (s)   self (s)
+    3              0.000129   if !get(g:,'coc_workspace_initialized', 0)
+                                return
+    3              0.000025   endif
+    3              0.000081   if get(g:, 'coc_service_initialized', 0)
+    3   0.068278   0.000272     call coc#rpc#request('CocAutocmd', a:000)
+                              else
+                                call coc#rpc#notify('CocAutocmd', a:000)
+    3              0.000022   endif
+
+FUNCTION  SuperTabSetCompletionType()
+    Defined: ~/.vim/plugged/supertab/plugin/supertab.vim line 199
+Called 1 time
+Total time:   0.000380
+ Self time:   0.000317
+
+count  total (s)   self (s)
+                              " Globally available function that users can use to create mappings to quickly
+                              " switch completion modes.  Useful when a user wants to restore the default or
+                              " switch to another mode without having to kick off a completion of that type
+                              " or use SuperTabHelp.  Note, this function only changes the current
+                              " completion type, not the default, meaning that the default will still be
+                              " restored once the configured retension duration has been met (see
+                              " g:SuperTabRetainCompletionDuration).  To change the default for the current
+                              " buffer, use SuperTabDefaultCompletionType(type) instead.  Example mapping to
+                              " restore SuperTab default:
+                              "   nmap <F6> :call SetSuperTabCompletionType("<c-p>")<cr>
+                            
+                              " don't allow overriding what SuperTabChain has set, otherwise chaining may
+                              " not work.
+    1              0.000033   if exists('b:SuperTabChain')
+                                return
+    1              0.000009   endif
+                            
+    1   0.000162   0.000098   call s:InitBuffer()
+    1              0.000082   exec "let b:complType = \"" . escape(a:type, '<') . "\""
+
+FUNCTION  <SNR>102_GetLinterNames()
+    Defined: ~/.vim/plugged/ale/autoload/ale/linter.vim line 439
+Called 1 time
+Total time:   0.000430
+ Self time:   0.000430
+
+count  total (s)   self (s)
+    1              0.000041     let l:buffer_ale_linters = get(b:, 'ale_linters', {})
+                            
+                                " b:ale_linters can be set to 'all'
+    1              0.000018     if l:buffer_ale_linters is# 'all'
+                                    return 'all'
+    1              0.000008     endif
+                            
+                                " b:ale_linters can be set to a List.
+    1              0.000026     if type(l:buffer_ale_linters) is v:t_list
+                                    return l:buffer_ale_linters
+    1              0.000008     endif
+                            
+                                " Try to get a buffer-local setting for the filetype
+    1              0.000027     if has_key(l:buffer_ale_linters, a:original_filetype)
+                                    return l:buffer_ale_linters[a:original_filetype]
+    1              0.000008     endif
+                            
+                                " Try to get a global setting for the filetype
+    1              0.000026     if has_key(g:ale_linters, a:original_filetype)
+                                    return g:ale_linters[a:original_filetype]
+    1              0.000008     endif
+                            
+                                " If the user has configured ALE to only enable linters explicitly, then
+                                " don't enable any linters by default.
+    1              0.000014     if g:ale_linters_explicit
+                                    return []
+    1              0.000008     endif
+                            
+                                " Try to get a default setting for the filetype
+    1              0.000028     if has_key(s:default_ale_linters, a:original_filetype)
+                                    return s:default_ale_linters[a:original_filetype]
+    1              0.000008     endif
+                            
+    1              0.000011     return 'all'
+
+FUNCTION  coc#rpc#ready()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/rpc.vim line 31
+Called 653 times
+Total time:   0.047913
+ Self time:   0.047913
+
+count  total (s)   self (s)
+  653              0.023564   if empty(s:client) || s:client['running'] == 0
+                                return 0
+  653              0.004216   endif
+  653              0.005466   return 1
+
+FUNCTION  <SNR>86_CheckTag()
+    Defined: /data/data/com.termux/files/usr/share/nvim/runtime/indent/html.vim line 308
+Called 1 time
+Total time:   0.000910
+ Self time:   0.000572
+
+count  total (s)   self (s)
+                              "{{{
+                              " Returns an empty string or "SCRIPT".
+                              " a:itag can be "tag" or "/tag" or "<!--" or "-->"
+    1   0.000307   0.000149   if (s:CheckCustomTag(a:itag))
+                                return ""
+    1              0.000010   endif
+    1   0.000278   0.000099   let ind = s:get_tag(a:itag)
+    1              0.000015   if ind == -1
+                                " closing tag
+                                if s:block != 0
+                                  " ignore itag within a block
+                                  return ""
+                                endif
+                                if s:nextrel == 0
+                                  let s:curind -= 1
+                                else
+                                  let s:nextrel -= 1
+                                endif
+    1              0.000013   elseif ind == 1
+                                " opening tag
+    1              0.000014     if s:block != 0
+                                  return ""
+    1              0.000007     endif
+    1              0.000020     let s:nextrel += 1
+                              elseif ind != 0
+                                " block-tag (opening or closing)
+                                return s:CheckBlockTag(a:itag, ind)
+                              " else ind==0 (other tag found): keep indent
+    1              0.000008   endif
+    1              0.000011   return ""
+
+FUNCTION  coc#util#check_refresh()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/util.vim line 278
+Called 1 time
+Total time:   0.000191
+ Self time:   0.000191
+
+count  total (s)   self (s)
+    1              0.000052   if !bufloaded(a:bufnr)
+                                return 0
+    1              0.000007   endif
+    1              0.000030   if getbufvar(a:bufnr, 'coc_diagnostic_disable', 0)
+                                return 0
+    1              0.000006   endif
+    1              0.000023   if get(g: , 'EasyMotion_loaded', 0)
+                                return EasyMotion#is_active() != 1
+    1              0.000006   endif
+    1              0.000007   return 1
+
+FUNCTION  <SNR>51_mergelists()
+    Defined: ~/.vim/plugged/ctrlp.vim/autoload/ctrlp/mrufiles.vim line 31
+Called 1 time
+Total time:   0.004917
+ Self time:   0.003763
+
+count  total (s)   self (s)
+    1   0.001242   0.000184 	let diskmrufs = ctrlp#utils#readfile(ctrlp#mrufiles#cachefile())
+    1              0.003120 	cal filter(diskmrufs, 'index(s:mrufs, v:val) < 0')
+    1              0.000337 	let mrufs = s:mrufs + diskmrufs
+    1   0.000202   0.000107 	retu s:chop(mrufs)
+
+FUNCTION  <SNR>69_Highlight_Matching_Pair()
+    Defined: /data/data/com.termux/files/usr/share/nvim/runtime/plugin/matchparen.vim line 39
+Called 453 times
+Total time:   0.884176
+ Self time:   0.884176
+
+count  total (s)   self (s)
+                              " Remove any previous match.
+  453              0.014221   if exists('w:paren_hl_on') && w:paren_hl_on
+   98              0.002314     silent! call matchdelete(3)
+   98              0.001773     let w:paren_hl_on = 0
+  453              0.003021   endif
+                            
+                              " Avoid that we remove the popup menu.
+                              " Return when there are no colors (looks like the cursor jumps).
+  453              0.015622   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+                                return
+  453              0.002775   endif
+                            
+                              " Get the character under the cursor and check if it's in 'matchpairs'.
+  453              0.010797   let c_lnum = line('.')
+  453              0.009141   let c_col = col('.')
+  453              0.005762   let before = 0
+                            
+  453              0.010055   let text = getline(c_lnum)
+  453              0.078341   let matches = matchlist(text, '\(.\)\=\%'.c_col.'c\(.\=\)')
+  453              0.011564   if empty(matches)
+                                let [c_before, c] = ['', '']
+  453              0.003260   else
+  453              0.014514     let [c_before, c] = matches[1:2]
+  453              0.003470   endif
+  453              0.052059   let plist = split(&matchpairs, '.\zs[:,]')
+  453              0.013889   let i = index(plist, c)
+  453              0.005637   if i < 0
+                                " not found, in Insert mode try character before the cursor
+  351              0.010522     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+  100              0.002090       let before = strlen(c_before)
+  100              0.001240       let c = c_before
+  100              0.002033       let i = index(plist, c)
+  351              0.002367     endif
+  351              0.003572     if i < 0
+                                  " not found, nothing to do
+  351              0.002858       return
+                                endif
+  102              0.000685   endif
+                            
+                              " Figure out the arguments for searchpairpos().
+  102              0.001590   if i % 2 == 0
+    9              0.000126     let s_flags = 'nW'
+    9              0.000172     let c2 = plist[i + 1]
+   93              0.000600   else
+   93              0.001207     let s_flags = 'nbW'
+   93              0.001149     let c2 = c
+   93              0.001675     let c = plist[i - 1]
+  102              0.000658   endif
+  102              0.001544   if c == '['
+                                let c = '\['
+                                let c2 = '\]'
+  102              0.000573   endif
+                            
+                              " Find the match.  When it was just before the cursor move it there for a
+                              " moment.
+  102              0.001031   if before > 0
+                                let has_getcurpos = exists("*getcurpos")
+                                if has_getcurpos
+                                  " getcurpos() is more efficient but doesn't exist before 7.4.313.
+                                  let save_cursor = getcurpos()
+                                else
+                                  let save_cursor = winsaveview()
+                                endif
+                                call cursor(c_lnum, c_col - before)
+  102              0.000647   endif
+                            
+  102              0.003750   if !has("syntax") || !exists("g:syntax_on")
+                                let s_skip = "0"
+  102              0.000604   else
+                                " Build an expression that detects whether the current cursor position is
+                                " in certain syntax types (string, comment, etc.), for use as
+                                " searchpairpos()'s skip argument.
+                                " We match "escape" for special items, such as lispEscapeSpecial.
+  102              0.004252     let s_skip = '!empty(filter(map(synstack(line("."), col(".")), ''synIDattr(v:val, "name")''), ' . '''v:val =~? "string\\|character\\|singlequote\\|escape\\|comment"''))'
+                                " If executing the expression determines that the cursor is currently in
+                                " one of the syntax types, then we want searchpairpos() to find the pair
+                                " within those syntax types (i.e., not skip).  Otherwise, the cursor is
+                                " outside of the syntax types and s_skip should keep its value so we skip
+                                " any matching pair inside the syntax types.
+                                " Catch if this throws E363: pattern uses more memory than 'maxmempattern'.
+  102              0.000840     try
+  102              0.169328       execute 'if ' . s_skip . ' | let s_skip = "0" | endif'
+                                catch /^Vim\%((\a\+)\)\=:E363/
+                                  " We won't find anything, so skip searching, should keep Vim responsive.
+                                  return
+  102              0.000874     endtry
+  102              0.000623   endif
+                            
+                              " Limit the search to lines visible in the window.
+  102              0.013489   let stoplinebottom = line('w$')
+  102              0.002782   let stoplinetop = line('w0')
+  102              0.001857   if i % 2 == 0
+    9              0.000169     let stopline = stoplinebottom
+   93              0.000607   else
+   93              0.001548     let stopline = stoplinetop
+  102              0.000663   endif
+                            
+                              " Limit the search time to 300 msec to avoid a hang on very long lines.
+                              " This fails when a timeout is not supported.
+  102              0.002857   if mode() == 'i' || mode() == 'R'
+                                let timeout = exists("b:matchparen_insert_timeout") ? b:matchparen_insert_timeout : g:matchparen_insert_timeout
+  102              0.000728   else
+  102              0.003260     let timeout = exists("b:matchparen_timeout") ? b:matchparen_timeout : g:matchparen_timeout
+  102              0.000691   endif
+  102              0.000703   try
+  102              0.156350     let [m_lnum, m_col] = searchpairpos(c, '', c2, s_flags, s_skip, stopline, timeout)
+                              catch /E118/
+                                " Can't use the timeout, restrict the stopline a bit more to avoid taking
+                                " a long time on closed folds and long lines.
+                                " The "viewable" variables give a range in which we can scroll while
+                                " keeping the cursor at the same position.
+                                " adjustedScrolloff accounts for very large numbers of scrolloff.
+                                let adjustedScrolloff = min([&scrolloff, (line('w$') - line('w0')) / 2])
+                                let bottom_viewable = min([line('$'), c_lnum + &lines - adjustedScrolloff - 2])
+                                let top_viewable = max([1, c_lnum-&lines+adjustedScrolloff + 2])
+                                " one of these stoplines will be adjusted below, but the current values are
+                                " minimal boundaries within the current window
+                                if i % 2 == 0
+                                  if has("byte_offset") && has("syntax_items") && &smc > 0
+                            	let stopbyte = min([line2byte("$"), line2byte(".") + col(".") + &smc * 2])
+                            	let stopline = min([bottom_viewable, byte2line(stopbyte)])
+                                  else
+                            	let stopline = min([bottom_viewable, c_lnum + 100])
+                                  endif
+                                  let stoplinebottom = stopline
+                                else
+                                  if has("byte_offset") && has("syntax_items") && &smc > 0
+                            	let stopbyte = max([1, line2byte(".") + col(".") - &smc * 2])
+                            	let stopline = max([top_viewable, byte2line(stopbyte)])
+                                  else
+                            	let stopline = max([top_viewable, c_lnum - 100])
+                                  endif
+                                  let stoplinetop = stopline
+                                endif
+                                let [m_lnum, m_col] = searchpairpos(c, '', c2, s_flags, s_skip, stopline)
+  102              0.000853   endtry
+                            
+  102              0.001168   if before > 0
+                                if has_getcurpos
+                                  call setpos('.', save_cursor)
+                                else
+                                  call winrestview(save_cursor)
+                                endif
+  102              0.000553   endif
+                            
+                              " If a match is found setup match highlighting.
+  102              0.001881   if m_lnum > 0 && m_lnum >= stoplinetop && m_lnum <= stoplinebottom 
+   98              0.002354     if exists('*matchaddpos')
+   98              0.049588       call matchaddpos('MatchParen', [[c_lnum, c_col - before], [m_lnum, m_col]], 10, 3)
+                                else
+                                  exe '3match MatchParen /\(\%' . c_lnum . 'l\%' . (c_col - before) . 'c\)\|\(\%' . m_lnum . 'l\%' . m_col . 'c\)/'
+   98              0.000672     endif
+   98              0.001848     let w:paren_hl_on = 1
+  102              0.000761   endif
+
+FUNCTION  <SNR>102_GetAliasedFiletype()
+    Defined: ~/.vim/plugged/ale/autoload/ale/linter.vim line 403
+Called 1 time
+Total time:   0.000534
+ Self time:   0.000534
+
+count  total (s)   self (s)
+    1              0.000047     let l:buffer_aliases = get(b:, 'ale_linter_aliases', {})
+                            
+                                " b:ale_linter_aliases can be set to a List or String.
+    1              0.000045     if type(l:buffer_aliases) is v:t_list|| type(l:buffer_aliases) is v:t_string
+                                    return l:buffer_aliases
+    1              0.000009     endif
+                            
+                                " Check for aliased filetypes first in a buffer variable,
+                                " then the global variable,
+                                " then in the default mapping,
+                                " otherwise use the original filetype.
+    4              0.000077     for l:dict in [   l:buffer_aliases,   g:ale_linter_aliases,   s:default_ale_linter_aliases,]
+    3              0.000081         if has_key(l:dict, a:original_filetype)
+                                        return l:dict[a:original_filetype]
+    3              0.000023         endif
+    4              0.000038     endfor
+                            
+    1              0.000016     return a:original_filetype
+
+FUNCTION  <SNR>51_savetofile()
+    Defined: ~/.vim/plugged/ctrlp.vim/autoload/ctrlp/mrufiles.vim line 88
+Called 1 time
+Total time:   0.002123
+ Self time:   0.000107
+
+count  total (s)   self (s)
+    1   0.002117   0.000101 	cal ctrlp#utils#writecache(a:mrufs, s:cadir, s:cafile)
+
+FUNCTION  <SNR>15_HexCode()
+    Defined: ~/.vim/plugged/colorizer/autoload/colorizer.vim line 162
+Called 51 times
+Total time:   0.062780
+ Self time:   0.062780
+
+count  total (s)   self (s)
+                              " finds RGB: #00f #0000ff and RGBA: #00f8 #0000ff88 (or ARGB: #800f #880000ff)
+   51              0.001763   if has("gui_running")
+                                let rgb_bg = s:RgbBgColor()
+   51              0.000421   else
+                                " translucent colors would display incorrectly, so ignore the alpha value
+   51              0.000843     let rgb_bg = []
+   51              0.000361   endif
+   51              0.000649   let ret = []
+   51              0.000655   let place = 0
+   51              0.001397   let colorpat = '#[0-9A-Fa-f]\{3\}\>\|#[0-9A-Fa-f]\{6\}\>\|#[0-9A-Fa-f]\{8\}\>\|#[0-9A-Fa-f]\{4\}\>'
+   51              0.000573   while 1
+   51              0.005435     let foundcolor = matchstr(a:str, colorpat, place)
+   51              0.000920     if foundcolor == ''
+   51              0.000437       break
+                                endif
+                                let place = matchend(a:str, colorpat, place)
+                                let pat = foundcolor . '\>'
+                                let colorlen = len(foundcolor)
+                                if get(g:, 'colorizer_hex_alpha_first') == 1
+                                  if colorlen == 4 || colorlen == 5
+                                    let ha = tolower(foundcolor[1])
+                                    let hr = tolower(foundcolor[2])
+                                    let hg = tolower(foundcolor[3])
+                                    let hb = tolower(foundcolor[4])
+                                    let foundcolor = substitute(foundcolor, '[[:xdigit:]]', '&&', 'g')
+                                  else
+                                    let ha = tolower(foundcolor[1:2])
+                                    let hr = tolower(foundcolor[3:4])
+                                    let hg = tolower(foundcolor[5:6])
+                                    let hb = tolower(foundcolor[7:8])
+                                  endif
+                                  if len(foundcolor) == 9
+                                    let alpha      = foundcolor[1:2]
+                                    let foundcolor = '#'.foundcolor[3:8]
+                                  else
+                                    let alpha = 'ff'
+                                  endif
+                                  if empty(rgb_bg)
+                                    if colorlen == 5
+                                      let pat = printf('\c#\x\zs%s%s%s\ze\>', hr,hg,hb)
+                                    elseif colorlen == 9
+                                      let pat = printf('\c#\x\x\zs%s%s%s\ze\>', hr,hg,hb)
+                                    endif
+                                  endif
+                                else
+                                  if colorlen == 4 || colorlen == 5
+                                    let hr = tolower(foundcolor[1])
+                                    let hg = tolower(foundcolor[2])
+                                    let hb = tolower(foundcolor[3])
+                                    let ha = tolower(foundcolor[4])
+                                    let foundcolor = substitute(foundcolor, '[[:xdigit:]]', '&&', 'g')
+                                  else
+                                    let hr = tolower(foundcolor[1:2])
+                                    let hg = tolower(foundcolor[3:4])
+                                    let hb = tolower(foundcolor[5:6])
+                                    let ha = tolower(foundcolor[7:8])
+                                  endif
+                                  if len(foundcolor) == 9
+                                    let alpha      = foundcolor[7:8]
+                                    let foundcolor = foundcolor[0:6]
+                                  else
+                                    let alpha = 'ff'
+                                  endif
+                                  if empty(rgb_bg)
+                                    if colorlen == 5
+                                      let pat = printf('\c#%s%s%s\ze\x\>', hr,hg,hb)
+                                    elseif colorlen == 9
+                                      let pat = printf('\c#%s%s%s\ze\x\x\>', hr,hg,hb)
+                                    endif
+                                  endif
+                                endif
+                                if empty(rgb_bg) || tolower(alpha) == 'ff'
+                                  call add(ret, [foundcolor, pat])
+                                else
+                                  let rgba    = s:Hexa2Rgba(foundcolor, alpha)
+                                  let rgb     = s:Rgba2Rgb(rgba[0], rgba[1], rgba[2], rgba[3], 0, rgb_bg)
+                                  let l:color = printf('#%02x%02x%02x', rgb[0], rgb[1], rgb[2])
+                                  call add(ret, [l:color, pat])
+                                endif
+   51              0.002257   endwhile
+   51              0.000867   return ret
+
+FUNCTION  coc#util#do_autocmd()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/util.vim line 968
+Called 2 times
+Total time:   0.000167
+ Self time:   0.000167
+
+count  total (s)   self (s)
+    2              0.000099   if exists('#User#'.a:name)
+                                exe 'doautocmd User '.a:name
+    2              0.000016   endif
+
+FUNCTION  ale#linter#GetAll()
+    Defined: ~/.vim/plugged/ale/autoload/ale/linter.vim line 380
+Called 1 time
+Total time:   0.000591
+ Self time:   0.000465
+
+count  total (s)   self (s)
+                                " Don't return linters in the sandbox.
+                                " Otherwise a sandboxed script could modify them.
+    1   0.000198   0.000073     if ale#util#InSandbox()
+                                    return []
+    1              0.000008     endif
+                            
+    1              0.000020     let l:combined_linters = []
+                            
+    2              0.000034     for l:filetype in a:filetypes
+                                    " Load linters from runtimepath if we haven't done that yet.
+    1              0.000030         if !has_key(s:runtime_loaded_map, l:filetype)
+                                        execute 'silent! runtime! ale_linters/' . l:filetype . '/*.vim'
+                            
+                                        let s:runtime_loaded_map[l:filetype] = 1
+    1              0.000008         endif
+                            
+    1              0.000045         call extend(l:combined_linters, get(s:linters, l:filetype, []))
+    2              0.000023     endfor
+                            
+    1              0.000015     return l:combined_linters
+
+FUNCTION  ale#linter#ResolveFiletype()
+    Defined: ~/.vim/plugged/ale/autoload/ale/linter.vim line 429
+Called 1 time
+Total time:   0.000726
+ Self time:   0.000192
+
+count  total (s)   self (s)
+    1   0.000661   0.000127     let l:filetype = s:GetAliasedFiletype(a:original_filetype)
+                            
+    1              0.000027     if type(l:filetype) isnot v:t_list
+    1              0.000018         return [l:filetype]
+                                endif
+                            
+                                return l:filetype
+
+FUNCTION  ale#util#Mode()
+    Defined: ~/.vim/plugged/ale/autoload/ale/util.vim line 5
+Called 1 time
+Total time:   0.000049
+ Self time:   0.000049
+
+count  total (s)   self (s)
+    1              0.000040     return call('mode', a:000)
+
+FUNCTION  <SNR>55_notify()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/client.vim line 167
+Called 650 times
+Total time:   0.416730
+ Self time:   0.379385
+
+count  total (s)   self (s)
+  650   0.093414   0.056069   let channel = coc#client#get_channel(self)
+  650              0.012339   if empty(channel)
+                                return ''
+  650              0.004004   endif
+  650              0.005095   try
+  650              0.005872     if s:is_vim
+                                  call ch_sendraw(channel, json_encode([0, [a:method, a:args]])."\n")
+  650              0.005297     else
+  650              0.110909       call call('rpcnotify', [channel, a:method] + a:args)
+  650              0.007233     endif
+                              catch /.*/
+                                if v:exception =~# 'E475'
+                                  if get(g:, 'coc_vim_leaving', 0)
+                                    return
+                                  endif
+                                  echohl Error | echom '['.self.name.'] server connection lost' | echohl None
+                                  let name = self.name
+                                  call s:on_exit(name, 0)
+                                  execute 'silent do User ConnectionLost'.toupper(name[0]).name[1:]
+                                elseif v:exception =~# 'E12'
+                                  " neovim's bug, ignore it
+                                else
+                                  echohl Error | echo 'Error on notify ('.a:method.'): '.v:exception | echohl None
+                                endif
+  650              0.005525   endtry
+
+FUNCTION  coc#_complete()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc.vim line 57
+Called 37 times
+Total time:   0.112089
+ Self time:   0.046405
+
+count  total (s)   self (s)
+   37              0.001930   let items = get(g:coc#_context, 'candidates', [])
+   37              0.001031   let preselect = get(g:coc#_context, 'preselect', -1)
+   37   0.105423   0.039739   call complete( g:coc#_context.start + 1, items)
+   37              0.001367   if s:select_api && len(items) && preselect != -1
+                                call nvim_select_popupmenu_item(preselect, v:false, v:false, {})
+   37              0.000273   endif
+   37              0.000349   return ''
+
+FUNCTION  <SNR>51_record()
+    Defined: ~/.vim/plugged/ctrlp.vim/autoload/ctrlp/mrufiles.vim line 59
+Called 1 time
+Total time:   0.001823
+ Self time:   0.000387
+
+count  total (s)   self (s)
+    1              0.000044 	if s:locked | retu | en
+    1              0.000037 	let bufnr = a:bufnr + 0
+    1              0.000033 	let bufname = bufname(bufnr)
+    1              0.000031 	if bufnr > 0 && !empty(bufname)
+    1              0.000053 		cal filter(s:mrbs, 'v:val != bufnr')
+    1              0.000029 		cal insert(s:mrbs, bufnr)
+    1   0.001560   0.000124 		cal s:addtomrufs(bufname)
+    1              0.000009 	en
+
+FUNCTION  <SNR>86_FreshState()
+    Defined: /data/data/com.termux/files/usr/share/nvim/runtime/indent/html.vim line 411
+Called 1 time
+Total time:   0.010697
+ Self time:   0.008628
+
+count  total (s)   self (s)
+                              "{{{
+                              " A state is to know ALL relevant details about the
+                              " lines 1..a:lnum-1, initial calculating (here!) can be slow, but updating is
+                              " fast (incremental).
+                              " TODO: this should be split up in detecting the block type and computing the
+                              " indent for the block type, so that when we do not know the indent we do
+                              " not need to clear the whole state and re-detect the block type again.
+                              " State:
+                              "	lnum		last indented line == prevnonblank(a:lnum - 1)
+                              "	block = 0	a:lnum located within special tag: 0:none, 2:<pre>,
+                              "			3:<script>, 4:<style>, 5:<!--, 6:<!--[
+                              "	baseindent	use this indent for line a:lnum as a start - kind of
+                              "			autoindent (if block==0)
+                              "	scripttype = ''	type attribute of a script tag (if block==3)
+                              "	blocktagind	indent for current opening (get) and closing (set)
+                              "			blocktag (if block!=0)
+                              "	blocklnr	lnum of starting blocktag (if block!=0)
+                              "	inattr		line {lnum} starts with attributes of a tag
+    1              0.000044   let state = {}
+    1              0.000057   let state.lnum = prevnonblank(a:lnum - 1)
+    1              0.000023   let state.scripttype = ""
+    1              0.000024   let state.blocktagind = -1
+    1              0.000020   let state.block = 0
+    1              0.000018   let state.baseindent = 0
+    1              0.000017   let state.blocklnr = 0
+    1              0.000064   let state.inattr = 0
+                            
+    1              0.000022   if state.lnum == 0
+                                return state
+    1              0.000009   endif
+                            
+                              " Heuristic:
+                              " remember startline state.lnum
+                              " look back for <pre, </pre, <script, </script, <style, </style tags
+                              " remember stopline
+                              " if opening tag found,
+                              "	assume a:lnum within block
+                              " else
+                              "	look back in result range (stopline, startline) for comment
+                              "	    \ delimiters (<!--, -->)
+                              "	if comment opener found,
+                              "	    assume a:lnum within comment
+                              "	else
+                              "	    assume usual html for a:lnum
+                              "	    if a:lnum-1 has a closing comment
+                              "		look back to get indent of comment opener
+                              " FI
+                            
+                              " look back for a blocktag
+    1              0.000024   let stopline2 = v:lnum + 1
+    1              0.000041   if has_key(b:hi_indent, 'block') && b:hi_indent.block > 5
+                                let [stopline2, stopcol2] = searchpos('<!--', 'bnW')
+    1              0.000009   endif
+    1              0.004027   let [stopline, stopcol] = searchpos('\c<\zs\/\=\%(pre\>\|script\>\|style\>\)', "bnW")
+    1              0.000050   if stopline > 0 && stopline < stopline2
+                                " ugly ... why isn't there searchstr()
+    1              0.000055     let tagline = tolower(getline(stopline))
+    1              0.000134     let blocktag = matchstr(tagline, '\/\=\%(pre\>\|script\>\|style\>\)', stopcol - 1)
+    1              0.000030     if blocktag[0] != "/"
+                                  " opening tag found, assume a:lnum within block
+                                  let state.block = s:indent_tags[blocktag]
+                                  if state.block == 3
+                                    let state.scripttype = s:GetScriptType(matchstr(tagline, '\>[^>]*', stopcol))
+                                  endif
+                                  let state.blocklnr = stopline
+                                  " check preceding tags in the line:
+                                  call s:CountITags(tagline[: stopcol-2])
+                                  let state.blocktagind = indent(stopline) + (s:curind + s:nextrel) * shiftwidth()
+                                  return state
+    1              0.000020     elseif stopline == state.lnum
+                                  " handle special case: previous line (= state.lnum) contains a
+                                  " closing blocktag which is preceded by line-noise;
+                                  " blocktag == "/..."
+                                  let swendtag = match(tagline, '^\s*</') >= 0
+                                  if !swendtag
+                                    let [bline, bcol] = searchpos('<'.blocktag[1:].'\>', "bnW")
+                                    call s:CountITags(tolower(getline(bline)[: bcol-2]))
+                                    let state.baseindent = indent(bline) + (s:curind + s:nextrel) * shiftwidth()
+                                    return state
+                                  endif
+    1              0.000008     endif
+    1              0.000008   endif
+    1              0.000017   if stopline > stopline2
+                                let stopline = stopline2
+                                let stopcol = stopcol2
+    1              0.000008   endif
+                            
+                              " else look back for comment
+    1              0.001048   let [comlnum, comcol, found] = searchpos('\(<!--\[\)\|\(<!--\)\|-->', 'bpnW', stopline)
+    1              0.000037   if found == 2 || found == 3
+                                " comment opener found, assume a:lnum within comment
+                                let state.block = (found == 3 ? 5 : 6)
+                                let state.blocklnr = comlnum
+                                " check preceding tags in the line:
+                                call s:CountITags(tolower(getline(comlnum)[: comcol-2]))
+                                if found == 2
+                                  let state.baseindent = b:hi_indent.baseindent
+                                endif
+                                let state.blocktagind = indent(comlnum) + (s:curind + s:nextrel) * shiftwidth()
+                                return state
+    1              0.000234   endif
+                            
+                              " else within usual HTML
+    1              0.000061   let text = tolower(getline(state.lnum))
+                            
+                              " Check a:lnum-1 for closing comment (we need indent from the opening line).
+                              " Not when other tags follow (might be --> inside a string).
+    1              0.000036   let comcol = stridx(text, '-->')
+    1              0.000028   if comcol >= 0 && match(text, '[<>]', comcol) <= 0
+                                call cursor(state.lnum, comcol + 1)
+                                let [comlnum, comcol] = searchpos('<!--', 'bW')
+                                if comlnum == state.lnum
+                                  let text = text[: comcol-2]
+                                else
+                                  let text = tolower(getline(comlnum)[: comcol-2])
+                                endif
+                                call s:CountITags(text)
+                                let state.baseindent = indent(comlnum) + (s:curind + s:nextrel) * shiftwidth()
+                                " TODO check tags that follow "-->"
+                                return state
+    1              0.000009   endif
+                            
+                              " Check if the previous line starts with end tag.
+    1              0.000103   let swendtag = match(text, '^\s*</') >= 0
+                            
+                              " If previous line ended in a closing tag, line up with the opening tag.
+    1              0.000075   if !swendtag && text =~ '</' . s:tagname . '\s*>\s*$'
+                                call cursor(state.lnum, 99999)
+                                normal! F<
+                                let start_lnum = HtmlIndent_FindStartTag()
+                                if start_lnum > 0
+                                  let state.baseindent = indent(start_lnum)
+                                  if col('.') > 2
+                                    " check for tags before the matching opening tag.
+                                    let text = getline(start_lnum)
+                                    let swendtag = match(text, '^\s*</') >= 0
+                                    call s:CountITags(text[: col('.') - 2])
+                                    let state.baseindent += s:nextrel * shiftwidth()
+                                    if !swendtag
+                                      let state.baseindent += s:curind * shiftwidth()
+                                    endif
+                                  endif
+                                  return state
+                                endif
+    1              0.000008   endif
+                            
+                              " Else: no comments. Skip backwards to find the tag we're inside.
+    1   0.000692   0.000142   let [state.lnum, found] = HtmlIndent_FindTagStart(state.lnum)
+                              " Check if that line starts with end tag.
+    1              0.000032   let text = getline(state.lnum)
+    1              0.000082   let swendtag = match(text, '^\s*</') >= 0
+    1   0.001654   0.000135   call s:CountITags(tolower(text))
+    1              0.000051   let state.baseindent = indent(state.lnum) + s:nextrel * shiftwidth()
+    1              0.000015   if !swendtag
+    1              0.000090     let state.baseindent += s:curind * shiftwidth()
+    1              0.000015   endif
+    1              0.000201   return state
+
+FUNCTION  <SNR>13_SetDefaultCompletionType()
+    Defined: ~/.vim/plugged/supertab/plugin/supertab.vim line 380
+Called 1 time
+Total time:   0.000601
+ Self time:   0.000220
+
+count  total (s)   self (s)
+    1              0.000084   if exists('b:SuperTabDefaultCompletionType') && (!exists('b:complCommandLine') || !b:complCommandLine)
+    1   0.000493   0.000113     call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
+    1              0.000010   endif
+
+FUNCTION  coc#util#set_buf_var()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/util.vim line 1111
+Called 2 times
+Total time:   0.000329
+ Self time:   0.000329
+
+count  total (s)   self (s)
+    2              0.000159   if !bufloaded(a:bufnr) | return | endif
+    2              0.000118   call setbufvar(a:bufnr, a:name, a:val)
+
+FUNCTION  coc#rpc#notify()
+    Defined: ~/.vim/plugged/coc.nvim/autoload/coc/rpc.vim line 95
+Called 650 times
+Total time:   0.584527
+ Self time:   0.120124
+
+count  total (s)   self (s)
+  650   0.087358   0.039685   if !coc#rpc#ready()
+                                return ''
+  650              0.003984   endif
+  650   0.472553   0.055823   call s:client['notify'](a:method, a:args)
+  650              0.006961   return ''
+
+FUNCTION  ale#ShouldDoNothing()
+    Defined: ~/.vim/plugged/ale/autoload/ale.vim line 32
+Called 1 time
+Total time:   0.001393
+ Self time:   0.001092
+
+count  total (s)   self (s)
+                                " The checks are split into separate if statements to make it possible to
+                                " profile each check individually with Vim's profiling tools.
+                                "
+                                " Do nothing if ALE is disabled.
+    1              0.000049     if !getbufvar(a:buffer, 'ale_enabled', get(g:, 'ale_enabled', 0))
+                                    return 1
+    1              0.000008     endif
+                            
+                                " Don't perform any checks when newer NeoVim versions are exiting.
+    1              0.000033     if get(v:, 'exiting', v:null) isnot v:null
+                                    return 1
+    1              0.000008     endif
+                            
+    1              0.000046     let l:filetype = getbufvar(a:buffer, '&filetype')
+                            
+                                " Do nothing when there's no filetype.
+    1              0.000019     if l:filetype is# ''
+                                    return 1
+    1              0.000008     endif
+                            
+                                " Do nothing for diff buffers.
+    1              0.000030     if getbufvar(a:buffer, '&diff')
+                                    return 1
+    1              0.000008     endif
+                            
+                                " Do nothing for blacklisted files.
+    1              0.000051     if index(get(g:, 'ale_filetype_blacklist', []), l:filetype) >= 0
+                                    return 1
+    1              0.000008     endif
+                            
+                                " Do nothing if running from command mode.
+    1              0.000030     if s:getcmdwintype_exists && !empty(getcmdwintype())
+                                    return 1
+    1              0.000008     endif
+                            
+    1              0.000044     let l:filename = fnamemodify(bufname(a:buffer), ':t')
+                            
+                                " Do nothing for directories.
+    1              0.000018     if l:filename is# '.'
+                                    return 1
+    1              0.000008     endif
+                            
+                                " Don't start linting and so on when an operator is pending.
+    1   0.000138   0.000089     if ale#util#Mode(1) is# 'no'
+                                    return 1
+    1              0.000008     endif
+                            
+                                " Do nothing if running in the sandbox.
+    1   0.000216   0.000084     if ale#util#InSandbox()
+                                    return 1
+    1              0.000008     endif
+                            
+                                " Do nothing if the file is too large.
+    1   0.000207   0.000087     if ale#FileTooLarge(a:buffer)
+                                    return 1
+    1              0.000008     endif
+                            
+                                " Do nothing from CtrlP buffers with CtrlP-funky.
+    1              0.000075     if exists(':CtrlPFunky') is 2&& getbufvar(a:buffer, '&l:statusline') =~# 'CtrlPMode.*funky'
+                                    return 1
+    1              0.000008     endif
+                            
+    1              0.000011     return 0
+
+FUNCTION  <SNR>100_Lint()
+    Defined: ~/.vim/plugged/ale/autoload/ale.vim line 99
+Called 1 time
+Total time:   0.004547
+ Self time:   0.000678
+
+count  total (s)   self (s)
+                                " Use the filetype from the buffer
+    1              0.000058     let l:filetype = getbufvar(a:buffer, '&filetype')
+    1   0.003673   0.000126     let l:linters = ale#linter#Get(l:filetype)
+                            
+                                " Apply ignore lists for linters only if needed.
+    1   0.000271   0.000113     let l:ignore_config = ale#Var(a:buffer, 'linters_ignore')
+    1   0.000248   0.000083     let l:disable_lsp = ale#Var(a:buffer, 'disable_lsp')
+    1              0.000057     let l:linters = !empty(l:ignore_config) || l:disable_lsp   ? ale#engine#ignore#Exclude(l:filetype, l:linters, l:ignore_config, l:disable_lsp)   : l:linters
+                            
+                                " Tell other sources that they can start checking the buffer now.
+    1              0.000030     let g:ale_want_results_buffer = a:buffer
+    1              0.000031     silent doautocmd <nomodeline> User ALEWantResults
+    1              0.000041     unlet! g:ale_want_results_buffer
+                            
+                                " Don't set up buffer data and so on if there are no linters to run.
+    1              0.000048     if !has_key(g:ale_buffer_info, a:buffer) && empty(l:linters)
+    1              0.000011         return
+                                endif
+                            
+                                " Clear lint_file linters, or only run them if the file exists.
+                                let l:lint_file = empty(l:linters)   || (a:should_lint_file && filereadable(expand('#' . a:buffer . ':p')))
+                            
+                                call ale#engine#RunLinters(a:buffer, l:linters, l:lint_file)
+
+FUNCTION  <SNR>52_Autocmd()
+    Defined: ~/.vim/plugged/coc.nvim/plugin/coc.vim line 204
+Called 650 times
+Total time:   0.684252
+ Self time:   0.099725
+
+count  total (s)   self (s)
+  650              0.026651   if !get(g:,'coc_workspace_initialized', 0)
+                                return
+  650              0.006404   endif
+  650   0.635217   0.050691   call coc#rpc#notify('CocAutocmd', a:000)
+
+FUNCTION  <SNR>13_InitBuffer()
+    Defined: ~/.vim/plugged/supertab/plugin/supertab.vim line 268
+Called 1 time
+Total time:   0.000064
+ Self time:   0.000064
+
+count  total (s)   self (s)
+    1              0.000039   if exists('b:SuperTabNoCompleteBefore')
+    1              0.000011     return
+                              endif
+                            
+                              let b:complReset = 0
+                              let b:complTypeManual = !exists('b:complTypeManual') ? '' : b:complTypeManual
+                              let b:complTypeContext = ''
+                            
+                              " init hack for <c-x><c-v> workaround.
+                              let b:complCommandLine = 0
+                            
+                              if !exists('b:SuperTabNoCompleteBefore')
+                                let b:SuperTabNoCompleteBefore = g:SuperTabNoCompleteBefore
+                              endif
+                              if !exists('b:SuperTabNoCompleteAfter')
+                                let b:SuperTabNoCompleteAfter = g:SuperTabNoCompleteAfter
+                              endif
+                            
+                              if !exists('b:SuperTabDefaultCompletionType')
+                                let b:SuperTabDefaultCompletionType = g:SuperTabDefaultCompletionType
+                              endif
+                            
+                              if !exists('b:SuperTabContextDefaultCompletionType')
+                                let b:SuperTabContextDefaultCompletionType = g:SuperTabContextDefaultCompletionType
+                              endif
+                            
+                              " set the current completion type to the default
+                              call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
+                            
+                              " hack to programatically revert a change to snipmate that breaks supertab
+                              " but which the new maintainers don't care about:
+                              " http://github.com/garbas/vim-snipmate/issues/37
+                              let snipmate = maparg('<tab>', 'i')
+                              if snipmate =~ '<C-G>u' && g:SuperTabMappingForward =~? '<tab>'
+                                let snipmate = substitute(snipmate, '<C-G>u', '', '')
+                                iunmap <tab>
+                                exec "inoremap <silent> <tab> " . snipmate
+                              endif
+
+FUNCTIONS SORTED ON TOTAL TIME
+count  total (s)   self (s)  function
+  453   0.884176             <SNR>69_Highlight_Matching_Pair()
+  650   0.684252   0.099725  <SNR>52_Autocmd()
+  650   0.584527   0.120124  coc#rpc#notify()
+  650   0.416730   0.379385  <SNR>55_notify()
+   51   0.171116   0.017473  <SNR>15_TextChanged()
+   51   0.153644   0.035461  <SNR>15_PreviewColorInLine()
+   37   0.112089   0.046405  coc#_complete()
+    3   0.068719   0.000713  <SNR>52_SyncAutocmd()
+    3   0.068006   0.000588  coc#rpc#request()
+    3   0.067178   0.066699  <SNR>55_request()
+   51   0.062780             <SNR>15_HexCode()
+  653   0.047913             coc#rpc#ready()
+  653   0.037546             coc#client#get_channel()
+   19   0.035268             coc#util#get_complete_option()
+   51   0.031486             <SNR>15_RgbaColor()
+   12   0.028027   0.022057  AutoPairsSpace()
+   51   0.023916             <SNR>15_RgbColor()
+    1   0.018367   0.002056  djangoplus#htmldjango_indent()
+    1   0.016311   0.005299  HtmlIndent()
+   37   0.013142             coc#_do_complete()
+
+FUNCTIONS SORTED ON SELF TIME
+count  total (s)   self (s)  function
+  453              0.884176  <SNR>69_Highlight_Matching_Pair()
+  650   0.416730   0.379385  <SNR>55_notify()
+  650   0.584527   0.120124  coc#rpc#notify()
+  650   0.684252   0.099725  <SNR>52_Autocmd()
+    3   0.067178   0.066699  <SNR>55_request()
+   51              0.062780  <SNR>15_HexCode()
+  653              0.047913  coc#rpc#ready()
+   37   0.112089   0.046405  coc#_complete()
+  653              0.037546  coc#client#get_channel()
+   51   0.153644   0.035461  <SNR>15_PreviewColorInLine()
+   19              0.035268  coc#util#get_complete_option()
+   51              0.031486  <SNR>15_RgbaColor()
+   51              0.023916  <SNR>15_RgbColor()
+   12   0.028027   0.022057  AutoPairsSpace()
+   51   0.171116   0.017473  <SNR>15_TextChanged()
+   37              0.013142  coc#_do_complete()
+   64              0.010134  coc#util#cursor()
+    1   0.010697   0.008628  <SNR>86_FreshState()
+   13              0.007566  <SNR>44_getline()
+    1   0.016311   0.005299  HtmlIndent()
+
