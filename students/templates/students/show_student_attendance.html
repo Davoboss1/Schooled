@@ -52,23 +52,16 @@ h1,h3{
         font-style:bold;
     }
     .present{
-        background-color:#239000;
-        color:white;
-        border-radius:5px;
-        padding-right:5px;
-        padding-left:5px;
-        padding-top:5px;
-        padding-bottom:5px;
+        border-bottom-color: green;
+        border-bottom-style: solid;
+        border-bottom-width: 2px;
+        padding-bottom: 0;
     }
     .absent{
-        background-color:#CD1414;
-        color:white;
-        border-radius:5px;
-        padding-right:5px;
-        padding-left:5px;
-        padding-top:5px;
-        padding-bottom:5px;
-
+        border-bottom-color: red;
+        border-bottom-style: solid;
+        border-bottom-width:2px;
+        padding-bottom: 0;
     }
     @media print {
         body {
@@ -91,9 +84,9 @@ h1,h3{
             <h3 class="text-center">School : {{student.Class.school.school_name}}</h3>
             <table id="attendance-table" style="width: 100%;">
                 <thead >
-                    <th style="width: 10%;">No</th>
-                    <th style="width: 60%;">Date</th>
-                    <th style="width: 30%;">Status</th>
+                    <th style="width: 15%;">No</th>
+                    <th style="width: 70%;">Date</th>
+                    <th style="width: 15%;">Status</th>
                 </thead>
             </table>
             <table id="attendance-table" style="width: 100%;">
@@ -102,14 +95,14 @@ h1,h3{
                     {% for each_attendance in attendance %}
                         {% if student in each_attendance.present_students.all %}
                             <tr >
-                                <td style="width: 10%;">{{forloop.counter}}</td>
-                                <td style="width: 60%;">
+                                <td style="width: 15%;">{{forloop.counter}}</td>
+                                <td style="width: 70%;">
                                     {{each_attendance.date|date:"l jS, F Y"}} </td>
-                                <td style="width: 30%;"><span class="present">Present</span></td></tr>
+                                <td style="width: 15%;"><div class="present">Present</div></td></tr>
                         {% else %}
                             <tr >
-                                <td style="width: 10%;">{{forloop.counter}}</td>
-                                <td style="width: 60%;">{{each_attendance.date|date:"l jS, F Y"}}</td><td style="width: 30%;"><span class="absent">Absent</span></td>
+                                <td style="width: 15%;">{{forloop.counter}}</td>
+                                <td style="width: 70%;">{{each_attendance.date|date:"l jS, F Y"}}</td><td style="width: 15%;"><div class="absent" >Absent</div></td>
                             </tr>
                         {% endif %}
                     {% endfor %}
