@@ -2,14 +2,13 @@
 <html lang="zxx" class="no-js">
 {% load static %}
 {% load crispy_forms_tags %}
-
 <head>
     <!-- Mobile Specific Meta -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <!-- Favicon -->
     <link rel="shortcut icon" href="img/fav.png" />
     <!-- Author Meta -->
-    <meta name="author" content="colorlib" />
+    <meta name="author" content="Davo" />
     <!-- Meta Description -->
     <meta name="description" content="" />
     <!-- Meta Keyword -->
@@ -18,26 +17,17 @@
     <meta charset="UTF-8" />
     <!-- Site Title -->
     <title>Schooled. The school management application</title>
-
-    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:900|Roboto:400,400i,500,700"
-        rel="stylesheet" />
-    <!--
+<!--
             CSS
             =============================================
         -->
-    <link rel="stylesheet" href="{% static 'css/linearicons.css'%}" />
-    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css'%}" />
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}" />
-    <link rel="stylesheet" href="{% static 'css/magnific-popup.css'%}" />
-    <link rel="stylesheet" href="{% static 'css/owl.carousel.css'%}" />
-    <link rel="stylesheet" href="{% static 'css/nice-select.css'%}">
-    <link rel="stylesheet" href="{% static 'css/hexagons.min.css'%}" />
-    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css'%}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/themify-icons/0.1.2/css/themify-icons.css" />
-    <link rel="stylesheet" href="{% static 'css/main.css'%}" />
-    <link rel="stylesheet" href="{% static 'css/style.css'%}">
-
-    {% block style %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Neuton:ital,wght@0,200;0,300;0,400;0,700;1,400&family=Roboto&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{% static 'css/linearicons.css'%}" />
+<link rel="stylesheet" href="{% static 'css/bootstrap.css'%}" />
+<link rel="stylesheet" href="{% static 'css/main.css'%}" />
+<link rel="stylesheet" href="{% static 'css/style.css'%}">
+{% block style %}
     <style>
         @media screen and (min-width:768px) {
             #main {
@@ -111,7 +101,7 @@
 <body>
     <!-- ================ Start Header Area ================= -->
     <header class="default-header" id="main-nav">
-        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #04091e;">
+        <nav class="navbar navbar-expand-lg fixed-top navbar-light" style="background-color: #04091e;">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'accounts:accounts_handler' %}">
                     <h3 class="brand-name">Schooled</h3>
@@ -127,7 +117,7 @@
                     <ul class="navbar-nav">
                         <li>
                             <div class="input-group-icon mx-3 d-flex flex-column">
-                                <div class="icon"><i class="fas fa-search" aria-hidden="true"></i></div>
+                                <div class="icon"><i class="fa fa-search" aria-hidden="true"></i></div>
                                 <input type="text" name="address" placeholder="Search Website"
                                     onfocus="this.placeholder " onblur="this.placeholder = 'Search Website'" disabled
                                     class="single-input rounded">
@@ -141,14 +131,14 @@
                                 Navigate To
                             </a>
                             <div class="dropdown-menu">
-                                {% if request.user.schooluser.level == "Teacher" %}
+                                {% if request.user.level == "Teacher" %}
                                 <a class="dropdown-item" onclick="animateScrollToId('#teacher-tools');"
                                     data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
                                 <a class="dropdown-item" onclick="animateScrollToId('#teacherProfile');"
                                     data-toggle="collapse" data-target="#navbarSupportedContent">Profile </a>
                                 <a class="dropdown-item" onclick="animateScrollToId('#main');" data-toggle="collapse"
                                     data-target="#navbarSupportedContent">Workspace</a>
-                                {% elif request.user.schooluser.level == "Admin" %}
+                                {% elif request.user.level == "Admin" %}
                                 <a class="dropdown-item" onclick="animateScrollToId('#admin-tools');"
                                     data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
                                 <a class="dropdown-item" onclick="animateScrollToId('#main');" data-toggle="collapse"
@@ -199,9 +189,9 @@
             <div class="row">
                 <div class="main-header">
                     <h2 class="text-white text-center" id="school-banner">
-                        {{user.schooluser.admin.schools.first.school_name}}
+                        {{user.admin.schools.first.school_name}}
                     </h2>
-                    <h6 class="text-white py-2 mt-3 text-center border-top border-bottom" id="school-motto-banner">{{user.schooluser.admin.schools.first.motto}}</h6>
+                    <h6 class="text-white py-2 mt-3 text-center border-top border-bottom" id="school-motto-banner">{{user.admin.schools.first.motto}}</h6>
                     
                 </div>
             </div>
@@ -236,7 +226,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row" id="body-row" aria-busy=""
+            <div class="row" id="body-row">
                 <!-- Admin List -->
                 <div class="col-12 col-sm-12 col-md-4 col-lg-4 bg-light thick-horizontal-border" id="admin-tools">
                     <!-- main list -->
@@ -267,7 +257,7 @@
                 <div class="col-12 col-sm-12 col-md-8 col-lg-8 py-3 d-flex flex-column">
                     <div class="d-flex flex-column" id="main">
                         <h4 class="text-center">No Current Work</h4>
-                        <span class="fas fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
+                        <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
                             class="text-center">Nothing to show</small>
                     </div>
                 </div>
@@ -303,8 +293,6 @@
 
         </div>
     </section>
-    <article style=""></article>
-
     {% endblock %}
     <!-- ================ End Body Area -->
     <!-- ================ start footer Area ================= -->
@@ -315,35 +303,35 @@
                 <div class="col-12 col-sm-12 col-md-6 col-lg-6 d-flex flex-column">
 
                     <a class="text-white mt-3 mx-auto" href="{% url 'accounts:accounts_handler' %}"
-                        style="font-size:30px;"><span class="fas fa-school mr-3"></span> Schooled</a>
+                        style="font-size:30px;"><span class="fa fa-graduation-cap mr-3"></span> Schooled</a>
                     <blockquote class="generic-blockquote bg-dark mt-2 mb-3 text-white p-2">Schooled helps the data
                         management of a school. With this application the school is able to manage students,teachers and
                         parents/guardians effortlessly.</blockquote>
                     <div class="footer-profile my-3">
                         <img class="rounded-circle"
-                            src="{{user.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+                            src="{{user.profile_picture.url|default:'/media/default.jpg'}}">
 
                         <div class="my-1">
                             <h6 class="text-white mt-1">Name : {{user.get_full_name|default:"Guest"}}</h6>
-                            <h6 class="text-white mt-1">User Type : {{user.schooluser.level|default:"Guest"}}</h6>
-                            {% if user.schooluser.level == "Admin" %}
+                            <h6 class="text-white mt-1">User Type : {{user.level|default:"Guest"}}</h6>
+                            {% if user.level == "Admin" %}
                             <h6 class="text-white mt-1">School :
-                                {{user.schooluser.admin.schools.first.school_name}}
+                                {{user.admin.schools.first.school_name}}
                             </h6>
-                            {% elif user.schooluser.level == "Teacher" %}
+                            {% elif user.level == "Teacher" %}
                             <h6 class="text-white mt-1">Schools :
-                                {{request.user.schooluser.teacher.teacher_class.school.school_name}}
+                                {{request.user.teacher.teacher_class.school.school_name}}
                             </h6>
                             {% endif %}
                         </div>
                     </div>
-
+                    {% if request.user.is_authenticated %}
                     <a class="mx-auto w-50" href="{% url 'accounts:logout' %}">
                         <button class="btn btn-outline-light my-3 w-100">
                             Log out
                         </button>
                     </a>
-
+                    {% endif %}
                     <h4 class="text-white text-center my-3">Thank you for using schooled.</h4>
 
                 </div>
@@ -351,17 +339,17 @@
                     <h5 class="text-white text-center">For any information or issues</h5>
                     <h5 class="text-white text-center">Contact us </h5>
                     <nav class="nav flex-column my-3">
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fas fa-envelope mr-2"></span>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-envelope mr-2"></span>
                             Email </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-whatsapp mr-2"></span>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-whatsapp mr-2"></span>
                             Whatsapp </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-linkedin mr-2"></span>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-linkedin mr-2"></span>
                             LinkedIn </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-facebook mr-2"></span>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-facebook mr-2"></span>
                             Facebook </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-instagram mr-2"></span>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-instagram mr-2"></span>
                             Instagram </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fab fa-twitter mr-2"></span>
+                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-twitter mr-2"></span>
                             Twitter </a>
 
                     </nav>
@@ -410,18 +398,7 @@
     <script src="{% static 'js/vendor/jquery-3.4.1.min.js'%}"></script>
     <script src="{% static 'js/vendor/popper.min.js'%}"></script>
     <script src="{% static 'js/vendor/bootstrap.min.js'%}"></script>
-    <script type="text/javascript"
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
-    <script src="{% static 'js/jquery.ajaxchimp.min.js'%}"></script>
-    <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
-    <script src="{% static 'js/parallax.min.js'%}"></script>
-    <script src="{% static 'js/owl.carousel.min.js'%}"></script>
-    <script src="{% static 'js/jquery.sticky.js'%}"></script>
-    <script src="{% static 'js/hexagons.min.js'%}"></script>
-    <script src="{% static 'js/jquery.counterup.min.js'%}"></script>
-    <script src="{% static 'js/waypoints.min.js'%}"></script>
     <!--<script src="{% static 'js/tippy.js' %}"></script>-->
-    <script src="{% static 'js/main.js'%}"></script>
     <script src="{% static 'js/utils.js' %}"></script>
     {% endblock %}
     {% block script %}
@@ -532,9 +509,15 @@
                 list[i].className = null;
             }
             item.className = "active";
-
+            var media = window.matchMedia("(min-width: 768px)");
+            var scrollValue;
+            if(media.matches){
+                scrollValue = 50;
+            }else{
+                scrollValue = 100;
+            }
             $('html, body').animate({
-                scrollTop: ($("#main").offset().top - 50)
+                scrollTop: ($("#main").offset().top - scrollValue)
             }, 1000);
 
             document.getElementById("main").innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';

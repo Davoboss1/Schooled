@@ -6,6 +6,6 @@ class ParentForm(ModelForm):
 	class Meta:
 		model = Parent
 		fields = ('__all__')
-		exclude = ("school","school_user")
+		exclude = ("school","user")
 		widgets = {"date_of_birth" : widgets.DateInput(attrs={"type":"date",},),"phone_no" : widgets.TextInput(attrs={"type":"tel",},),}
 			

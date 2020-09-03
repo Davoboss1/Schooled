@@ -43,13 +43,13 @@
             <div class="single-comment single-reviews justify-content-between d-flex">
                 <div class="user justify-content-between d-flex w-100">
                     <div class="thumb">
-                        <img class="rounded-circle icon_50x50" alt="" src="{{recipent.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+                        <img class="rounded-circle icon_50x50" alt="" src="{{recipent.profile_picture.url|default:'/media/default.jpg'}}">
                     </div>
                     <div class="desc w-100 ml-2">
                         <div class="d-flex">
                             <h5 class="my-2" style="width: 85%;"><b class="text-dark">{{recipent.get_full_name|default:"Unavailable user"}}</b>
                                 <div class="mt-1">
-                                    <u class="text-dark">{{recipent.schooluser.level|default:"Unavailable"}}</u>
+                                    <u class="text-dark">{{recipent.level|default:"Unavailable"}}</u>
                                 </div>
                             </h5>
                             <span style="width: 15%;"><span
@@ -77,13 +77,13 @@
             <div class="single-comment single-reviews justify-content-between d-flex">
                 <div class="user justify-content-between d-flex w-100">
                     <div class="thumb">
-                        <img class="rounded-circle icon_50x50" alt="" src="{{recipent.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+                        <img class="rounded-circle icon_50x50" alt="" src="{{recipent.profile_picture.url|default:'/media/default.jpg'}}">
                     </div>
                     <div class="desc w-100 ml-2">
                         <div class="d-flex">
                             <h5 class="my-2" style="width: 85%;"><b class="text-dark">{{recipent.get_full_name}}</b>
                                 <div class="mt-1">
-                                    <u class="text-dark">{{recipent.schooluser.level}}</u>
+                                    <u class="text-dark">{{recipent.level}}</u>
                                 </div>
                             </h5>
                             <span style="width: 15%;"><span

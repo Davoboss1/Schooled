@@ -7,6 +7,7 @@ from teachers.models import Teacher,Class
 from django.utils.timezone import localdate
 from parents.models import Parent
 from datetime import date as Date
+from tools import years_ago
 class Term(models.Model):
 	FIRST_TERM = "1st Term"
 	SECOND_TERM = "2nd Term"
@@ -44,7 +45,7 @@ class Term(models.Model):
 
 	
 # Create your models here.
-class Student(BasicInfo):
+class Student(models.Model):
 	sex_choices=(('male','male'),
 		('female','female')
 	)
@@ -55,14 +56,22 @@ class Student(BasicInfo):
 	phone_no= models.CharField(max_length=100,blank=True,null =True)
 	Class = models.ForeignKey(Class,on_delete=models.SET_NULL,null=True)
 	photo = models.ImageField(default='default.jpg', upload_to = 'Student_Pictures')
+	address = models.CharField(max_length=100,null=True)
+	date_of_birth=models.DateField(null=True)
+	sex =models.CharField(max_length=10, choices= sex_choices,null=True)
+	state_of_origin = models.CharField(max_length=30,null=True)
+	created_at = models.DateField(auto_now_add=True)
+	update_at = models.DateField(auto_now=True)
+	
+	@property
+	def age(self):
+		try:
+			result = years_ago(self.date_of_birth)
+			return result
+		except:
+			return "Not available"
 	def __str__(self):
 		return self.name
-	def is_present(self,date):
-		current_object = Attendance.objects.get(pk=date)
-		if self in current_object.present_students.all():
-			return True
-		else:
-			return False
 	class Meta:
 		ordering = ["name",]
 
@@ -130,56 +139,3 @@ class School_activity_log(models.Model):
 		ordering = ["-Activity_date_and_time"]
 		
 		
-#Signal functions
-def attendance_log(**kwargs):
-	instance = kwargs["instance"]
-	created = kwargs["created"]
-	school_log_obj = School_activity_log(Class=instance.Class,Activity_type="Attendance")
-	if isinstance(instance.date,str):
-		date_obj = Date.fromisoformat(instance.date)
-	else:
-		date_obj = instance.date
-	day = str(date_obj.day)
-	if day == "1":
-		day += "st"
-	elif day == "2":
-		day += "nd"
-	elif day == "3":
-		day +="rd"
-	else:
-		day += "th"
-	date = date_obj.strftime(f"%A, {day} of %B, %Y")
-	if created:
-		school_log_obj.Activity_info= f"{instance.Class.class_name} Attendance has been marked."
-	else:
-		school_log_obj.Activity_info= f"{instance.Class.class_name} Marked attendance has been updated."
-	school_log_obj.save()
-def performance_log(**kwargs):
-	instance = kwargs["instance"]
-	created = kwargs["created"]
-	log_obj = School_activity_log(Class=instance.Class,Activity_type="Performance")
-	if created:
-		log_obj.Activity_info= f"{instance.student.name} Performance in {instance.subject} added."
-	else:
-		log_obj.Activity_info= f"{instance.student.name} Performance in {instance.subject} updated."
-	log_obj.save()
-def student_log(**kwargs):
-	instance = kwargs["instance"]
-	created = kwargs["created"]
-	school_log_obj = School_activity_log(Class=instance.Class,Activity_type="Student")
-	if created:
-		school_log_obj.Activity_info= f"New student {instance.name} in {instance.Class.class_name} profile was created."
-	else:
-		school_log_obj.Activity_info= f"Student {instance.name} in {instance.Class.class_name} profile was updated."
-	school_log_obj.save()
-	
-def delete_student_log(**kwargs):
-	instance = kwargs["instance"]
-	school_log_obj = School_activity_log(Class=instance.Class,Activity_type="Student")
-	school_log_obj.Activity_info= f"Student {instance.name} in {instance.Class.class_name} profile was deleted."
-	school_log_obj.save()
-	
-post_save.connect(attendance_log,sender=Attendance)
-post_save.connect(performance_log,sender=Performance)
-post_save.connect(student_log,sender=Student)
-post_delete.connect(delete_student_log,sender=Student)

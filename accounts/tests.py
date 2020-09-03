@@ -60,9 +60,9 @@ class accounts_test(TestCase):
         self.assertEqual(user.last_name,post_data["lastname"])
         self.assertEqual(user.email,post_data["email"])
         self.assertTrue(User.objects.filter(username=username).exists())
-        assert user.schooluser is not None, "user schooluser does not exists"
-        assert user.schooluser.admin is not None, "user Admin does not exists"
-        self.assertEqual(user.schooluser.level,"Admin")
+        assert user is not None, "user schooluser does not exists"
+        assert user.admin is not None, "user Admin does not exists"
+        self.assertEqual(user.level,"Admin")
         self.assertTrue(School.objects.filter(school_name=school_name).exists())
         
         

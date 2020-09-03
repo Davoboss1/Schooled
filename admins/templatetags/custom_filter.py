@@ -1,5 +1,5 @@
 from django import template
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from students.models import Term
 from admins.models import School
 register = template.Library()
@@ -18,7 +18,7 @@ def current_term_filter(value):
 @register.filter(name="get_user")
 def get_user(value):
 	try:
-		user = User.objects.get(username=value)
+		user = get_user_model().objects.get(username=value)
 		return user
 	except:
 		return "Unavailable user"

@@ -1,16 +1,17 @@
 from django.db import models
-from admins.models import Admin,School,SchoolUser
+from django.contrib.auth import get_user_model
+from admins.models import Admin,School
 from admins.models import BasicInfo
 from django.db.models.signals import post_delete,pre_delete
 # Create your models here.
 
 class Teacher(BasicInfo):
-    school_user = models.OneToOneField(SchoolUser,on_delete=models.CASCADE)
+    user = models.OneToOneField(get_user_model(),on_delete=models.CASCADE)
     def __str__(self):
-        return self.school_user.user.get_full_name()
+        return self.user.get_full_name()
     @property
     def full_name(self):
-        return self.school_user.user.get_full_name()
+        return self.user.get_full_name()
 		
 class Class(models.Model):
 	school = models.ForeignKey(School,models.CASCADE)
@@ -31,7 +32,7 @@ def delete_students(**kwargs):
 def delete_teachers(**kwargs):
 	try:
 		instance = kwargs['instance']
-		instance.teacher.school_user.user.delete()
+		instance.teacher.user.delete()
 	except:
 		pass
 

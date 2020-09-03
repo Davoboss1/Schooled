@@ -3,8 +3,6 @@ from django.shortcuts import redirect,reverse
 from . import views
 
 urlpatterns = [
-path('school_create/', views.school_create, name='school_create'),
-path('admin_create/', views.admin_create, name='admin_create'),
 #School_owner
 path("",views.school_owner_home_page, name='admin_homepage'),
 re_path("^view-.*",lambda x:redirect(reverse("admin_homepage"))),

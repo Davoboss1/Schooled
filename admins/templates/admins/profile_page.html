@@ -5,7 +5,7 @@
 	<!-- Profile picture -->
 	<img class="rounded" src="{{student.photo.url}}" alt="" style="max-width:50%; max-height:50%; float:right;"
 >
-	{% if request.user.schooluser.level == "Teacher" %}
+	{% if request.user.level == "Teacher" %}
 	<div class="form-group w-50 border p-2 mr-1">
 		<label for="customFile">Photo</label>
 		<div class="custom-file"> <input type="file" name="photo" accept="image/*" class="custom-file-input"
@@ -62,7 +62,7 @@
 							{{parent.full_name|default:"No name yet"}}
 						</td>
 						<td>
-							{{parent.school_user.user.get_username}}
+							{{parent.user.get_username}}
 						</td>
 					</tr>
 					{% endfor %}
@@ -101,13 +101,13 @@
 				<option {% if current_term.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
 				<option {% if current_term.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
 			</select>
-			<button class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span class="fas fa-redo"></span></button>
+			<button class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span class="fa fa-repeat"></span></button>
 		</div>
 
 	</div>
 	<div class="btn-group w-100 mt-1 mb-3" role="group" aria-label="get performance"> <button type="button"
-			class="genric-btn info radius w-50 mx-3" onclick="download_pdf('P')">Download</button> <button type="button"
-			class="genric-btn info radius w-50 mx-3" onclick="print_performance()">Print</button> </div>
+			class="genric-btn info radius w-50 mx-2" onclick="download_pdf('P')">Download <span class="fa fa-download"></span></button> <button type="button"
+			class="genric-btn info radius w-50 mx-2" onclick="print_performance()">Print <span class="lnr lnr-printer"></span></button> </div>
 	<!-- Performance part -->
 	<div id="performance-view">
 
@@ -115,8 +115,8 @@
 	<hr>
 	<!-- Attendance part -->
 	<div class="btn-group w-100 mt-1 mb-3" role="group" aria-label="get performance"> <button type="button"
-			class="genric-btn info radius w-50 mx-3" onclick="download_pdf('A')">Download</button>
-			<button class="genric-btn info radius w-50 mx-3" onclick="print_attendance()">Print</button> </div>
+			class="genric-btn info radius w-50 mx-2" onclick="download_pdf('A')">Download <span class="fa fa-download"></span></button>
+			<button class="genric-btn info radius w-50 mx-2" onclick="print_attendance()">Print <span class="lnr lnr-printer"></span></button> </div>
 	<div id="attendance-view">
 
 	</div>

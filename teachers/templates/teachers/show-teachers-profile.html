@@ -1,18 +1,18 @@
 <div class="card text-center">
 	<div class="card-header bg-light text-dark"> Teacher Information </div> 
 	<div class="card-body text-dark border border-light">
-		<img class="card-img-top mx-auto" src="{{teacher.school_user.profile_picture.url}}" alt="" style="max-height:50%; max-width:50%;">
+		<img class="card-img-top mx-auto" src="{{teacher.user.profile_picture.url}}" alt="" style="max-height:50%; max-width:50%;">
                             
 		<h6 class="mt-2"><u class="text-dark">Teacher's Name </u></h6>
-		<b  class="text-dark">{{teacher.school_user.user.get_full_name}}</b>
+		<b  class="text-dark">{{teacher.user.get_full_name}}</b>
 		<h6 class="mt-2"><u class="text-dark">Teacher's Username </u></h6>
-		<b  class="text-dark">{{teacher.school_user.user.get_username}}</b>
+		<b  class="text-dark">{{teacher.user.get_username}}</b>
 		<h6 class="mt-2"><u class="text-dark">School Name </u></h6>
 		<b  class="text-dark">{{teacher.teacher_class.school.school_name}}</b>
 		<h6 class="mt-2"><u class="text-dark">Class</u></h6>
 		<b class="text-dark">{{teacher.teacher_class.class_name}}</b>	
 		<h6 class="mt-2"><u class="text-dark">Email </u></h6>
-		<b class="text-dark">{{teacher.school_user.user.email}}</b>
+		<b class="text-dark">{{teacher.user.email}}</b>
 		<h6 class="mt-2"><u class="text-dark">Phone number </u></h6>
 		<b class="text-dark">{{teacher.phone_no}}</b>
 		</div> 

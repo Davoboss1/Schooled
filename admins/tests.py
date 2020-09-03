@@ -71,18 +71,18 @@ class Admin_tests(TestCase):
         except:
             raise AssertionError("Username does not exists")
         #Test that teacher user model has a schooluser object
-        assert (user.schooluser is not None), "Schooluser was not created"
+        assert (user is not None), "Schooluser was not created"
         #Test that correct schooluser object was created with correct value
-        assert (user.schooluser.level=="Teacher"), "Schooluser is not a teacher"
+        assert (user.level=="Teacher"), "Schooluser is not a teacher"
         #Test that teacher profile was created
-        assert (user.schooluser.teacher is not None), "Schooluser does not have teacher profile"
+        assert (user.teacher is not None), "Schooluser does not have teacher profile"
         #Get query set of class that was created
         #Needed to make some assertions like
         #Check if class exists,class is unique or no duplicates
         class_set = Class.objects.filter(class_name=post_data["class"])
         assert (class_set.exists() and class_set.count()==1), "Class does not exists or is not unique"
-        self.assertEqual(user.schooluser.teacher,class_set.first().teacher)
-        return user.schooluser.teacher
+        self.assertEqual(user.teacher,class_set.first().teacher)
+        return user.teacher
 
     def test_new_teacher_for_class(self):
         self.test_add_teacher("TeacherTest","JS3") 

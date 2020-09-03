@@ -6,7 +6,7 @@ class AdminForm(ModelForm):
 	class Meta:
 		model = Admin
 		fields = ('__all__')
-		exclude = ('school','school_user','created_at','update_at')
+		exclude = ('school','user','created_at','update_at')
 		tel = widgets.TextInput(attrs={"type":"tel"})
 		widgets = {"date_of_birth":widgets.DateInput(attrs={"type":"date"},),"phone_no":tel}
 		

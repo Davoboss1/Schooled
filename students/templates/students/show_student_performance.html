@@ -20,9 +20,12 @@
 <style>
 	h1,h3{
 		font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-		text-decoration: underline;
-		
+        margin-top: 0;
+        margin-bottom: 0;		
 	}
+    h1{
+        text-decoration: underline;
+    }
  	th{
  		background-color:#222222;
  		color:white;
@@ -49,18 +52,7 @@
  @media print {
 	body {
 		-webkit-print-color-adjust: exact;
-		
 	}
-	table{
-		page-break-inside: auto;
-	}
-	
-	tr{
-		page-break-inside: avoid;
-		page-break-after: auto;
-		
-	}
-	
  }
 </style>
 </head>
@@ -81,21 +73,23 @@
 	
 						<table style="width: 100%;">
 							<thead >
-								<th>Subject</th>
-								<th>Test Score</th>
-								<th>Exam Score</th>
-								<th>Total Score</th>
-								<th>Comment</th>
+								<th style="width: 40%">Subject</th>
+								<th style="width: 10%">Test Score</th>
+								<th style="width: 10%">Exam Score</th>
+								<th style="width: 10%">Total Score</th>
+								<th style="width: 30%">Comment</th>
 							</thead>
+                        </table>
+						<table style="width: 100%;">
 							<tbody >
 								{% if performance %}
 							{% for performance in performance %}
 								<tr>
-									<td>{{performance.subject}}</td>
-									<td>{{performance.test}}</td>
-									<td>{{performance.exam}}</td>
-									<td>{{performance.total}}</td>
-									<td>{{performance.comment}}</td>
+									<td style="width: 40%">{{performance.subject}}</td>
+									<td style="width: 10%">{{performance.test}}</td>
+									<td style="width: 10%">{{performance.exam}}</td>
+									<td style="width: 10%">{{performance.total}}</td>
+									<td style="width: 30%">{{performance.comment}}</td>
 								</tr>			
 								{% endfor %}
 								{% else %}

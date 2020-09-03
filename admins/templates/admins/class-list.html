@@ -35,7 +35,9 @@
         <div class="d-flex mt-2">
             <div class="w-50 pr-3" >
                 <select class="form-control" id="session-years">
-                    <option value="{{current_term.year}}">{{current_term.session}}</option>
+                    {% if current_term %}
+                        <option value="{{current_term.year}}">{{current_term.session}}</option>
+                    {% endif %}
                     <option disabled>-----------</option>
                 </select>
             </div>
@@ -72,18 +74,6 @@
             <h4>User Information</h4>
             {{ userform | crispy }}
             {{userform.errors}}
-            <div class="form-group">
-                <label for="fname">First name <span class="asteriskField">*</span></label>
-                <input class="form-control" id="fname" name="firstname" type="text" required>
-            </div>
-            <div class="form-group">
-                <label for="lname">Last name <span class="asteriskField">*</span></label>
-                <input class="form-control" id="lname" name="lastname" type="text" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email <span class="asteriskField">*</span></label>
-                <input class="form-control" id="email" name="email" type="email" required>
-            </div>
             <hr>
             <div class="form-group">
                 <label for="class">Class <span class="asteriskField">*</span></label>
@@ -111,7 +101,7 @@
         <li class="list-group-item d-flex align-items-center text-dark pr-0">
             <span class="w-25">Class</span> 
             <b class="dark-red w-50 text-center">No of students</b>
-            <span class="w-25 text-right mr-2"><span class="btn btn-light fas fa-edit" data-checked="false" id="edit-class"></span></span>
+            <span class="w-25 text-right mr-2"><span class="btn btn-light fa fa-edit" data-checked="false" id="edit-class"></span></span>
         </li>
         {% for class in classes %}
         <li class="list-group-item list-group-item-action d-flex align-items-center class-list"
@@ -119,10 +109,10 @@
             data-url="{{url}}{{class.pk}}/">
             <strong class="w-25">{{class.class_name}}</strong>
             <span class="w-50 text-center"><span class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>
-            <span class="w-25 text-right"><span class="fas fa-angle-down drop-icon"></span></span>
+            <span class="w-25 text-right"><span class="fa fa-angle-down drop-icon"></span></span>
             <input class="form-control w-25" value="{{class.class_name}}" style="display: none;">
             <span class="w-50 text-center" style="display: none;"><span class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>  
-            <span class="w-25 text-right" style="display: none;"><span class="badge badge-success badge-pill edit-class-btn" data-pk="{{class.pk}}"><span class="fas fa-check"></span></span></span>
+            <span class="w-25 text-right" style="display: none;"><span class="badge badge-success badge-pill edit-class-btn" data-pk="{{class.pk}}"><span class="fa fa-check"></span></span></span>
             
         </li>
 
@@ -353,7 +343,7 @@
         var list = btn.parent().parent();
         var input = $(list.find("input")[0]);
         btn.removeClass("badge-danger");
-        icon.className = "fas fa-spinner fa-spin";
+        icon.className = "fa fa-spinner fa-spin";
 
         $.ajax({
             url: "{% url 'update_class' %}",
@@ -361,14 +351,19 @@
             timeout: 20000,
             data: {csrfmiddlewaretoken:"{{csrf_token}}",class_pk:btn.attr("data-pk"),class_name:input.val()},
             success: function(data){
-                icon.className = "fas fa-check";
+                icon.className = "fa fa-check";
                 //Set normal class name element to new class value
                 list.children().first().html(input.val());
             },
             error: function(res,textStatus,errorThrown){
-                icon.className = "fas fa-refresh";
+                icon.className = "fa fa-refresh";
                 btn.addClass("badge-danger");
             }
         });
     })
+
+    function add_class(value) {
+        document.getElementById("class").value = value;
+        window.location.href = "#add-teachers";
+    }
 </script>

@@ -17,22 +17,22 @@
             {% if conversation.reciever.get_username == user.get_username %}
             {% with reciever=conversation.sender|get_user %}
             <div class="thumb m-0 mr-1">
-                <img class="rounded-circle icon_50x50" alt=""  src="{{reciever.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+                <img class="rounded-circle icon_50x50" alt=""  src="{{reciever.profile_picture.url|default:'/media/default.jpg'}}">
             </div>
             <div class="">
             <h5><u class="text-dark">Name</u> : <b class="text-dark">{{reciever.get_full_name|default:'Unavailable user'}}</b> </h5>
             <h5><u class="text-dark">Username</u> : <b class="text-dark">{{reciever.get_username|default:'Unavailable'}}</b></h5>
-            <h5><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.schooluser.level|default:'Unavailable'}}</b></h5>
+            <h5><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.level|default:'Unavailable'}}</b></h5>
             {% endwith %}
             {% else %}
             {% with reciever=conversation.reciever %}
             <div class="thumb m-0 mr-1">
-                <img class="rounded-circle icon_50x50" alt=""  src="{{reciever.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+                <img class="rounded-circle icon_50x50" alt=""  src="{{reciever.profile_picture.url|default:'/media/default.jpg'}}">
             </div>
             <div class="">
             <h5><u class="text-dark">Name</u> : <b class="text-dark">{{reciever.get_full_name|default:'Unavailable user'}}</b> </h5>
             <h5><u class="text-dark">Username</u> : <b class="text-dark">{{reciever.get_username|default:'Unavailable'}}</b></h5>
-            <h5><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.schooluser.level|default:'Unavailable'}}</b></h5>
+            <h5><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.level|default:'Unavailable'}}</b></h5>
             {% endwith %}
             {% endif %}
         </div>
@@ -61,7 +61,7 @@
                 </p>
                 <div class="thumb m-0 ml-auto">
                     <img class="rounded-circle" style="width: 35px; height: 35px;" alt=""
-                        src="{{user.schooluser.profile_picture.url}}">
+                        src="{{user.profile_picture.url}}">
                 </div>
 
             </div>
@@ -77,11 +77,11 @@
                 <div class="thumb m-0 mr-auto">
                     {% if conversation.sender == user.get_username %}
                     <img class="rounded-circle" style="width: 35px; height: 35px;" alt=""
-                        src="{{conversation.reciever.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+                        src="{{conversation.reciever.profile_picture.url|default:'/media/default.jpg'}}">
                     {% else %}
                     {% with other_user=conversation.sender|get_user %}
                     <img class="rounded-circle" style="width: 35px; height: 35px;" alt=""
-                        src="{{other_user.schooluser.profile_picture.url|default:'/media/default.jpg'}}">
+                        src="{{other_user.profile_picture.url|default:'/media/default.jpg'}}">
                     {% endwith %}
                     {% endif %}
                 </div>
@@ -107,7 +107,7 @@
 </div>
 <!-- End of Card -->
 </div>
-<input id="img-url" type="hidden" value="{{user.schooluser.profile_picture.url}}">
+<input id="img-url" type="hidden" value="{{user.profile_picture.url}}">
 <script>
     //Send button event handler
     $(".send-button").click(function () {

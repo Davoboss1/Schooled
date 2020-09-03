@@ -1,11 +1,10 @@
 from django.contrib import admin
 from .models import  Parent
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 # Register your models here.
 class ParentAdmin(admin.ModelAdmin):
-	list_display = ['full_name', 'sex']
+	list_display = ['full_name']
 	search_fields = ['name']
 	
 

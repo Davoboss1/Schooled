@@ -1,6 +1,6 @@
 
 def update_class(request):
-	admin = request.user.schooluser.admin
+	admin = request.user.admin
 	class_pk = request.POST.get("class_pk")
 	class_name = request.POST.get("class_name")
 	class_set = Class.objects.get(school__admin=admin,pk=class_pk)

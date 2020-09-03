@@ -4,11 +4,12 @@ from django.shortcuts import render,redirect,get_object_or_404,Http404,HttpRespo
 from django.http.response import HttpResponseServerError
 from .models import Student, Performance, Attendance,Term
 from teachers.models import Teacher
-from admins.models import User,Admin,SchoolUser
+from admins.models import Admin
 from admins.views import loadmore_performance
 from parents.models import Parent
 from django.db.models import Q
-from django.contrib.auth.forms import UserCreationForm
+from accounts.forms import UserCreationForm
+from django.contrib.auth import get_user_model
 from .forms  import StudentForm, PerformanceForm
 from django.contrib import messages
 from django.views.generic.edit import DeleteView
@@ -20,21 +21,24 @@ from django.core.paginator import Paginator
 from xhtml2pdf import pisa
 from io import StringIO
 from schooled import settings
+from tools import view_for,require_ajax,require_auth
 #FUNCTION BASED VIEWS
 
 #View for viewing performance
 #Used by teachers
+@view_for("teacher")
+@require_ajax
 def performance_page(request,type):
-	school = request.user.schooluser.teacher.teacher_class.school
+	school = request.user.teacher.teacher_class.school
 	context={
 		'type':type,
 		"terms":Term.objects.filter(school=school),
-		'current_term':Term.objects.get(school=school,current_session=True)
+		'current_term':Term.objects.filter(school=school,current_session=True).first()
 	}
 	#Pagination of students
 	if "page" in request.GET.keys():
 		#get all students in teachers class
-		all_Info= request.user.schooluser.teacher.teacher_class.student_set.all()
+		all_Info= request.user.teacher.teacher_class.student_set.all()
 		
 		#Paginate students, Show only 10 objects
 		paginator = Paginator(all_Info,10)
@@ -74,17 +78,19 @@ def performance_page(request,type):
 		#create new attribute called termly_performance
 		student.termly_performance = filtered_performance
 		return HttpResponse(loadmore_performance(student.termly_performance,10,int(request.GET.get("page_no"))))
-	context["students"] = request.user.schooluser.teacher.teacher_class.student_set.all()
+	context["students"] = request.user.teacher.teacher_class.student_set.all()
 	print("Main context :",context)		
 	return render(request, 'students/performance_page.html', context)
 
 
 
 #Function for STUDENTS ATTENDANCE
+@view_for("teacher")
+@require_ajax
 def attendance_page(request,type):
 	#get all student in in teachers class
-	all_Info= request.user.schooluser.teacher.teacher_class.student_set.all()
-	current_class = request.user.schooluser.teacher.teacher_class
+	all_Info= request.user.teacher.teacher_class.student_set.all()
+	current_class = request.user.teacher.teacher_class
 	Date =date.today()
 
 
@@ -126,23 +132,16 @@ def attendance_page(request,type):
 	
 	context={
 		'all_Info':all_Info,
-		'attendance': attendance,'all_students':request.user.schooluser.teacher.teacher_class.student_set.all(),
+		'attendance': attendance,'all_students':request.user.teacher.teacher_class.student_set.all(),
 		'date':str(Date),
 		'type':type,
 	}
 	return render(request, 'students/attendance_page.html', context)
 	
-	
-def students_page(request):
-	return render(request, 'students/students_page.html')
-		
-def detail(request, pk):
-	student = get_object_or_404(Student, pk=pk)
-	return render(request, 'students/detail.html',{'student':student})
-
-
 
 #ADD STUDENTS	
+@view_for("teacher")
+@require_ajax
 def update(request):
 	if request.method == 'POST':
 		#form to add new student
@@ -152,7 +151,7 @@ def update(request):
 			form = form.save(commit=False)
 			#assign student school
 			#assigns students school to teacher's school
-			teacher = request.user.schooluser.teacher
+			teacher = request.user.teacher
 			form.school = teacher.teacher_class.school
 			#assigns students class to teacher's class
 			form.Class = teacher.teacher_class
@@ -169,26 +168,26 @@ def update(request):
 			    #Check if f_parent is not None, Validate username and user and add to many to many list
 			    if f_parent:
 			        try:
-			            parent = User.objects.get(username=f_parent).schooluser.parent
+			            parent = get_user_model().objects.get(username=f_parent).parent
 			            parent_list.append(parent.pk)
-			        except User.DoesNotExist:
+			        except get_user_model().DoesNotExist:
 			            print("Does not exist")
 			            #UNF means user not found
 			            return HttpResponseServerError("UNF")
-			        except SchoolUser.parent.RelatedObjectDoesNotExist:
+			        except get_user_model().parent.RelatedObjectDoesNotExist:
 			            #UNP means user not parent
 			            print("Unp")
 			            return HttpResponseServerError("UNP")
 			   #Check if s_parent_parent is not None, Validate username and user and add to many to many list
 			    if s_parent:
 			        try:
-			            parent = User.objects.get(username=s_parent).schooluser.parent
+			            parent = get_user_model().objects.get(username=s_parent).parent
 			            parent_list.append(parent.pk)
-			        except User.DoesNotExist:
+			        except get_user_model().DoesNotExist:
 			            print("Does not exist")
 			            #UNF means user not found
 			            return HttpResponseServerError("UNF")
-			        except SchoolUser.parent.RelatedObjectDoesNotExist:
+			        except get_user_model().parent.RelatedObjectDoesNotExist:
 			            #UNP means user not parent
 			            print("Unp")
 			            return HttpResponseServerError("UNP")
@@ -201,13 +200,13 @@ def update(request):
 				parentform = UserCreationForm(request.POST)
 			
 				if parentform.is_valid():
-					parentform = parentform.save()
+					parentform = parentform.save(commit=False)
 					#create a schooluser for parent
-					schooluser = SchoolUser(user=parentform,level="Parent")
+					parentform.level="Parent"
 					#save form
-					schooluser.save()
+					parentform.save()
 					#create parent object
-					parent = Parent(school_user=schooluser)
+					parent = Parent(user=parentform)
 					#save parent object
 					parent.save()
 					form.save()
@@ -227,7 +226,9 @@ def update(request):
 		parent_form.use_required_attribute = False
 	return render(request,'students/update.html',{'form':form,"parent_form":parent_form,})
 	
-#update student
+#update student and shows student edit form 
+@view_for("teacher")
+@require_ajax
 def update_students(request,pk):
 	#get student form of student by pk
 	form = StudentForm(instance=Student.objects.get(pk=pk))
@@ -247,12 +248,12 @@ def update_students(request,pk):
 				#Check that n or  parent is not None, Validate username and user and add to many to many list
 				if n:
 					try:
-						parent = User.objects.get(username=n).schooluser.parent
+						parent = get_user_model().objects.get(username=n).parent
 						parent_list.append(parent.pk)
-					except User.DoesNotExist:
+					except get_user_model().DoesNotExist:
 						#UNF means user not found
 						return HttpResponseServerError("UNF")
-					except SchoolUser.parent.RelatedObjectDoesNotExist:
+					except get_user_model().parent.RelatedObjectDoesNotExist:
 						#UNP means user not parent
 						return HttpResponseServerError("UNP")
 			#Save form and set parents
@@ -266,11 +267,11 @@ def update_students(request,pk):
 		parents = student.parents.all()
 		#Get parents username to be shown in template
 		try:
-			fparent_username =  parents[0].school_user.user.get_username()
+			fparent_username =  parents[0].user.get_username()
 		except IndexError:
 			fparent_username = ""
 		try:
-			sparent_username =  parents[1].school_user.user.get_username()
+			sparent_username =  parents[1].user.get_username()
 		except IndexError:
 			sparent_username = ""
 
@@ -280,22 +281,25 @@ def update_students(request,pk):
 #shows edit students page
 #also deletes student
 #It shouldn't be like this i know.
+@view_for("teacher")
+@require_ajax
 def edit_students(request):
 	#can be used to delete students
-	if request.is_ajax():
-		#On post request delete student
-		if request.method == "POST":
-			student = get_object_or_404(Student, pk=int(request.POST.get("pk")),Class__teacher=request.user.schooluser.teacher)
-			student.delete()
-			return HttpResponse(f"Student :  {student.name} was deleted successfully" )
-		else:
-			return render(request,"students/edit_students.html",{"all_students":request.user.schooluser.teacher.teacher_class.student_set.all()
+	#On post request delete student
+	if request.method == "POST":
+		student = get_object_or_404(Student, pk=int(request.POST.get("pk")),Class__teacher=request.user.teacher)
+		student.delete()
+		return HttpResponse(f"Student :  {student.name} was deleted successfully" )
+	else:
+		return render(request,"students/edit_students.html",{"all_students":request.user.teacher.teacher_class.student_set.all()
 })
 
-#View for creating performance
+#View for creating and updating performance
+@view_for("teacher")
+@require_ajax
 def p_create_or_update(request, student_id):
 	try:
-		teacher =  request.user.schooluser.teacher
+		teacher =  request.user.teacher
 		#info variable represents student
 		info = Student.objects.get(Class__teacher=teacher,pk=student_id)
 		current_term = Term.objects.get(school=info.Class.school,current_session=True)
@@ -306,7 +310,7 @@ def p_create_or_update(request, student_id):
 	except (Performance.DoesNotExist):
 		#if performance with added subject does not exist
 		#create new performance
-		selected_subject =info.performance_set.create(subject=request.POST['subject'], test=request.POST['test'], exam = request.POST['exam'],comment =request.POST['comment'],Class=request.user.schooluser.teacher.teacher_class,term=current_term)
+		selected_subject =info.performance_set.create(subject=request.POST['subject'], test=request.POST['test'], exam = request.POST['exam'],comment =request.POST['comment'],Class=request.user.teacher.teacher_class,term=current_term)
 		#return success message
 		return HttpResponse("Performance Added Successfully")
 	else:
@@ -319,6 +323,8 @@ def p_create_or_update(request, student_id):
 		return HttpResponse(f'{selected_subject.subject} has been updated successfully')
 		
 #delete performance view
+@view_for("teacher")
+@require_ajax
 def delete(request):
 	if request.is_ajax():
 		if request.method == "POST":
@@ -328,6 +334,8 @@ def delete(request):
 			return HttpResponse(f"Subject {performance.subject} was deleted successfully" )
 	
 #mark attendance view
+@view_for("teacher")
+@require_ajax
 def mark(request,Date):
 	if request.method == "POST":
 		print(request.POST)
@@ -335,7 +343,7 @@ def mark(request,Date):
 		obj = request.POST.getlist('present')
 		#try to get attendance for requested date
 		try:
-			attendance=Attendance.objects.get(date=Date,Class=request.user.schooluser.teacher.teacher_class)
+			attendance=Attendance.objects.get(date=Date,Class=request.user.teacher.teacher_class)
 			#if attendance exist set the present students
 			attendance.present_students.set(obj)
 			attendance.save()
@@ -343,14 +351,16 @@ def mark(request,Date):
 		except Attendance.DoesNotExist:
 			#if attendance does not exist
 			#create new attendance object
-			attendance=Attendance.objects.create(date=Date,Class=request.user.schooluser.teacher.teacher_class)
+			attendance=Attendance.objects.create(date=Date,Class=request.user.teacher.teacher_class)
 			attendance.present_students.set(obj)
 					
 		return HttpResponse("You Have Successfully added attendance for "+str(Date))
 	else:
 		return Http404
 
-#view for handling uploads
+#view for uploading student photo
+@view_for("teacher")
+@require_ajax
 def handle_uploads(request):
 	if request.method == "POST":
 		#Get photo fron request.FILES
@@ -360,21 +370,21 @@ def handle_uploads(request):
 		#if photo is not default.jpg delete photo then save new one
 		if student.photo.name != "default.jpg":
 			student.photo.delete()
-		student.photo.save(file.name,file.file,save=True)
-		
+		student.photo.save(file.name,file.file,save=True)		
 		return HttpResponse("Success")
 
-		
 #View shows attendance in student profile
+@require_auth
 def view_only_attendance(request,pk):
-	schooluser = request.user.schooluser
+	user = request.user
 	#Get a student using primary key
-	if schooluser.level == "Parent":
-		student =  schooluser.parent.student_set.get(pk=pk)
-	elif schooluser.level == "Admin":
-		student = Student.objects.get(Class__school__admin=schooluser.admin,pk=pk)
+	level = user.level
+	if level == "Parent":
+		student =  user.parent.student_set.get(pk=pk)
+	elif level == "Admin":
+		student = Student.objects.get(Class__school__admin=user.admin,pk=pk)
 	else:
-		student = schooluser.teacher.teacher_class.student_set.get(pk=pk)
+		student = user.teacher.teacher_class.student_set.get(pk=pk)
 	#get attendance for the student class
 	attendance = student.Class.attendance_set.all()
 	#if date exists in request.Get
@@ -388,32 +398,40 @@ def view_only_attendance(request,pk):
 		#If requested_date is date in the future
 		if date.fromisoformat(start_date) > date.today():
 			return HttpResponse("DoesNotExist")
+		#Get attendance between date range
 		attendance = attendance.filter(date__range=(start_date,end_date))
 	else:
 		start_date = ""
 		end_date = ""
 
-	#Paginate attendanceshow only 7 days
+	#Paginate attendance show only 7 days
 	paginator = Paginator(attendance,7)
 	attendance = paginator.get_page(request.GET.get("attendance_page"))
 	
 	return render(request,"students/view_only_attendance.html",{"attendance":attendance,"student":student,"start_date" : start_date,"end_date" : end_date})
 	
 #view shows performance in student profile
+@require_auth
 def view_only_performance(request,pk):
-	schooluser = request.user.schooluser
-	if schooluser.level == "Parent":
-		student =  schooluser.parent.student_set.get(pk=pk)
-	elif schooluser.level == "Admin":
-		student = Student.objects.get(Class__school__admin=schooluser.admin,pk=pk)
+	user = request.user
+	level = user.level
+	#Get student
+	if level == "Parent":
+		student =  user.parent.student_set.get(pk=pk)
+	elif level == "Admin":
+		student = Student.objects.get(Class__school__admin=user.admin,pk=pk)
 	else:
-		student = schooluser.teacher.teacher_class.student_set.get(pk=pk)
+		student = user.teacher.teacher_class.student_set.get(pk=pk)
 	term_html = None
+	#Parent argument exists if request is made by parent
+	#Check if parent is in get request keys
 	if "parent" in request.GET:
+		#Get all needed variables form term
 		terms=Term.objects.filter(school=student.Class.school)
 		current_term = terms.get(current_session=True)
 		year = current_term.year
 		term_text = current_term.term
+		#Render it in a template
 		data = '''<div>
 					<div class="d-flex flex-column">
 						<div class="d-flex">
@@ -433,11 +451,12 @@ def view_only_performance(request,pk):
 								<option {% if current_term.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
 							</select>
 							<button class=" ml-2 btn btn-dark " id="fetch-termly-performance" onclick="fetch_termly_performance(this)"><span
-									class="fas fa-redo"></span></button>
+									class="fa fa-repeat"></span></button>
 						</div>
 					</div>
 				</div>
 			'''
+		#Assign term_html to template
 		term_html = Template(data).render(Context({"current_term":current_term,"terms":terms}))
 	else:
 		year = int(request.GET.get("year"))
@@ -455,7 +474,6 @@ def view_only_performance(request,pk):
 	performance = student.termly_performance
 	paginator = Paginator(performance,10)
 	performance = paginator.get_page(request.GET.get("page"))
-	print(term_html)
 	return render(request,"students/view_only_performance.html",{"student":student,"performance":performance,"terms":Term.objects.filter(school=student.Class.school),"term_html":term_html})		
 	
 def link_callback(uri,rel):
@@ -475,29 +493,33 @@ def link_callback(uri,rel):
 		return path
 
 #View returns print attendance page
+@require_auth
 def print_attendance(request,pk,start_date=None,end_date=None):
-	schooluser = request.user.schooluser
-	if schooluser.level == "Parent":
-		student =  schooluser.parent.student_set.get(pk=pk)
-	elif schooluser.level == "Admin":
-		student = Student.objects.get(Class__school__admin=schooluser.admin,pk=pk)
+	user = request.user
+	level = user.level
+	if level == "Parent":
+		student =  user.parent.student_set.get(pk=pk)
+	elif level == "Admin":
+		student = Student.objects.get(Class__school__admin=user.admin,pk=pk)
 	else:
-		student = schooluser.teacher.teacher_class.student_set.get(pk=pk)
+		student = user.teacher.teacher_class.student_set.get(pk=pk)
 	if start_date and end_date:
 		attendance = student.Class.attendance_set.filter(date__range=(start_date,end_date))
 	else:
 		attendance = student.Class.attendance_set.all()
 	return render(request,"students/show_student_attendance.html",{"student":student,"attendance":attendance})
 #View returns print performance page
+@require_auth
 def print_performance(request,pk,year,term):
-	schooluser = request.user.schooluser
+	user = request.user
+	level = user.level
 	#Get student using the type of user
-	if schooluser.level == "Parent":
-		student =  schooluser.parent.student_set.get(pk=pk)
-	elif schooluser.level == "Admin":
-		student = Student.objects.get(Class__school__admin=schooluser.admin,pk=pk)
+	if level == "Parent":
+		student =  user.parent.student_set.get(pk=pk)
+	elif level == "Admin":
+		student = Student.objects.get(Class__school__admin=user.admin,pk=pk)
 	else:
-		student = schooluser.teacher.teacher_class.student_set.get(pk=pk)
+		student = user.teacher.teacher_class.student_set.get(pk=pk)
 	term = Term.objects.get(school=student.Class.school,year=year,term=term)
 	performance = term.performance_set.filter(student=student)
 	context = {'student':student,'performance':performance,"term":term}
@@ -505,19 +527,25 @@ def print_performance(request,pk,year,term):
 	return render(request,"students/show_student_performance.html",context)
 
 #View for rendering attendance as pdf using xhtml2pdf
+@require_auth
 def convert_attendance_to_pdf(request,pk,start_date=None,end_date=None):
+	#Template for pdf
 	template = get_template("students/show_student_attendance.html")
-	schooluser = request.user.schooluser
-	if schooluser.level == "Parent":
-		student =  schooluser.parent.student_set.get(pk=pk)
-	elif schooluser.level == "Admin":
-		student = Student.objects.get(Class__school__admin=schooluser.admin,pk=pk)
+	user = request.user
+	level = user.level
+	#Get student
+	if level == "Parent":
+		student =  user.parent.student_set.get(pk=pk)
+	elif level == "Admin":
+		student = Student.objects.get(Class__school__admin=user.admin,pk=pk)
 	else:
-		student = schooluser.teacher.teacher_class.student_set.get(pk=pk)
+		student = user.teacher.teacher_class.student_set.get(pk=pk)
+	#If start_date and end_date is not none, get attendance with range else get all attendance
 	if start_date and end_date:
 		attendance = student.Class.attendance_set.filter(date__range=(start_date,end_date))
 	else:
 		attendance = student.Class.attendance_set.all()
+	
 	context = {'pagesize':'A4','student':student,'attendance':attendance,}
 	response = HttpResponse(content_type="application/pdf")
 	response['Content-Disposition'] = 'attachment; filename="attendance.pdf"'
@@ -528,17 +556,23 @@ def convert_attendance_to_pdf(request,pk,start_date=None,end_date=None):
 	return response
 		
 #View for rendering performance as pdf using xhtml2pdf
+@require_auth
 def convert_performance_to_pdf(request,pk,year,term):
+	#Template for pdf
 	template = get_template("students/show_student_performance.html")
-	schooluser = request.user.schooluser
-	if schooluser.level == "Parent":
-		student =  schooluser.parent.student_set.get(pk=pk)
-	elif schooluser.level == "Admin":
-		student = Student.objects.get(Class__school__admin=schooluser.admin,pk=pk)
+	user = request.user
+	level = user.level
+	#Get student
+	if level == "Parent":
+		student =  user.parent.student_set.get(pk=pk)
+	elif level == "Admin":
+		student = Student.objects.get(Class__school__admin=user.admin,pk=pk)
 	else:
-		student = schooluser.teacher.teacher_class.student_set.get(pk=pk)
+		student = user.teacher.teacher_class.student_set.get(pk=pk)
+	#Get term and get performance for the term
 	term = Term.objects.get(school=student.Class.school,year=year,term=term)
 	performance = term.performance_set.filter(student=student)
+
 	context = {'pagesize':'A4','student':student,'performance':performance,"term":term}
 	response = HttpResponse(content_type="application/pdf")
 	response['Content-Disposition'] = 'attachment; filename="performance.pdf"'
@@ -550,10 +584,12 @@ def convert_performance_to_pdf(request,pk,year,term):
 	
 
 #Handles performance csv_handler
+@view_for("teacher")
+@require_ajax
 def csv_handler(request):
 	if request.method == "POST":
 		#Get neccessary data
-		teacher = request.user.schooluser.teacher
+		teacher = request.user.teacher
 		current_class = teacher.teacher_class
 		student = Student.objects.get(Class=current_class,pk=request.POST.get("student_pk"))
 		#Get school current term
@@ -562,7 +598,7 @@ def csv_handler(request):
 		#Check if uploaded file is greater than 100kb
 		if csv_file.size > 100000:
 			#Return file too big message
-			return HttpResponse("File size too big")
+			return HttpResponse("File size too large")
 		#Read csv file
 		csv_file = csv_file.read()
 		#Convert from bytes to string and splitlines to enable csvreader to read

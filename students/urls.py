@@ -15,13 +15,11 @@ urlpatterns = [
 	path('students/attendance/mark/<Date>/', views.mark, name='mark'),
 	
 	#Other URLS	
-	path('', views.students_page, name='students_page'),
 	path("edit_students/",views.edit_students,name='edit_students')
 	,
 	path('update/', views.update, name='update'),
 path('update_student/',views.update_students,name="update_student"),
 path('update_student/<pk>/',views.update_students,name="update_student"),
-path('detail/<int:pk>/', views.detail, name='detail'),
 path("convert_attendance_to_pdf/",views.convert_attendance_to_pdf,name="convert_attendance_to_pdf"),
 path("convert_attendance_to_pdf/<pk>/",views.convert_attendance_to_pdf,name="convert_attendance_to_pdf"),
 path("convert_attendance_to_pdf/<pk>/<start_date>/<end_date>/",views.convert_attendance_to_pdf,name="convert_attendance_to_pdf"),

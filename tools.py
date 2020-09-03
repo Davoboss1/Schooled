@@ -15,7 +15,8 @@ def require_ajax(func):
 def require_auth(func):
     @wraps(func)
     def innerfunc(request,*args,**kwargs):
-        if request.is_authenticated():
+        print(dir(request))
+        if request.user.is_authenticated:
             return func(request,*args,**kwargs)
         else:
             raise PermissionDenied()
@@ -25,7 +26,7 @@ def view_for(type):
     def innerfunc(func):
         @wraps(func)
         def view(request,*args,**kwargs):
-            if str(request.user.schooluser.level).lower() == type.lower():
+            if str(request.user.level).lower() == type.lower():
                 return func(request,*args,**kwargs)
             else:
                 raise PermissionDenied()
@@ -54,8 +55,16 @@ def get_expirable_session(request,key):
     else:
         return session["data"]
 
-
-
-
-
+#Saves image to image field while delimg previous image
+def save_picture(image_field,picture_file):
+	if picture_file is not None:
+		if image_field.name != "default.jpg":
+			try:
+				image_field.delete()
+			except ValueError:
+				pass
+		image_field.save(picture_file.name,picture_file.file,save=True)
+		return True
+	else:
+		return False
 
