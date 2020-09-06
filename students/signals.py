@@ -24,9 +24,9 @@ def attendance_log(**kwargs):
 		day += "th"
 	date = date_obj.strftime(f"%A, {day} of %B, %Y")
 	if created:
-		school_log_obj.Activity_info= f"{instance.Class.class_name} Attendance has been marked."
+		school_log_obj.Activity_info= f"{instance.Class.class_name} Attendance for {date} has been marked."
 	else:
-		school_log_obj.Activity_info= f"{instance.Class.class_name} Marked attendance has been updated."
+		school_log_obj.Activity_info= f"{instance.Class.class_name} Marked attendance for {date} has been updated."
 	school_log_obj.save()
 def performance_log(**kwargs):
 	instance = kwargs["instance"]

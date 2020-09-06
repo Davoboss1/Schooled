@@ -1,4 +1,0 @@
-1. Pop up are you sure you want to reload page on page refresh.
-2. Download and print attendance within a range of dates.
-3. Try to prevent multiple ajax requests to be sent at once.
-4. 

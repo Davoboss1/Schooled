@@ -10,5 +10,6 @@ urlpatterns = [
 	path("reset_password",views.reset_password,name="reset_password"),
 	path('logout/', LogoutView.as_view(template_name='accounts/admin_logout.html'), name= 'logout'),
 	path('account_redirect/',views.account_handler, name = 'accounts_handler'),
+	path('help_page/',views.help_view, name="help_page"),
 ]
 

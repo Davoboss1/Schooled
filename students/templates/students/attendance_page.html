@@ -7,7 +7,7 @@
     </div>
     <div class="d-flex my-3">
 
-        <h5 class="my-auto ml-3">Select Date : </h5>
+        <h6 class="my-auto ml-3">Select Date : </h6>
 
         <div class="d-flex date-container ">
             <span class="fa fa-calendar vcenter ml-2">
@@ -27,7 +27,7 @@
 
         <!-- Attendance mark form -->
         <form method="post" action="{% url 'students:mark' date %}" id="mark-form">
-            <h5>Mark attendance for {{date|to_date|date:"l jS, F Y"}}</h5>
+            <h6 class="my-3">Mark attendance for {{date|to_date|date:"l jS, F Y"}}</h6>
             <!-- Mark and Unmark all buttons -->
             <div class="mark-all-container">
                 <button class="btn btn-info mx-auto" id="markallBtn" onclick="markAll(true);" type="button">Mark all

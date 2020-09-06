@@ -4,12 +4,7 @@
 	.div-300 {
 		height: 300px;
 	}
-    h1,h2,h3,h4,h5,h6{
-        font-family: 'Neuton', serif;
-    }
-    p,blockquote{
-        font-family: 'Montserrat', sans-serif;
-    }
+    
 </style>
 {% endblock %}
 {% block content %}
@@ -19,12 +14,15 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="main-header" >
-				<h1 class="text-white text-center" style="margin-top:150px;">
+				<div>
+					<h1 class="text-white text-center" >
 					Welcome to Schooled
 				</h1>
 				<h6 class="text-white mx-auto mt-3" style="text-align:center;">
 					The software that makes your work easier
 				</h6>
+				</div>
+				
 			</div>
 			
 		</div>
@@ -38,7 +36,7 @@
 		<div class="row">
 			<!-- Start short project description area -->
 			<div class="col-md-6 col-lg-6">
-				<div class="border bordered-dark rounded d-flex flex-column mt-5 mb-5 ml-2 mr-2 div-300">
+				<div class="border bordered-dark rounded d-flex flex-column mt-5 mb-5 ml-2 mr-2 div-300 p-2">
 					<h3 class="mx-auto mb-3">What is schooled ?</h3>
 
 					<p class="mb-1 text-center"> An application that helps schools, teachers,parents/guardians</p>
@@ -78,8 +76,8 @@
 			<!-- Start login area -->
 			<div class="col-md-6 col-lg-6">
 				<div class="border bordered-dark rounded d-flex flex-column mt-5 mb-5 ml-2 mr-2 div-300">
-					<h3 class="my-3 text-center" >Are you an existing user...</h3>
-					<h4 class="my-1 text-center">Click button below to login ?</h4>
+					<h4 class="my-3 text-center" >Are you an existing user...</h4>
+					<h5 class="my-1 text-center">Click button below to login ?</h5>
 					<a class="genric-btn info radius w-50 m-auto"
 						href="{% url 'accounts:login' %}">Login</a>
 				</div>
@@ -89,8 +87,8 @@
 			<!-- Start contact area -->
 			<div class="col-md-6 col-lg-6">
 				<div class="border bordered-dark rounded d-flex flex-column mt-5 mb-5 ml-2 mr-2 div-300">
-					<h2 class="my-3 text-center"> Schooled Contact.</h2>
-					<h4 class="my-1 text-center">Contact us.</h4>
+					<h4 class="my-3 text-center"> Schooled Contact.</h4>
+					<h5 class="my-1 text-center">Contact us.</h5>
 					<div class="d-flex p-3 bg-info m-auto">
 						<div class="mx-auto">
 							<a href="">

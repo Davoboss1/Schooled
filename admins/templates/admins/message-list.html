@@ -11,16 +11,16 @@
             <input type="hidden" name="convo" value="">
             <input type="hidden" name="sender" value="{{user.get_username}}">
             <label for="username-entry">
-                <h5>Username</h5>
+                <h6>Username</h6>
             </label>
             <input name="username-entry" id="username-entry" class="form-control" placeholder="Enter Username"
                 type="text" required>
             <label class="my-2" for="subject-entry">
-                <h5>Conversation subject</h5>
+                <h6>Conversation subject</h6>
             </label>
             <input name="subject-entry" id="subject-entry" class="form-control" placeholder="Enter Subject" type="text">
             <label class="my-2" for="message-entry">
-                <h5>Message</h5>
+                <h6>Message</h6>
             </label>
             <textarea name="message-entry" id="message-entry" class="form-control py-3"
                 placeholder="Enter first message" required></textarea>
@@ -47,11 +47,11 @@
                     </div>
                     <div class="desc w-100 ml-2">
                         <div class="d-flex">
-                            <h5 class="my-2" style="width: 85%;"><b class="text-dark">{{recipent.get_full_name|default:"Unavailable user"}}</b>
-                                <div class="mt-1">
+                            <span style="width: 85%;"><h6 class="text-dark">{{recipent.get_full_name|default:"Unavailable user"}}</h6>
+                                <div>
                                     <u class="text-dark">{{recipent.level|default:"Unavailable"}}</u>
                                 </div>
-                            </h5>
+                            </span>
                             <span style="width: 15%;"><span
                                     class="badge badge-pill badge-primary">{{conversation.msg_count}}</span></span>
                         </div>
@@ -81,11 +81,11 @@
                     </div>
                     <div class="desc w-100 ml-2">
                         <div class="d-flex">
-                            <h5 class="my-2" style="width: 85%;"><b class="text-dark">{{recipent.get_full_name}}</b>
+                            <span class="my-2" style="width: 85%;"><h6 class="text-dark">{{recipent.get_full_name}}</h6>
                                 <div class="mt-1">
                                     <u class="text-dark">{{recipent.level}}</u>
                                 </div>
-                            </h5>
+                            </span>
                             <span style="width: 15%;"><span
                                     class="badge badge-pill badge-primary">{{conversation.msg_count}}</span></span>
 

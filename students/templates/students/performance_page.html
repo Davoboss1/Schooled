@@ -10,7 +10,7 @@
 				<div class="mx-auto d-flex">
 					<div class="custom-file mr-1" > <input type="file" class="custom-file-input" name="user-profile-picture"
 						id="csv_file"
-						onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected successfully' : this.nextElementSibling.innerHTML = 'Choose file')"
+						onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected' : this.nextElementSibling.innerHTML = 'Choose file')"
 						> <label class="custom-file-label" for="csv_file" id="file-label">Choose
 						csv file</label> </div>
 						<select class="custom-select ml-1" id="file-student-select">
@@ -105,33 +105,6 @@
 
 	</div>
 
-	<!-- Beginning of delete modal -->
-	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal"
-		aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered " role="document">
-			<div class="modal-content border border-danger">
-				<div class="modal-header bg-danger text-light">
-					<h5 class="modal-title" id="deleteModalTitle">Delete Performance</h5> <button type="button"
-						class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true"
-							style="color:white;">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body" style="background:#EB6666; color:white;" id="deleteModalContent">Are you sure.
-					You want to delete this performance : <p id="modalsubject"></p>
-				</div>
-				<div class="modal-footer flex-column">
-					<div class="d-flex ml-auto">
-						<button type="button" class="btn btn-secondary mr-3" data-dismiss="modal">No</button>
-
-						<button id="deleteButton" class="btn btn-danger" type="button">yes</button>
-					</div>
-					<div id="status" class="mt-2"></div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-	<!--End of delete modal -->
 	<script>
 
 		$(function () {
@@ -150,6 +123,9 @@
 					$("#performance-list").html(data);
 				},
 				error: function (req, status, error) {
+					if(req.responseText){
+					$("#performance-list").html("<div class='d-flex flex-column my-3'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>" + req.responseText +"</div>");
+					}else
 					$("#performance-list").html("<div class='d-flex flex-column my-3'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong and page could not be fetched.</div>");
 				}
 			});

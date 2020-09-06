@@ -13,3 +13,9 @@ class User(AbstractUser):
 	def __str__(self):
 		return f"Username : {self.username} , FullName : {self.get_full_name()}"
 
+
+class help(models.Model):
+    title = models.CharField(max_length=150)
+    description = models.TextField()
+    def __str__(self):
+        return self.title

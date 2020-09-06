@@ -219,13 +219,6 @@
 						  	 		  </div>			  
 						  	 	<!--End of delete modal -->
 			 <script >
-			 	
-			 			$(function(){
-			alert("Document ready");
-			});
-			
-			 	
-			 	
 	{% if type == "view-performance" %}
 	$("#nav-view-performance-tab").addClass("active");
 	$("#nav-view-performance").addClass("show active");
@@ -258,7 +251,7 @@
 		success:function(data){
 			 status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Success..</strong>'+data+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
 		},
-		failure:function(data){
+		error :function(data){
 		 status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong>Something went wrong. Form was not submitted <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
 
 		},
@@ -284,8 +277,8 @@
 			//main.innerHTML=data;
 			$("#main").html(data);
 		},
-		failure:function(data){
-			alert(data);
+		error:function(data){
+			$("#main").html(write_alert("Something went wrong. Please try again."));
 		},
 	});
 		

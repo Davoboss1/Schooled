@@ -1,6 +1,7 @@
 <div class="card text-center">
 	<div class="card-header bg-light text-dark"> School Information </div> 
 	<div class="card-body text-dark border border-light">
+		<img class="card-img-top mx-auto" src="{% if school.image %}{{school.image.url}}{% endif %}" alt="" style="max-height:50%; max-width:50%;">
 		<h6 class="mt-2"><u class="text-dark">School Name </u></h6>
 		<b  class="text-dark">{{school.school_name}}</b>
 		<h6 class="mt-2"><u class="text-dark">School Address </u></h6>
@@ -8,10 +9,11 @@
 		<h6 class="mt-2"><u class="text-dark">School Type </u></h6>
 		<b class="text-dark">{{school.type}}</b>	
 		<h6 class="mt-2"><u class="text-dark">Email </u></h6>
-		<b class="text-dark">{{school.school_email}}</b>
+        <a href="mailto:{{school.school_email}}" class="text-dark">{{school.school_email}}</a>
 		<h6 class="mt-2"><u class="text-dark">Approved </u></h6>
 		<b class="text-dark">{{school.approved}}</b>
 		<h4 class="my-3"><u class="text-dark">School Owner Infomation</u></h4>
+		<img class="card-img-top mx-auto" src="{{admin.user.profile_picture.url}}" alt="" style="max-height:50%; max-width:50%;">
 		<h6 class="mt-2"><u class="text-dark">Name</u></h6>
 		<b class="text-dark">{{admin.user.get_full_name}}</b>
 		<h6 class="mt-2"><u class="text-dark">Username</u></h6>
@@ -19,7 +21,7 @@
 		<h6 class="mt-2"><u class="text-dark">Residential Address</u></h6>
 		<b class="text-dark">{{admin.address}}</b>
 		<h6 class="mt-2"><u class="text-dark">Email </u></h6>
-		<b class="text-dark">{{admin.user.email}}</b>
+        <a href="mailto:{{admin.user.email}}" class="text-dark">{{admin.user.email}}</a>
 		<h6 class="mt-2"><u class="text-dark">Phone no </u></h6>
 		<b class="text-dark">{{admin.phone_no}}</b>	
 	</div> 

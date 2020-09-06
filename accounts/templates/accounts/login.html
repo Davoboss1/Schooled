@@ -8,17 +8,21 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="main-header">
-				<h2 class="text-white text-center">Schooled Login page</h2>
-
+				<div>
+					<h2 class="text-white text-center">Schooled Login page</h2>
+				</div>
 			</div>
-
 		</div>
 	</div>
 
 </section>
 <!-- ================ End banner Area ================= -->
 <div class="container my-3 d-flex flex-column" style="max-width:350px;">
-
+{% if messages %}
+{% for message in messages %}
+<div {% if message.tags %} class="alert alert-{{ message.tags }} my-3"{% endif %}>{{ message }}</div>
+{% endfor %}
+{% endif %}
 	<form class="w-100 mx-auto"  method="post" action="{% url 'accounts:login' %}">
 
 		{% csrf_token %}

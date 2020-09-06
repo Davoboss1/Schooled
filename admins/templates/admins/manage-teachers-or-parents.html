@@ -32,17 +32,17 @@
                         <!-- Card body -->
                         <div class="card-body">
                             <!-- Profile Info -->
-                            <h5><u class="text-dark">Full Name</u></h5>
+                            <h6><u class="text-dark">Full Name</u></h6>
                             <b class="dark-red">{{teacher.full_name}}</b>
-                            <h5><u class="text-dark">Username</u></h5>
+                            <h6><u class="text-dark">Username</u></h6>
                             <b class="dark-red">{{teacher.user.get_username}}</b>
-                            <h5><u class="text-dark">Address</u></h5>
+                            <h6><u class="text-dark">Address</u></h6>
                             <b class="dark-red">{{teacher.address}}</b>
-                            <h5><u class="text-dark">Class teacher of</u></h5>
+                            <h6><u class="text-dark">Class teacher of</u></h6>
                             <b class="dark-red">{{teacher.teacher_class.class_name }}</b>
-                            <h5><u class="text-dark">Email</u></h5>
-                            <b class="dark-red">{{teacher.user.email}}</b>
-                            <h5><u class="text-dark">Phone number</u></h5>
+                            <h6><u class="text-dark">Email</u></h6>
+                            <a href="mailto:{{teacher.user.email}}" class="dark-red">{{teacher.user.email}}</a>
+                            <h6><u class="text-dark">Phone number</u></h6>
                             <b class="dark-red">{{teacher.phone_no}}</b>
                             <!-- End of profile info -->
                         </div>
@@ -104,17 +104,17 @@
                     <!-- Card body -->
                     <div class="card-body">
                         <!-- Profile Info -->
-                        <h5><u class="text-dark">Full Name</u></h5>
+                        <h6><u class="text-dark">Full Name</u></h6>
                         <b class="dark-red">{{parent.full_name|default:"Not set yet"}}</b>
-                        <h5><u class="text-dark">Username</u></h5>
+                        <h6><u class="text-dark">Username</u></h6>
                         <b class="dark-red">{{parent.user.get_username}}</b>
-                        <h5><u class="text-dark">Address</u></h5>
+                        <h6><u class="text-dark">Address</u></h6>
                         <b class="dark-red">{{parent.address|default:"Not set yet"}}</b>
-                        <h5><u class="text-dark">Email</u></h5>
+                        <h6><u class="text-dark">Email</u></h6>
                         <b class="dark-red">{{parent.user.email|default:"Not set yet"}}</b>
-                        <h5><u class="text-dark">Phone number</u></h5>
+                        <h6><u class="text-dark">Phone number</u></h6>
                         <b class="dark-red">{{parent.phone_no|default:"Not set yet"}}</b>
-                        <h5><u class="text-dark">Children in your school</u></h5>
+                        <h6><u class="text-dark">Children in your school</u></h6>
                         <table class="table my-3">
                             <thead class="thead-dark">
                                 <tr>

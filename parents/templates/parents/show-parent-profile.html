@@ -1,0 +1,17 @@
+<div class="card text-center">
+	<div class="card-header bg-light text-dark"> Parent Information </div> 
+	<div class="card-body text-dark border border-light">
+		<img class="card-img-top mx-auto" src="{{parent.user.profile_picture.url}}" alt="" style="max-height:50%; max-width:50%;">
+                            
+		<h6 class="mt-2"><u class="text-dark">Name </u></h6>
+		<b  class="text-dark">{{parent.user.get_full_name}}</b>
+		<h6 class="mt-2"><u class="text-dark">Username </u></h6>
+		<b  class="text-dark">{{parent.user.get_username}}</b>
+		<h6 class="mt-2"><u class="text-dark">Address</u></h6>
+		<b  class="text-dark">{{parent.address}}</b>
+		<h6 class="mt-2"><u class="text-dark">Email </u></h6>
+        <a href="mailto:{{parent.user.email}}" >{{parent.user.email}}</a>
+		<h6 class="mt-2"><u class="text-dark">Phone number </u></h6>
+		<b class="text-dark">{{parent.phone_no}}</b>
+		</div> 
+</div>

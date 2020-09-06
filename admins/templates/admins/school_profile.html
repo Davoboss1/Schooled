@@ -1,11 +1,11 @@
 <div class="d-flex border-left border-right border-dark p-1 mx-auto" >
     <img class="rounded" src="{% if school.image %}{{school.image.url}}{% endif %}" alt="" style="width:150px; height:150px;">
     <div >
-        <h6 class="ml-3"><u class="text-dark">School Name</u> : <strong>{{school.school_name}} </strong>
+        <h6 class="ml-3"><u class="text-dark font-weight-bold">School Name</u> : <span>{{school.school_name}} </span>
         </h6>
-        <h6 class="ml-3 mt-3"><u class="text-dark">Motto</u> : <strong>{{school.motto}}</strong>
+        <h6 class="ml-3 mt-3"><u class="text-dark  font-weight-bold">Motto</u> : <span>{{school.motto}}</span>
         </h6>
-        <h6 class="ml-3 mt-3"><u class="text-dark">School Owner</u> : <strong>{{user.get_full_name}} </strong>
+        <h6 class="ml-3 mt-3"><u class="text-dark  font-weight-bold">School Owner</u> : <span>{{user.get_full_name}} </span>
         </h6>
     </div>
 </div> 		 			 		
@@ -23,7 +23,7 @@
                 <b class="text-dark">{{school.type}}</b>
 
                 <h6 class="mb-2"><u class="text-dark">Email </u></h6>
-                <b class="text-dark">{{school.school_email}}</b>
+                <a href="mailto:{{school.school_email}}" class="text-dark">{{school.school_email}}</a>
                 <h6 class="mb-2"><u class="text-dark">Approved </u></h6>
                 <b class="text-dark">{{school.approved}}</b>
             </div> 
@@ -66,8 +66,8 @@
                 <b class="text-dark">{{user.admin.address}}</b>
 
                 <h6 class="mb-2"><u class="text-dark">Email </u></h6>
-                <b class="text-dark">
-                    {{user.email}}</b>
+                <a href="mailto:{{user.email}}" class="text-dark">
+                    {{user.email}}</a>
                 <h6 class="mb-2"><u class="text-dark">Phone no </u></h6>
                 <b class="text-dark">
                     {{user.admin.phone_no}}</b>

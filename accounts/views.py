@@ -6,10 +6,12 @@ from django.contrib.auth import get_user_model
 from .forms import UserCreationForm,SetPasswordForm
 from django.core.mail import send_mail,BadHeaderError
 from django.contrib.auth.views import LoginView
-from django.template import Template,RequestContext
+from django.template import Template,RequestContext,Context
+from django.contrib import messages
 from admins.forms import AdminForm,SchoolForm
 from django.contrib import messages
 from tools import get_expirable_session,set_expirable_session,save_picture
+from .models import help
 # Create your views here.
 #main homepage
 #redirects authenticated users
@@ -51,20 +53,22 @@ def register(request):
 			#Get user model object,assign level, set image and save
 			user = userform.save(commit=False)
 			user.level = "Admin"
-			save_picture(user.profile_picture,request.FILES.get("user-profile-picture"))
 			user.save()
+			save_picture(user.profile_picture,request.FILES.get("user-profile-picture"))
 			#Get admin model object,assign to user and save
 			admin = admin_form.save(commit=False)	
 			admin.user = user
 			admin.save()
 			#Get school model object, save image, assign school adkin and save
 			school = schoolform.save(commit=False)
-			#setting school image
-			save_picture(school.image,request.FILES.get("school-image"))
 			school.admin = admin
 			school.save()
+			#setting school image
+			save_picture(school.image,request.FILES.get("school-image"))
 			#Messages to be added
 			#redirect to login page
+			messages.success(request,"Your school has been registered successfully. Kindly login to continue")
+			request.session[user.username + "_new_user"] = True
 			return redirect("accounts:login")
 	return render(request, 'accounts/admin_register.html', {'userform':userform,'adminform':admin_form,'schoolform':schoolform,})
 	
@@ -120,6 +124,7 @@ def reset_password(request):
 				passwordform = SetPasswordForm(user,request.POST)
 				if passwordform.is_valid():
 					passwordform.save()
+					messages.success(request,"Your password has been successfully reset.")
 					return redirect("accounts:login")
 				else:
 					return render(request,"accounts/reset-password.html",{"passwordform":passwordform,"v_code":v_code,"username":username})
@@ -161,3 +166,12 @@ def account_handler(request):
 			return redirect("parents:parents_homepage")
 	except:
 		return redirect("accounts:welcome_page")
+
+def help_view(request):
+    if "help_pk" in request.GET:
+        help_obj = help.objects.get(pk=request.GET.get("help_pk"))
+        description = Template("{{desc|linebreaks}}").render(Context({"desc":help_obj.description}));
+        print(description)
+        return HttpResponse(description)
+    helps = help.objects.all()
+    return render(request,"accounts/help-page.html",{"helps":helps})

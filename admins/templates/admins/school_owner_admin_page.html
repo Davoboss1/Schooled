@@ -2,6 +2,7 @@
 <html lang="zxx" class="no-js">
 {% load static %}
 {% load crispy_forms_tags %}
+
 <head>
     <!-- Mobile Specific Meta -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -17,17 +18,18 @@
     <meta charset="UTF-8" />
     <!-- Site Title -->
     <title>Schooled. The school management application</title>
-<!--
+    <!--
             CSS
             =============================================
         -->
-<link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Neuton:ital,wght@0,200;0,300;0,400;0,700;1,400&family=Roboto&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{% static 'css/linearicons.css'%}" />
-<link rel="stylesheet" href="{% static 'css/bootstrap.css'%}" />
-<link rel="stylesheet" href="{% static 'css/main.css'%}" />
-<link rel="stylesheet" href="{% static 'css/style.css'%}">
-{% block style %}
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat&family=Neuton:ital,wght@0,200;0,300;0,400;0,700;1,400&family=Roboto&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/linearicons.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    {% block style %}
     <style>
         @media screen and (min-width:768px) {
             #main {
@@ -86,312 +88,365 @@
             padding: 0;
         }
 
-        #new-user-body{
+        #new-user-body {
             width: 100%;
             text-align: left;
             margin-top: 5%;
         }
-        #new-user-body p{
-            font-size: 0.8em;
+
+        #new-user-body p {
+            font-size: 1em;
+        }
+
+        .help-card {
+            padding: 5%;
+            background-color: #FFFFFF;
+            box-shadow: 10px 10px 4px #e8e8e8;
+        }
+
+        .help-card .title {
+            background-color: purple;
+            border-radius: 5px;
+            color: white;
+            padding: 5px;
+        }
+
+        .help-card .body {
+            padding: 5px;
         }
     </style>
     {% endblock %}
+
 </head>
 
 <body>
-    <!-- ================ Start Header Area ================= -->
-    <header class="default-header" id="main-nav">
-        <nav class="navbar navbar-expand-lg fixed-top navbar-light" style="background-color: #04091e;">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'accounts:accounts_handler' %}">
-                    <h3 class="brand-name">Schooled</h3>
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span class="lnr lnr-menu"></span>
-                </button>
-
-                <div class="collapse navbar-collapse justify-content-end align-items-center"
-                    id="navbarSupportedContent" style="background-color: #04091e;">
-                    <ul class="navbar-nav">
-                        <li>
-                            <div class="input-group-icon mx-3 d-flex flex-column">
-                                <div class="icon"><i class="fa fa-search" aria-hidden="true"></i></div>
-                                <input type="text" name="address" placeholder="Search Website"
-                                    onfocus="this.placeholder " onblur="this.placeholder = 'Search Website'" disabled
-                                    class="single-input rounded">
-
-                            </div>
-                        </li>
-                        <li><a href="{% url 'homepage' %}">Home</a></li>
-                        <!-- Dropdown -->
-                        <li class="dropdown">
-                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                                Navigate To
-                            </a>
-                            <div class="dropdown-menu">
-                                {% if request.user.level == "Teacher" %}
-                                <a class="dropdown-item" onclick="animateScrollToId('#teacher-tools');"
-                                    data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
-                                <a class="dropdown-item" onclick="animateScrollToId('#teacherProfile');"
-                                    data-toggle="collapse" data-target="#navbarSupportedContent">Profile </a>
-                                <a class="dropdown-item" onclick="animateScrollToId('#main');" data-toggle="collapse"
-                                    data-target="#navbarSupportedContent">Workspace</a>
-                                {% elif request.user.level == "Admin" %}
-                                <a class="dropdown-item" onclick="animateScrollToId('#admin-tools');"
-                                    data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
-                                <a class="dropdown-item" onclick="animateScrollToId('#main');" data-toggle="collapse"
-                                    data-target="#navbarSupportedContent">Workspace</a>
-                                {% else %}
-
-                                {% endif %}
-                                <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent"
-                                    onclick="animateScrollToElem('header:first-of-type');">Header</a>
-                                <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent"
-                                    onclick="animateScrollToId('#page-footer');">Footer</a>
-                            </div>
-                        </li>
-                        <li class="dropdown">
-                            {% if user.is_authenticated %}
-                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                                Logged In
-                            </a>
-                            <div class="dropdown-menu">
-
-                                <a class="dropdown-item" href="{% url 'accounts:logout' %}">Log Out</a>
-                            </div>
-                            {% else %}
-                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                                Login/Register
-                            </a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="{% url 'accounts:login' %}">Login</a>
-                                <a class="dropdown-item" href="{% url 'accounts:register' %}">Register school</a>
-                            </div>
-                            {% endif %}
-                        </li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="contacts.html">Contacts</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-    </header>
-    <!-- ================ End Header Area ================= -->
-
-    {% block content %}
-    <!-- ================ start banner Area ================= -->
-    <section class="home-banner-area">
-        <!-- Header area -->
-        <div class="container-fluid">
-            <div class="row">
-                <div class="main-header">
-                    <h2 class="text-white text-center" id="school-banner">
-                        {{user.admin.schools.first.school_name}}
-                    </h2>
-                    <h6 class="text-white py-2 mt-3 text-center border-top border-bottom" id="school-motto-banner">{{user.admin.schools.first.motto}}</h6>
-                    
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ================ End banner Area ================= -->
-
-    <!-- ================ Start Body Area ================= -->
-    <section>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="mx-auto py-3 my-3 col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3 border">
-                    <h3>
-                        Select current school :
-                    </h3>
-                    <select class="form-control my-3" id="selected-school">
-                        {% for school in schools %}
-                        <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}"
-                            value="{{school.pk}}">
-                            {{school.school_name}}
-                        </option>
-                        {% endfor %}
-                    </select>
-                    <div class="d-flex mt-2">
-                        <button class="btn btn-success mr-2"
-                            onclick="document.getElementById('body-row').style.display='none'; document.getElementById('new-sch-cont').style.display='flex';">
-                            Create new school
-                        </button>
-                        <button class="btn btn-danger ml-2" id="delete-school-btn">
-                            Delete school
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="row" id="body-row">
-                <!-- Admin List -->
-                <div class="col-12 col-sm-12 col-md-4 col-lg-4 bg-light thick-horizontal-border" id="admin-tools">
-                    <!-- main list -->
-                    <ul class="block-list my-3">
-                        <li data-history="view-school-profile" data-url="{% url 'school_profile' %}">School Profile</li>
-                        <li data-history="view-performance" data-url="{% url 'class_list' 'view_performance' %}">View
-                            Performance </li>
-                        <li data-history="view-attendance" data-url="{% url 'class_list' 'view_attendance' %}">View
-                            Attendance</li>
-                        <li data-history="view-student-information"
-                            data-url="{% url 'class_list' 'view_student_info' %}">View Students Information</li>
-                        <li data-history="view-manage-teachers" data-url="{% url 'class_list' 'manage_teachers' %}">
-                            Manage Teachers</li>
-                        <li data-history="view-manage-parents" data-url="{% url 'class_list' 'manage_parents' %}">Manage
-                            Parents</li>
-                        <li data-history="view-messages" data-url="{% url 'message_list' %}">Messages <span
-                                class="badge badge-dark badge-pill ml-3"
-                                id="unread-messages-count">{{unread_msg_count}}</span></li>
-                        <li data-history="view-notifications" data-url="{% url 'notifications' %}">Notifications <span
-                                class="badge badge-dark badge-pill ml-3"
-                                id="unviewed-notifications-count">{{unviewed_notifications_count}}</span></li>
-                        <li data-history="view-request-for-changes" data-url="{% url 'coming_soon' %}">Request for
-                            changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
-                        <li data-history="view-post-and-news" data-url="{% url 'coming_soon' %}">Post and News</li>
-                    </ul>
-                </div>
-                <!-- Main Right Area -->
-                <div class="col-12 col-sm-12 col-md-8 col-lg-8 py-3 d-flex flex-column">
-                    <div class="d-flex flex-column" id="main">
-                        <h4 class="text-center">No Current Work</h4>
-                        <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
-                            class="text-center">Nothing to show</small>
-                    </div>
-                </div>
-                <!--End of Col container -->
-            </div>
-            <div class="" style="display:none;" id="new-sch-cont">
-                <div class="mx-auto">
-                    <button class="btn btn-outline-primary ml-3"
-                        onclick="document.getElementById('new-sch-cont').style.display='none'; document.getElementById('body-row').style.display='flex';">
-                        <span class="fa fa-angle-left mr-2"></span>
-                        Go back to workspace and menu
-                    </button>
-                    <form method="post" style="max-width:350px;" class="m-3" id="new-school-form">
-                        {% csrf_token %}
-                        {{schoolform|crispy}}
-                        <div class="form-group">
-                            <label for="customFile1">School Logo</label>
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="school-image" id="customFile1"
-                                    onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected successfully' : this.nextElementSibling.innerHTML = 'Choose file')"
-                                    accept="image/*">
-                                <label class="custom-file-label" for="customFile1" id="file-label1">Choose file</label>
-                            </div>
-                        </div>
-                        <button class="btn btn-info ">
-                            Create new school
-                        </button>
-                        <div class="my-2" id="new-school-status">
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-    </section>
-    {% endblock %}
-    <!-- ================ End Body Area -->
-    <!-- ================ start footer Area ================= -->
-    <footer class="footer-area section-gap" id="page-footer">
-        <div class="container-fluid">
-
-            <div class="row">
-                <div class="col-12 col-sm-12 col-md-6 col-lg-6 d-flex flex-column">
-
-                    <a class="text-white mt-3 mx-auto" href="{% url 'accounts:accounts_handler' %}"
-                        style="font-size:30px;"><span class="fa fa-graduation-cap mr-3"></span> Schooled</a>
-                    <blockquote class="generic-blockquote bg-dark mt-2 mb-3 text-white p-2">Schooled helps the data
-                        management of a school. With this application the school is able to manage students,teachers and
-                        parents/guardians effortlessly.</blockquote>
-                    <div class="footer-profile my-3">
-                        <img class="rounded-circle"
-                            src="{{user.profile_picture.url|default:'/media/default.jpg'}}">
-
-                        <div class="my-1">
-                            <h6 class="text-white mt-1">Name : {{user.get_full_name|default:"Guest"}}</h6>
-                            <h6 class="text-white mt-1">User Type : {{user.level|default:"Guest"}}</h6>
-                            {% if user.level == "Admin" %}
-                            <h6 class="text-white mt-1">School :
-                                {{user.admin.schools.first.school_name}}
-                            </h6>
-                            {% elif user.level == "Teacher" %}
-                            <h6 class="text-white mt-1">Schools :
-                                {{request.user.teacher.teacher_class.school.school_name}}
-                            </h6>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% if request.user.is_authenticated %}
-                    <a class="mx-auto w-50" href="{% url 'accounts:logout' %}">
-                        <button class="btn btn-outline-light my-3 w-100">
-                            Log out
-                        </button>
-                    </a>
-                    {% endif %}
-                    <h4 class="text-white text-center my-3">Thank you for using schooled.</h4>
-
-                </div>
-                <div class="col-12 col-sm-12 col-md-6 col-md-6">
-                    <h5 class="text-white text-center">For any information or issues</h5>
-                    <h5 class="text-white text-center">Contact us </h5>
-                    <nav class="nav flex-column my-3">
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-envelope mr-2"></span>
-                            Email </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-whatsapp mr-2"></span>
-                            Whatsapp </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-linkedin mr-2"></span>
-                            LinkedIn </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-facebook mr-2"></span>
-                            Facebook </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-instagram mr-2"></span>
-                            Instagram </a>
-                        <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-twitter mr-2"></span>
-                            Twitter </a>
-
-                    </nav>
-                    <h5 class="text-white text-center">For more information about this application</h5>
-                    <h5 class="text-center mt-2"><a href="" class="text-info">Click here.</a></h5>
-                </div>
-                <h5 class="text-white mx-auto my-3">Schooled © 2019. All rights reserved</h5>
-            </div>
-        </div>
-    </footer>
-    <!-- ================ End footer Area ================= -->
-
-    <div id="new-user" style="display: none;" >
-        <h1><u class="text-dark">Welcome to schooled</u></h1>
-        <p class="text-center my-2">Thank you for joining us</p>
-        <div id="new-user-body">
-            <b class="font-weight-bold">Hello {{user.get_full_name}}</b>          
-            <h3 class="text-center">Getting started.</h3>
-            <h4 class="text-center"><u class="text-dark">Teacher management</u></h4>
-            <div class="card p-2"><p>
-                You will need to create a class and a teacher profile for allow your teachers use this platform for your school.
-            </p>
-            <p>
-                You can do that by clicking on manage teachers, then click the add teachers button and fill in the form.
-                <br>
-                <small>You will provide a username and password for your teacher which the teacher will change after login.</small>
-            </p></div>
-            
-            <h4 class="text-center"><u class="text-dark">Session management</u></h4>
-            <div class="card p-2">
-                <p>
-                    You also need to specify the term/session your school is currently in for performances tp be added.
-                </p>
-                <p>
-                    That can be done by going to view performance and clicking the new session button and specify the term/session your school is currently in.
-                </p>
-                <small>Note: You will need to update this every term.</small>
-            </div>
-            
+    <div id="help-container" class="close" >
+        <div class="mt-3 mx-3 d-flex justify-content-between">
+            <button class="btn btn-dark lnr lnr-cross text-white" onclick="toggleHelp(false)" id="closeHelp" style="font-size: 30px;"></button>
+            <h3 class="brand-name my-auto">Schooled</h3>
         </div>
         
+        <div class="container my-3" id="help-container-body" >
+        </div>
     </div>
+    <!-- ================ Start Header Area ================= -->
+    <div id="main-page-body">
+        <header class="default-header" id="main-nav">
+            <nav class="navbar navbar-expand-lg fixed-top navbar-light" style="background-color: #04091e;">
+                <div class="container">
+                    <a class="navbar-brand" href="{% url 'accounts:accounts_handler' %}">
+                        <h3 class="brand-name">Schooled</h3>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="lnr lnr-menu"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse justify-content-end align-items-center"
+                        id="navbarSupportedContent" style="background-color: #04091e;">
+                        <ul class="navbar-nav">
+                            <li>
+                                <div class="d-flex">
+                                    <div class="input-group mx-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white"><span
+                                                    class="fa fa-search"></span></span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Search website">
+                                    </div>
+                                </div>
+
+                            </li>
+                            <li><a href="{% url 'homepage' %}">Home</a></li>
+                            <!-- Dropdown -->
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                    Navigate To
+                                </a>
+                                <div class="dropdown-menu">
+                                    {% if request.user.level == "Teacher" %}
+                                    <a class="dropdown-item" onclick="animateScrollToId('#teacher-tools');"
+                                        data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
+                                    <a class="dropdown-item" onclick="animateScrollToId('#teacherProfile');"
+                                        data-toggle="collapse" data-target="#navbarSupportedContent">Profile </a>
+                                    <a class="dropdown-item" onclick="animateScrollToId('#main');"
+                                        data-toggle="collapse" data-target="#navbarSupportedContent">Workspace</a>
+                                    {% elif request.user.level == "Admin" %}
+                                    <a class="dropdown-item" onclick="animateScrollToId('#admin-tools');"
+                                        data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
+                                    <a class="dropdown-item" onclick="animateScrollToId('#main');"
+                                        data-toggle="collapse" data-target="#navbarSupportedContent">Workspace</a>
+                                    {% else %}
+
+                                    {% endif %}
+                                    <a class="dropdown-item" data-toggle="collapse"
+                                        data-target="#navbarSupportedContent"
+                                        onclick="animateScrollToElem('header:first-of-type');">Header</a>
+                                    <a class="dropdown-item" data-toggle="collapse"
+                                        data-target="#navbarSupportedContent"
+                                        onclick="animateScrollToId('#page-footer');">Footer</a>
+                                </div>
+                            </li>
+                            <li class="dropdown">
+                                {% if user.is_authenticated %}
+                                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                    Logged In
+                                </a>
+                                <div class="dropdown-menu">
+
+                                    <a class="dropdown-item" href="{% url 'accounts:logout' %}">Log Out</a>
+                                </div>
+                                {% else %}
+                                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                    Login/Register
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'accounts:login' %}">Login</a>
+                                    <a class="dropdown-item" href="{% url 'accounts:register' %}">Register school</a>
+                                </div>
+                                {% endif %}
+                            </li>
+                            <li><a href="about.html">About</a></li>
+                            <li><a href="javascript:void(0)" data-toggle="collapse" data-target="#navbarSupportedContent" onclick="toggleHelp(true)">Help</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+        </header>
+        <!-- ================ End Header Area ================= -->
+
+        {% block content %}
+        <!-- ================ start banner Area ================= -->
+        <section class="home-banner-area">
+            <!-- Header area -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="main-header">
+                        <div>
+                            <h2 class="text-white text-center" id="school-banner">
+                                {{user.admin.schools.first.school_name}}
+                            </h2>
+                            <h6 class="text-white py-2 mt-3 text-center border-top border-bottom"
+                                id="school-motto-banner">{{user.admin.schools.first.motto}}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ================ End banner Area ================= -->
+
+        <!-- ================ Start Body Area ================= -->
+        <section>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="mx-auto py-3 my-3 col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3 border">
+                        <h3>
+                            Select current school :
+                        </h3>
+                        <select class="form-control my-3" id="selected-school">
+                            {% for school in schools %}
+                            <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}"
+                                value="{{school.pk}}">
+                                {{school.school_name}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="d-flex mt-2">
+                            <button class="btn btn-success mx-auto"
+                                onclick="document.getElementById('body-row').style.display='none'; document.getElementById('new-sch-cont').style.display='flex';">
+                                Create new school
+                            </button>
+                            <button class="btn btn-danger mx-auto" id="delete-school-btn">
+                                Delete school
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="body-row">
+                    <!-- Admin List -->
+                    <div class="col-12 col-sm-12 col-md-4 col-lg-4 bg-light thick-horizontal-border" id="admin-tools">
+                        <!-- main list -->
+                        <ul class="block-list my-3">
+                            <li data-history="view-school-profile" data-url="{% url 'school_profile' %}">School Profile
+                            </li>
+                            <li data-history="view-performance" data-url="{% url 'class_list' 'view_performance' %}">
+                                View
+                                Performance </li>
+                            <li data-history="view-attendance" data-url="{% url 'class_list' 'view_attendance' %}">View
+                                Attendance</li>
+                            <li data-history="view-student-information"
+                                data-url="{% url 'class_list' 'view_student_info' %}">View Students Information</li>
+                            <li data-history="view-manage-teachers" data-url="{% url 'class_list' 'manage_teachers' %}">
+                                Manage Teachers</li>
+                            <li data-history="view-manage-parents" data-url="{% url 'class_list' 'manage_parents' %}">
+                                Manage
+                                Parents</li>
+                            <li data-history="view-messages" data-url="{% url 'message_list' %}">Messages <span
+                                    class="badge badge-dark badge-pill ml-3"
+                                    id="unread-messages-count">{{unread_msg_count}}</span></li>
+                            <li data-history="view-notifications" data-url="{% url 'notifications' %}">Notifications
+                                <span class="badge badge-dark badge-pill ml-3"
+                                    id="unviewed-notifications-count">{{unviewed_notifications_count}}</span></li>
+                            <li data-history="view-request-for-changes" data-url="{% url 'coming_soon' %}">Request for
+                                changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
+                            <li data-history="view-post-and-news" data-url="{% url 'coming_soon' %}">Post and News</li>
+                        </ul>
+                    </div>
+                    <!-- Main Right Area -->
+                    <div class="col-12 col-sm-12 col-md-8 col-lg-8 py-3 d-flex flex-column">
+                        <div class="d-flex flex-column" id="main">
+                            <h4 class="text-center">No Current Work</h4>
+                            <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
+                                class="text-center">Nothing to show</small>
+                        </div>
+                    </div>
+                    <!--End of Col container -->
+                </div>
+                <div class="" style="display:none;" id="new-sch-cont">
+                    <div class="mx-auto">
+                        <button class="btn btn-outline-primary ml-3"
+                            onclick="document.getElementById('new-sch-cont').style.display='none'; document.getElementById('body-row').style.display='flex';">
+                            <span class="fa fa-angle-left mr-2"></span>
+                            Go back to workspace and menu
+                        </button>
+                        <form method="post" style="max-width:350px;" class="m-3" id="new-school-form">
+                            {% csrf_token %}
+                            {{schoolform|crispy}}
+                            <div class="form-group">
+                                <label for="customFile1">School Logo</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="school-image" id="customFile1"
+                                        onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected successfully' : this.nextElementSibling.innerHTML = 'Choose file')"
+                                        accept="image/*">
+                                    <label class="custom-file-label" for="customFile1" id="file-label1">Choose
+                                        file</label>
+                                </div>
+                            </div>
+                            <button class="btn btn-info ">
+                                Create new school
+                            </button>
+                            <div class="my-2" id="new-school-status">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        {% endblock %}
+        <!-- ================ End Body Area -->
+        <!-- ================ start footer Area ================= -->
+        <footer class="footer-area section-gap" id="page-footer">
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-6 col-lg-6 d-flex flex-column">
+
+                        <a class="text-white mt-3 mx-auto" href="{% url 'accounts:accounts_handler' %}"
+                            style="font-size:30px;"><span class="fa fa-graduation-cap mr-3"></span> Schooled</a>
+                        <blockquote class="generic-blockquote bg-dark mt-2 mb-3 text-white p-2">Schooled helps the data
+                            management of a school. With this application the school is able to manage students,teachers
+                            and
+                            parents/guardians effortlessly.</blockquote>
+                        <div class="footer-profile my-3">
+                            <img class="rounded-circle" src="{{user.profile_picture.url|default:'/media/default.jpg'}}">
+
+                            <div class="my-1">
+                                <h6 class="text-white mb-0">Name : {{user.get_full_name|default:"Guest"}}</h6>
+                                <h6 class="text-white mb-0">User Type : {{user.level|default:"Guest"}}</h6>
+                                {% if user.level == "Admin" %}
+                                <h6 class="text-white mb-0">School :
+                                    {{user.admin.schools.first.school_name}}
+                                </h6>
+                                {% elif user.level == "Teacher" %}
+                                <h6 class="text-white mb-0">School :
+                                    {{request.user.teacher.teacher_class.school.school_name}}
+                                </h6>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if request.user.is_authenticated %}
+                        <a class="mx-auto w-50" href="{% url 'accounts:logout' %}">
+                            <button class="btn btn-outline-light my-3 w-100">
+                                Log out
+                            </button>
+                        </a>
+                        {% endif %}
+                        <h5 class="text-white text-center my-3">Thank you for using schooled.</h5>
+
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-6 col-md-6">
+                        <h5 class="text-white text-center">For any information or issues</h5>
+                        <h5 class="text-white text-center">Contact us </h5>
+                        <nav class="nav flex-column my-3">
+                            <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-envelope mr-2"></span>
+                                Email </a>
+                            <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-whatsapp mr-2"></span>
+                                Whatsapp </a>
+                            <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-linkedin mr-2"></span>
+                                LinkedIn </a>
+                            <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-facebook mr-2"></span>
+                                Facebook </a>
+                            <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-instagram mr-2"></span>
+                                Instagram </a>
+                            <a class="nav-link mx-auto contact-link" href="#"><span class="fa fa-twitter mr-2"></span>
+                                Twitter </a>
+
+                        </nav>
+                        <h6 class="text-white text-center">For more information about this application</h6>
+                        <h6 class="text-center mt-2"><a href="" class="text-info">Click here.</a></h6>
+                    </div>
+                    <h6 class="text-white mx-auto my-3">Schooled © 2019. All rights reserved</h6>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ================ End footer Area ================= -->
+    {% if new_user %}
+    <div id="new-user" style="display: none;">
+        <h4>Welcome to schooled</h4>
+        <div id="new-user-body">
+            <b>Hello {{user.get_full_name}}</b>
+            <blockquote class="generic-blockquote p-2">Thank you for joining us. <br> We are happy to have you on board.
+            </blockquote>
+            <h3 class="text-center underline">Getting started.</h3>
+            <div class="help-card">
+                <label class="title">Teacher management</label>
+                <div class="body">
+                    <p>
+                        You will need to create a class and a teacher profile for allow your teachers use this platform
+                        for your school.
+                    </p>
+                    <p>
+                        You can do that by clicking on manage teachers, then click the add teachers button and fill in
+                        the form.
+                        <br>
+                        <small>You will provide a username and password for your teacher which the teacher will change
+                            after login.</small>
+                    </p>
+                </div>
+            </div>
+            <div class="help-card mt-3">
+                <label class="title">Session management</label>
+                <div class="body">
+                    <p>
+                        You also need to specify the term/session your school is currently in for performances tp be
+                        added.
+                    </p>
+                    <p>
+                        That can be done by going to view performance and clicking the new session button and specify
+                        the term/session your school is currently in.
+                    </p>
+                    <small>Note: You will need to update this every term.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     {% block default_scripts %}
 
     <script src="{% static 'js/sweetalert.js' %}"></script>
@@ -511,9 +566,9 @@
             item.className = "active";
             var media = window.matchMedia("(min-width: 768px)");
             var scrollValue;
-            if(media.matches){
+            if (media.matches) {
                 scrollValue = 50;
-            }else{
+            } else {
                 scrollValue = 100;
             }
             $('html, body').animate({
@@ -540,12 +595,12 @@
         //history management
         (function history_management() {
             var li_items = document.querySelectorAll(".block-list li");
-            for(var index=0;index<li_items.length;index++){
+            for (var index = 0; index < li_items.length; index++) {
                 item = li_items[index];
                 item.id = "item-" + index;
                 item.onclick = setHistory;
             }
-            
+
 
             var last_page = "";
             var browser_history = [];
@@ -587,13 +642,15 @@
             $("#school-banner").text(school_name);
             $("#school-motto-banner").text(sch_motto);
         });
-
-    Swal.fire({
-        html: $("#new-user").html(),
-        showCloseButton: true,
-        showCancelButton: false,
-        showConfirmButton: false
-    });
+        {% if new_user %}
+        Swal.fire({
+            html: $("#new-user").html(),
+            showCloseButton: true,
+            showCancelButton: false,
+            showConfirmButton: false,
+            background: '#efefef'
+        });
+        {% endif %}
     </script>
     {% endblock %}
 </body>

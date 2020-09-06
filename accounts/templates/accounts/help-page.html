@@ -1,0 +1,45 @@
+
+<div id="helpSideNav" class="sidenav" >
+
+    <h6 class="help-nav-title">Help information</h6>
+    <a href="javascript:void(0)" class="closebtn">&times;</a>
+
+    <div class="container" id="help-nav-body">
+    <strong class="font-weight-bold"></strong>
+    <p class="mt-3">
+    </p>
+    </div>
+</div>
+
+<!-- Use any element to open the sidenav -->
+<ul class="help-list row">
+    {% for help in helps %}
+    <div class="col-md-6 col-lg-4">
+        <li data-pk="{{help.pk}}">
+            {{help.title}}
+            <span class="lnr lnr-arrow-right my-auto"></span>
+        </li>
+    </div>
+    {% endfor %}
+</ul>
+
+<script>
+        $(".help-list li").click(function(){
+            list = $(this);
+            //Expand side nav
+            document.getElementById("helpSideNav").style.width = "80%";
+            $("#closeHelp")[0].disabled = true;
+            //Get list and the nav body
+            var nav_body= $("#help-nav-body");
+            //Set nav body title with list text
+            nav_body.children().first().text(list.text());
+            //Fetch help information into nav-hel-body last element 
+            get_data("/accounts/help_page/",{help_pk:list.attr("data-pk")},nav_body.children().last()[0]);
+        });
+        //Close help nav
+        $(".sidenav .closebtn").click(function(){
+            document.getElementById("helpSideNav").style.width = "0";
+            $("#closeHelp")[0].disabled = false;
+        });
+        
+</script>

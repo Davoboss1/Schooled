@@ -20,9 +20,9 @@
                 <img class="rounded-circle icon_50x50" alt=""  src="{{reciever.profile_picture.url|default:'/media/default.jpg'}}">
             </div>
             <div class="">
-            <h5><u class="text-dark">Name</u> : <b class="text-dark">{{reciever.get_full_name|default:'Unavailable user'}}</b> </h5>
-            <h5><u class="text-dark">Username</u> : <b class="text-dark">{{reciever.get_username|default:'Unavailable'}}</b></h5>
-            <h5><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.level|default:'Unavailable'}}</b></h5>
+            <h6><u class="text-dark">Name</u> : <b class="text-dark">{{reciever.get_full_name|default:'Unavailable user'}}</b> </h6>
+            <h6><u class="text-dark">Username</u> : <b class="text-dark">{{reciever.get_username|default:'Unavailable'}}</b></h6>
+            <h6><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.level|default:'Unavailable'}}</b></h6>
             {% endwith %}
             {% else %}
             {% with reciever=conversation.reciever %}
@@ -30,9 +30,9 @@
                 <img class="rounded-circle icon_50x50" alt=""  src="{{reciever.profile_picture.url|default:'/media/default.jpg'}}">
             </div>
             <div class="">
-            <h5><u class="text-dark">Name</u> : <b class="text-dark">{{reciever.get_full_name|default:'Unavailable user'}}</b> </h5>
-            <h5><u class="text-dark">Username</u> : <b class="text-dark">{{reciever.get_username|default:'Unavailable'}}</b></h5>
-            <h5><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.level|default:'Unavailable'}}</b></h5>
+            <h6><u class="text-dark">Name</u> : <b class="text-dark">{{reciever.get_full_name|default:'Unavailable user'}}</b> </h6>
+            <h6><u class="text-dark">Username</u> : <b class="text-dark">{{reciever.get_username|default:'Unavailable'}}</b></h6>
+            <h6><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.level|default:'Unavailable'}}</b></h6>
             {% endwith %}
             {% endif %}
         </div>

@@ -28,11 +28,16 @@
 		background-color: #04091e;
 		border-bottom: 2px dotted white;
 		border-top: 2px dotted white;
+		
 	}
 
 	@media screen and (max-width:767px) {
 		#main {
 			padding-top: 15%;
+		}
+		#teacher-tools,#teacherProfile{
+			word-wrap: break-word;
+			word-break: break-all;
 		}
 	}
 
@@ -70,12 +75,14 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="main-header">
-				<h2 class="text-white text-center">
+				<div>
+					<h2 class="text-white text-center" style="margin-top: 70px;">
 					Welcome {{request.user.get_full_name}}
 				</h2>
 				<h3 class="text-center my-3">
 					<u class="text-white">School: {{request.user.teacher.teacher_class.school.school_name}}</u>
 				</h3>
+				</div>
 			</div>
 
 		</div>
@@ -163,7 +170,7 @@
 			<div class="col-12 col-sm-12 col-md-3 col-lg-3" id="teacherProfile">
 				<div>
 					<div class="d-flex flex-column p-3">
-						<h2 class="mx-auto mb-3"><u class="text-white">Teacher Info</u></h2>
+						<h4 class="mx-auto mb-3 text-white underline">Teacher Info</h4>
 						<div class="d-flex">
 							<img class="rounded" src="{{user.profile_picture.url}}" style="width:50px; height:50px;"
 								alt="">
@@ -192,18 +199,18 @@
 							
 							<li>
 								<b>Email:</b>
-								<b>{{user.email}}</b>
+                                <a href="mailto:{{user.email}}">{{user.email}}</a>
 							</li>
 							<li>
 								<b>Phone no:</b>
 								<b>{{user.teacher.phone_no}}</b>
 							</li>
 						</ul>
-						<h2 class="mx-auto my-3"><u class="text-white">School Info</u></h2>
+						<h4 class="mx-auto my-3 text-white underline">School Info</h4>
 
 						<div class="d-flex">
 							<img class="rounded"
-								src="	{% if user.teacher.Class.school.image %}{{user.teacher.Class.school.image.url}}{% endif %}"
+								src="{% if user.teacher.teacher_class.school.image %}{{user.teacher.teacher_class.school.image.url}}{% endif %}"
 								style="width:50px; height:50px;" alt="">
 							<ul class="profile-list">
 								<li>
@@ -223,7 +230,7 @@
 								<b>{{user.teacher.teacher_class.school.type}}</b>
 							</li>
 						</ul>
-						<h2 class="mx-auto my-3"><u class="text-white">Class Info</u></h2>
+						<h4 class="mx-auto my-3 text-white underline">Class Info</h4>
 						<ul class="unordered-list profile-list">
 							<li>
 								<b>Class:</b>

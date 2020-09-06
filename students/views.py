@@ -52,13 +52,15 @@ def performance_page(request,type):
 			context['url'] = reverse("students:performance_page",kwargs={"type":"view-performance"})
 			#get year and term value
 			if "year" in request.GET.keys() and "term" in request.GET.keys():
-				year = int(request.GET.get("year"))
-				term_text = request.GET.get("term")
 				#try to get term object
 				try:
+					year = int(request.GET.get("year"))
+					term_text = request.GET.get("term")
 					term = Term.objects.get(year=year,term=term_text,school=school)
 				except Term.DoesNotExist:
 					return HttpResponse("DOE_ERROR")
+				except ValueError:
+					return HttpResponseServerError("Invalid term detected")
 				#get all students in the paginated object list
 				for student in all_Info.object_list:
 					#filter the performance by term
@@ -79,7 +81,6 @@ def performance_page(request,type):
 		student.termly_performance = filtered_performance
 		return HttpResponse(loadmore_performance(student.termly_performance,10,int(request.GET.get("page_no"))))
 	context["students"] = request.user.teacher.teacher_class.student_set.all()
-	print("Main context :",context)		
 	return render(request, 'students/performance_page.html', context)
 
 
@@ -223,6 +224,9 @@ def update(request):
 		#create student form and parent form
 		form = StudentForm()
 		parent_form = UserCreationForm()
+		#Remove fields first_name,last_name and email as they are not needed in the form
+		del parent_form.fields['first_name'],parent_form.fields['last_name'],parent_form.fields['email']
+
 		parent_form.use_required_attribute = False
 	return render(request,'students/update.html',{'form':form,"parent_form":parent_form,})
 	

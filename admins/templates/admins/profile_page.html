@@ -54,6 +54,7 @@
 					<th>
 						Username
 					</th>
+					<th>.</th>
 				</thead>
 				<tbody>
 					{% for parent in student.parents.all %}
@@ -64,6 +65,7 @@
 						<td>
 							{{parent.user.get_username}}
 						</td>
+						<td class="btn btn-light w-100" id="view-parent-profile"><span class="fa fa-eye" ></span></td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -75,7 +77,7 @@
 		</li>
 		<li>
 			<h6><u class="text-dark">Email</u></h6>
-			<b>{{student.email}}</b>
+            <a href="mailto:{{student.email}}">{{student.email}}</a>
 		</li>
 		<li>
 			<h6><u class="text-dark">Phone number</u></h6>
@@ -154,6 +156,11 @@
 			}
 		});
 
+	});
+
+	$("#view-parent-profile").click(function (e) {
+		var parent_username = $(this).prev().text();
+		get_data("{% url 'show_profile' %}"+"parent/"+parent_username+"/",{},$("#profile-body")[0]);
 	});
 	//Upload image event handler
 	var uploadStatus = $("#upload-status");

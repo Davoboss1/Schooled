@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import check_password
+from django.contrib import messages as django_messages
 from .forms import SchoolForm, AdminForm
 from teachers.models import Class,Teacher
 from teachers.forms import TeacherForm
@@ -50,7 +51,10 @@ def school_owner_home_page(request):
 		notif_count = schools.first().notif_count
 	except:
 		notif_count = 0
-	return render(request,"admins/school_owner_admin_page.html",{'user':request.user,"unread_msg_count":unread_msg_count,"unviewed_notifications_count":notif_count,"schoolform":sch_form,"schools":schools})
+	new_user = request.session.get(user.username + "_new_user")
+	if new_user:
+		del request.session[user.username+"_new_user"]
+	return render(request,"admins/school_owner_admin_page.html",{'user':request.user,"unread_msg_count":unread_msg_count,"unviewed_notifications_count":notif_count,"schoolform":sch_form,"schools":schools,"new_user":new_user})
 
 
 #View for creating a new school
@@ -60,11 +64,11 @@ def create_new_school(request):
 	sch_form = SchoolForm(request.POST)
 	if sch_form.is_valid():
 		sch = sch_form.save(commit=False)
-		save_picture(sch.image,request.FILES.get("school-image"))
 		#Get admin object and set it as the admin of newly create school
 		admin = request.user.admin
 		sch.admin = admin
 		sch.save()		
+		save_picture(sch.image,request.FILES.get("school-image"))
 		return JsonResponse({"name":sch.school_name,"pk":sch.pk,"motto":sch.motto})
 	else:
 		return HttpResponseServerError(get_errors_in_text(sch_form))
@@ -117,10 +121,9 @@ def school_profile(request,sch_pk):
 			form = UserUpdateForm(request.POST,instance=current_user)
 			admin_form = AdminForm(request.POST,instance=current_user.admin)
 			if form.is_valid() and admin_form.is_valid():
-				form = form.save(commit=False)
+				form = form.save()
 				#for handling profile picture upload
 				save_picture(form.profile_picture,request.FILES.get("user-profile-picture"))
-				form.save()
 				admin_form.save()
 				return HttpResponse("Success")
 			else:
@@ -160,9 +163,9 @@ def class_list(request,sch_pk,type):
 	if type == "manage_teachers":
 		#if type is manage_teacher
 		user_form = UserCreationForm()
-		user_form.fields['first_name'].label = " (Optional)"
-		user_form.fields['last_name'].label = " (Optional)"
-		user_form.fields['email'].label = " (Optional)"
+		user_form.fields['first_name'].label += " (Optional)"
+		user_form.fields['last_name'].label += " (Optional)"
+		user_form.fields['email'].label += " (Optional)"
 	else:
 		#if type is not manage_teachers
 		#assign user form variables to none
@@ -542,15 +545,17 @@ def add_sessions(request,sch_pk):
 		term_obj = Term.objects.filter(school=school,year=year,term=term)
 		if term_obj.exists():
 			current_term = term_obj.first()
+			print("Session exists")
 		else:
 			current_term = Term.objects.create(school=school,year=year,term=term)
+			print("New session")
 			
 		current_term.set_as_current()
 		return HttpResponse("Success")
 
-#View for showing teacher or admin profile
-#Used by parents
-@view_for("parent")
+#View for showing teacher or admin or parents profile
+@require_auth
+@require_ajax
 def show_profile(request,type,lookup):
 	if type == "school":
 		sch = School.objects.get(pk=lookup)
@@ -559,3 +564,9 @@ def show_profile(request,type,lookup):
 	elif type == "teacher":
 		teacher = get_user_model().objects.get(username=lookup).teacher
 		return render(request,"teachers/show-teachers-profile.html",{"teacher":teacher})
+	elif type == "parent":
+		parent = get_user_model().objects.get(username=lookup).parent
+
+
+
+		return render(request,"parents/show-parent-profile.html",{"parent":parent})

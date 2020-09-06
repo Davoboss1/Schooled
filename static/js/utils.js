@@ -35,7 +35,34 @@ function write_loader(msg){
 	if(msg===undefined){msg=""}
     return '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="mx-auto">'+msg+'</small></div>';
 }
-
+//Help section
+var help_requested = false;
+function toggleHelp(show) {
+	if(show){
+		$("#help-container").removeClass("close");
+        setTimeout(function(){
+		document.getElementById("main-page-body").style.display = "none";
+        },500);
+		var body = document.getElementById("help-container-body");
+		if(!help_requested){
+			get_data("/accounts/help_page/",{},body);
+		}
+	}else{
+		$("#help-container").addClass("close");
+		document.getElementById("main-page-body").style.display = "block";
+	}
+}
+var list;
+$(document).click(function(event) {
+	if(!list){return;}
+    var $target = $(event.target);
+    if(!$target.closest('#helpSideNav').length && $('#helpSideNav').is(":visible") && (event.target !== list[0]) ) {
+        document.getElementById("helpSideNav").style.width = "0";
+        $("#closeHelp")[0].disabled = false;
+    }        
+});
+	
+//End help section
 function check_file(input){
 	if(input.files[0]){
 		return true;
@@ -179,9 +206,8 @@ function get_data(url,data,elem,status_elem,use_server_msg){
     }
 	status_obj.html(write_loader());
 	$.get(url,data).done(function(data){
-        $(elem).html(data);
 		status_obj.html("");
-        
+        $(elem).html(data);
 	}).fail(function(res,textStatus,errorThrown){if(use_server_msg){
 		if(res.responseText){
 			status_obj.html(write_alert(res.responseText,"danger"));

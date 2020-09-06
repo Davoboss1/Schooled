@@ -33,8 +33,9 @@ class Term(models.Model):
 		self.current_session = True
 		self.save()
 	def save(self,*args,**kwargs):
+		#Check if current_session already exists and raise error
 		if self.current_session:
-			if Term.objects.filter(school=self.school,current_session=True).exists():
+			if Term.objects.filter(school=self.school,current_session=True).exclude(pk=self.pk).exists():
 				raise ValidationError("A current session already exists, call set_as_current method to set it as current session")
 		super(Term,self).save(*args,**kwargs)
 
