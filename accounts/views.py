@@ -34,7 +34,10 @@ def homepage(request):
 #Welcome page view
 def welcome_page(request):
 	return render(request,"accounts/welcome_page.html",{})
-	
+
+def about_view(request):
+	return render(request,"accounts/about_page.html",{})
+
 #View to register school and admin information
 #Url = /register/
 def register(request):

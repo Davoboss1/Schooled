@@ -207,7 +207,7 @@
                                 </div>
                                 {% endif %}
                             </li>
-                            <li><a href="about.html">About</a></li>
+                            <li><a href="{% url 'accounts:about_page' %}">About</a></li>
                             <li><a href="javascript:void(0)" data-toggle="collapse" data-target="#navbarSupportedContent" onclick="toggleHelp(true)">Help</a></li>
                         </ul>
                     </div>
@@ -396,7 +396,7 @@
 
                         </nav>
                         <h6 class="text-white text-center">For more information about this application</h6>
-                        <h6 class="text-center mt-2"><a href="" class="text-info">Click here.</a></h6>
+                        <h6 class="text-center mt-2"><a href="{% url 'accounts:about_page' %}" class="text-info">Click here.</a></h6>
                     </div>
                     <h6 class="text-white mx-auto my-3">Schooled © 2019. All rights reserved</h6>
                 </div>
@@ -417,7 +417,7 @@
                 <label class="title">Teacher management</label>
                 <div class="body">
                     <p>
-                        You will need to create a class and a teacher profile for allow your teachers use this platform
+                        You will need to create a class and a teacher profile to allow your teachers use this platform
                         for your school.
                     </p>
                     <p>
@@ -433,7 +433,7 @@
                 <label class="title">Session management</label>
                 <div class="body">
                     <p>
-                        You also need to specify the term/session your school is currently in for performances tp be
+                        You also need to specify the term/session your school is currently in for performances to be
                         added.
                     </p>
                     <p>
