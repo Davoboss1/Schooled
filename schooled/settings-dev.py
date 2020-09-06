@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SCHOOLED_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["10.61.120.22","127.0.0.1","192.168.43.1","localhost","d843721730be.ngrok.io","davoboss1.pagekite.me","schooled.pythonanywhere.com"]
 #ALLOWED_HOSTS = ["*"]
@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ["10.61.120.22","127.0.0.1","192.168.43.1","localhost","d8437217
 # Application definition
 
 INSTALLED_APPS = [
-	#Custom Apps
+	#Custum Apps
 	'accounts.apps.AccountsConfig',
 	'students.apps.StudentsConfig',
 	'admins.apps.AdminsConfig',
@@ -88,6 +88,12 @@ WSGI_APPLICATION = 'schooled.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+'''
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'Schooled$default',
         'USER' : 'Schooled',
@@ -97,12 +103,6 @@ DATABASES = {
         }, 
         'HOST' : 'Schooled.mysql.pythonanywhere-services.com'
     },
-}
-'''
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
 '''
 
 # Password validation
@@ -153,11 +153,11 @@ MESSAGE_TAGS = {
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL ='/media/'
 
-#STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'accounts:accounts_handler'
