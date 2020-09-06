@@ -171,7 +171,6 @@ def help_view(request):
     if "help_pk" in request.GET:
         help_obj = help.objects.get(pk=request.GET.get("help_pk"))
         description = Template("{{desc|linebreaks}}").render(Context({"desc":help_obj.description}));
-        print(description)
         return HttpResponse(description)
     helps = help.objects.all()
     return render(request,"accounts/help-page.html",{"helps":helps})

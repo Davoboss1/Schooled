@@ -146,9 +146,7 @@
 				</ul>
 				<!-- end of list -->
 				<!-- Recent Activities-->
-				<h2 class="text-center mb-2">
-					<u class="text-info">Recent Activities</u>
-				</h2>
+				<h4 class="text-center mb-2 text-info underline">Recent Activities</h4>
 
 				<!-- Recent activities list -->
 				<ul class="unordered-list">
@@ -226,8 +224,44 @@
 						</div>
 						<ul class="unordered-list profile-list">
 							<li>
-								<b>School Type:</b>
+								<b>School type:</b>
 								<b>{{user.teacher.teacher_class.school.type}}</b>
+							</li>
+							<li>
+								<b>School address:</b>
+								<b>{{user.teacher.teacher_class.school.school_address}}</b>
+							</li>
+							<li>
+								<b>Approved:</b>
+								<b>{{user.teacher.teacher_class.school.approved}}</b>
+							</li>
+							<li>
+								<b>School email:</b>
+								<b>{{user.teacher.teacher_class.school.school_email}}</b>
+							</li>
+						</ul>
+						<h4 class="mx-auto my-3 text-white underline">School Owner Info</h4>
+						<ul class="unordered-list profile-list">
+							<li>
+								<b>Name:</b>
+								<b>{{user.teacher.teacher_class.school.admin.full_name}}</b>
+							</li>
+							<li>
+								<b>Username:</b>
+								<b>{{user.teacher.teacher_class.school.admin.user.username}}</b>
+							</li>
+							<li>
+								<b>Address:</b>
+								<b>{{user.teacher.teacher_class.school.admin.address}}</b>
+							</li>
+							<li>
+								<b>Email:</b>
+								<b>{{user.teacher.teacher_class.school.admin.user.email}}</b>
+							</li>
+
+							<li>
+								<b>Phone number:</b>
+								<b>{{user.teacher.teacher_class.school.admin.phone_no}}</b>
 							</li>
 						</ul>
 						<h4 class="mx-auto my-3 text-white underline">Class Info</h4>

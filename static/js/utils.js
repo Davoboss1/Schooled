@@ -46,6 +46,7 @@ function toggleHelp(show) {
 		var body = document.getElementById("help-container-body");
 		if(!help_requested){
 			get_data("/accounts/help_page/",{},body);
+            help_requested = true;
 		}
 	}else{
 		$("#help-container").addClass("close");

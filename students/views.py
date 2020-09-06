@@ -589,7 +589,6 @@ def convert_performance_to_pdf(request,pk,year,term):
 
 #Handles performance csv_handler
 @view_for("teacher")
-@require_ajax
 def csv_handler(request):
 	if request.method == "POST":
 		#Get neccessary data
