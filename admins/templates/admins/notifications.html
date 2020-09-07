@@ -1,3 +1,4 @@
+{% load tz %}
 <div class="mx-auto w-100" id="notif">
 	<div class="w-100 border d-flex p-3">
 		<h5 class="mr-auto">Notifications</h5> <span
@@ -5,9 +6,9 @@
 	</div>
 	{% for activity in activity_log %}
 	<blockquote class="generic-blockquote mt-3" style="background-color:#f2f2f2;">
-		<h6>Date : {{activity.Activity_date_and_time.date}}</h6>
+		<h6>Date : {{activity.Activity_date_and_time|localtime|date:"N j,Y"}}</h6>
 		<hr>
-		<h6>Time : {{activity.Activity_date_and_time.time}}</h6>
+		<h6>Time : {{activity.Activity_date_and_time|localtime|date:"P"}}</h6>
 		<hr>
 		<h6>Class : {{activity.Class.class_name}}</h6>
 		<hr>

@@ -43,13 +43,14 @@ def school_owner_home_page(request):
 	#Gets all schools unread notifications number at set it to a new attribute notif_count
 	for school in schools:
 		school.notif_count = School_activity_log.objects.filter(Class__school=school,viewed=False).count()
+
 	#School form for creating new form
 	sch_form = SchoolForm()
 	#Default notif_count to be shown.
 	#Gets notif_count of first school
-	try:
-		notif_count = schools.first().notif_count
-	except:
+	if schools.exists():
+		notif_count = schools[0].notif_count
+	else:
 		notif_count = 0
 	new_user = request.session.get(user.username + "_new_user")
 	if new_user:

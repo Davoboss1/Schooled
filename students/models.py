@@ -109,7 +109,7 @@ class Performance(models.Model):
 
 	
 def prevent_future_dates(date):
-	if date > Date.today():
+	if date > localdate():
 		print("ValidationError should be raised")
 		raise ValidationError("Future dates cannot be added")
 

@@ -17,6 +17,7 @@ from django.urls import reverse_lazy
 from django.template.loader import render_to_string,get_template
 from django.template import Context,Template
 from datetime import datetime,date,timedelta
+from django.utils.timezone import localdate
 from django.core.paginator import Paginator
 from xhtml2pdf import pisa
 from io import StringIO
@@ -92,7 +93,7 @@ def attendance_page(request,type):
 	#get all student in in teachers class
 	all_Info= request.user.teacher.teacher_class.student_set.all()
 	current_class = request.user.teacher.teacher_class
-	Date =date.today()
+	Date =localdate()
 
 
 	#if a particular date is requested
@@ -110,7 +111,7 @@ def attendance_page(request,type):
 			date_list = Date.split("-")
 			Date = date(int(date_list[0]),int(date_list[1]),int(date_list[2]))
 			#if date is in future
-			if Date > date.today():
+			if Date > localdate():
 				return HttpResponseServerError('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Oops! sorry</strong> You can\'t add or view date for the future .<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
 			else:
 				#return none
@@ -400,7 +401,7 @@ def view_only_attendance(request,pk):
 		start_date = request.GET.get("start_date")
 		end_date = request.GET.get("end_date")
 		#If requested_date is date in the future
-		if date.fromisoformat(start_date) > date.today():
+		if date.fromisoformat(start_date) > localdate():
 			return HttpResponse("DoesNotExist")
 		#Get attendance between date range
 		attendance = attendance.filter(date__range=(start_date,end_date))
