@@ -133,6 +133,18 @@
     font-weight: 600;
     font-size: 25px;
 }
+/* Temporarily hide search */
+@media (max-width: 991px){
+    #search-website-container{
+        display: none;
+    }
+}
+
+@media (min-width: 992px){
+    #search-website-container{
+        visibility: hidden;
+    }
+}
 
 /* Footer */
 .footer-area {

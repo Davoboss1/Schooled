@@ -1,6 +1,5 @@
 import random
-from datetime import timedelta
-from django.utils.timezone import localtime
+from datetime import datetime,timedelta
 from django.shortcuts import render, redirect,HttpResponse
 from django.http.response import HttpResponseNotAllowed,HttpResponseServerError
 from django.contrib.auth import get_user_model
@@ -105,7 +104,7 @@ def reset_password(request):
 		if not send_email('Schooled password reset verification code','Hello '+username+".\nYour schooled password reset verification code is\n"+ v_code + ".\nPlease note that this code expires after 15 minutes.",user.email):
 			return HttpResponseServerError("Something went wrong. Mail failed to send.")
 		#Set token object in expirable session to expire after 15 minutes
-		set_expirable_session(request,username+"-token",token,localtime() + timedelta(minutes=15))
+		set_expirable_session(request,username+"-token",token,datetime.now() + timedelta(minutes=15))
 		#Return user email
 		return HttpResponse(user.email)
 	#On post requet
