@@ -17,8 +17,11 @@ class Parent(models.Model):
 	created_at = models.DateField(auto_now_add=True)
 	update_at = models.DateField(auto_now=True)
 	def __str__(self):
-		return self.full_name
+		return "Username: " + self.user.username + ", Full name: " + self.user.get_full_name()
+
 	@property
 	def full_name(self):
 		return self.user.get_full_name()
-		
+
+
+

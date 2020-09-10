@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get("SCHOOLED_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["10.61.120.22","127.0.0.1","192.168.43.1","localhost","d843721730be.ngrok.io","davoboss1.pagekite.me","schooled.pythonanywhere.com"]
+ALLOWED_HOSTS = ["10.61.120.22","127.0.0.1","192.168.43.1","localhost","d843721730be.ngrok.io","Userboss1.pagekite.me","schooled.pythonanywhere.com"]
 #ALLOWED_HOSTS = ["*"]
 
 
@@ -141,8 +141,8 @@ TIME_ZONE = 'Africa/Lagos'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'Links2webContact@gmail.com'
-EMAIL_HOST_PASSWORD = 'yuzwwdqksbqosevq'
+EMAIL_HOST_USER = 'schooledcontact@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWrRD")
 EMAIL_PORT = 587
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

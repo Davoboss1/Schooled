@@ -8,7 +8,8 @@ from django.db.models.signals import post_delete,pre_delete
 class Teacher(BasicInfo):
     user = models.OneToOneField(get_user_model(),on_delete=models.CASCADE)
     def __str__(self):
-        return self.user.get_full_name()
+        return "Username: " + self.user.username + ", Full name: " + self.user.get_full_name()
+
     @property
     def full_name(self):
         return self.user.get_full_name()
