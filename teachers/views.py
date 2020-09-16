@@ -9,7 +9,7 @@ from accounts.forms import UserCreationForm,UserUpdateForm
 from .forms import TeacherForm
 from .models import Class,Teacher
 from students.models import School_activity_log
-from admins.models import Messages
+from accounts.models import Messages
 from admins.views import get_errors_in_text
 from tools import view_for,save_picture,require_ajax
 # Create your views here.

@@ -128,13 +128,13 @@
         $("#newConvoStatus").remove();
         $.post({
 
-            url: "{% url 'message_list' %}",
+            url: "{% url 'accounts:message_list' %}",
             data: form.serialize(),
             success: function (data) {
                 //On success after conversation created.
                 //Refresh page 
                 $("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small>Reloading page.....</small></div>');
-                $.get("{% url 'message_list' %}", {}).done(function (data) {
+                $.get("{% url 'accounts:message_list' %}", {}).done(function (data) {
                     $("#main").html(data);
                 });
             },
@@ -153,7 +153,7 @@
     $(".chat-btn").click(function (e) {
         var convo_pk = $(this).attr("data-convo-pk");
         $("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Getting messages.....</small></div>');
-        $.get("{% url 'messages' %}" + convo_pk + "/", {}).done(function (data) {
+        $.get("{% url 'accounts:messages' %}" + convo_pk + "/", {}).done(function (data) {
             $("#main").html(data);
         });
     });

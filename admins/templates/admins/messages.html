@@ -121,7 +121,7 @@
         }
         send_button.text("Sending...");
         $.post({
-            url: "{% url 'messages' conversation.pk %}",
+            url: "{% url 'accounts:messages' conversation.pk %}",
             data: {
                 csrfmiddlewaretoken: "{{csrf_token}}",
                 message: message,
@@ -151,7 +151,7 @@
         var page_no = btn.attr("data-page-no");
         btn.html("Previous Messages Loading...");
         $.get({
-            url: "{% url 'messages' conversation.pk %}",
+            url: "{% url 'accounts:messages' conversation.pk %}",
             data: { more_msg: "", page_no: page_no },
             success: function (data) {
                 //If response is empty hide prev msg button
@@ -175,14 +175,14 @@
     //Goes back to message list
     $("#back-convo").click(function () {
         $("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Getting conversations.....</small></div>');
-        $.get("{% url 'message_list' %}", {}).done(function (data) {
+        $.get("{% url 'accounts:message_list' %}", {}).done(function (data) {
             $("#main").html(data);
         });
     });
     //Refresh page
     $("#refresh").click(function () {
         $("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Reloading page.....</small></div>');
-        $.get("{% url 'messages' conversation.pk %}", {}).done(function (data) {
+        $.get("{% url 'accounts:messages' conversation.pk %}", {}).done(function (data) {
             $("#main").html(data);
         });
     });
@@ -196,7 +196,7 @@
         span.toggleClass("fa-spin");
         //Remove danger color if it exits
         btn.removeClass("btn-danger");
-        $.get("{% url 'messages' conversation.pk %}", { check_msg: "" }).done(function (data) {
+        $.get("{% url 'accounts:messages' conversation.pk %}", { check_msg: "" }).done(function (data) {
             //Append new message
             $("#msg-card").append(data);
             //Stop icon spin

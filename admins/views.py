@@ -1,14 +1,13 @@
 from django.shortcuts import render, redirect
 from django.db.utils import IntegrityError
-from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import check_password
-from django.contrib import messages as django_messages
+from django.contrib import messages
 from .forms import SchoolForm, AdminForm
 from teachers.models import Class,Teacher
 from teachers.forms import TeacherForm
-from .models import Admin,School,Messages,Conversation
+from .models import Admin,School
 from accounts.forms import UserCreationForm,UserUpdateForm
 from django.template.loader import render_to_string
 from django.template import Template,Context
@@ -21,6 +20,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from tools import require_ajax,view_for,save_picture,require_auth
 from students.models import School_activity_log
+from accounts.models import Messages
 
 # Create your views here.
 #Writes from error in string of h6 tags
@@ -309,171 +309,6 @@ def manage_parents(request,class_pk):
 	return render(request,"admins/manage-teachers-or-parents.html",{"type":"Parent","students":students,"class_pk":class_pk,})
 
 
-#View that lists all conversations
-#View handles all conversation requests and differenciates requests by arguments in get request
-@require_auth
-@require_ajax
-def message_list(request,sch_pk=None):
-	#Get conversations in which the user is either the sender or the reciever
-	conversations = Conversation.objects.filter(sender=request.user.get_username()) | Conversation.objects.filter(reciever=request.user)
-	user = request.user
-	if request.is_ajax() and request.method == "POST":
-		#Request for creating new conversation
-		if "convo" in request.POST:
-			return new_conversation(request)
-
-	#Counts unread messages in each conversation
-	for convo in conversations:
-		convo.msg_count = convo.messages_set.filter(message_read=False).exclude(sent_by=request.user.get_username()).count()
-
-	return render(request,"admins/message-list.html",{"conversations":conversations,"user":user,})
-
-#View that lists all messages
-#View handles all messaging requests and differenciates requests by arguments in get request
-@require_auth
-@require_ajax
-def messages(request,convo_pk):
-	user = request.user
-	#Get conversation by pk
-	conversation = Conversation.objects.get(Q(pk=convo_pk),Q(sender=user.get_username()) | Q(reciever=user))
-	if request.is_ajax():
-		if "more_msg" in request.GET:
-			#Request for loading more messages
-			return more_msg(request,convo_pk)
-		elif "check_msg" in request.GET:
-			#Request for checking for new messages
-			return check_msg(request,convo_pk)
-		#If it was a post request.
-		#A new message was sent
-		if request.POST:
-			message = Messages(conversation=conversation,message=request.POST.get("message"),sent_by=request.POST.get("sender"))
-			message.save()
-			return HttpResponse("Success")
-
-	msgs = conversation.messages_set.all()
-	#Paginate messages i.e show only 16 messages at once
-	paginator = Paginator(msgs,16)
-	msgs = paginator.page(1)
-	msgs = list(msgs.object_list)
-	#Reverse the list to show latest messages at the bottom
-	msgs.reverse()	
-	#Update unread messages as read
-	conversation.messages_set.all().exclude(sent_by=request.user.get_username()).update(message_read=True)
-	return render(request,"admins/messages.html",{"conversation":conversation,"user":user,"msgs":msgs})
-
-#Funtion for creating new conversation
-@require_auth
-@require_ajax
-def new_conversation(request):
-	try:
-		#Try to check if new conversation exactly matches an old conversation
-		conversation = Conversation.objects.filter(sender=request.POST.get("sender"),reciever=get_user_model().objects.get(username=request.POST.get("username-entry")),subject__iexact=request.POST.get("subject-entry")) | Conversation.objects.filter(sender=request.POST.get("username-entry"),reciever=get_user_model().objects.get(username=request.POST.get("username-entry")),subject__iexact=request.POST.get("subject-entry"))
-		#If conversation already exists, Just select conversation instead of creating duplicate
-		if conversation.exists():
-			conversation = conversation.first()
-		else:
-			conversation = Conversation(sender=request.POST.get("sender"),reciever=get_user_model().objects.get(username=request.POST.get("username-entry")),subject=request.POST.get("subject-entry"))
-		conversation.save()
-	except get_user_model().DoesNotExist:
-		#If Conversation had an invalid username
-		return HttpResponseServerError("Invalid user name entered")	
-	#Add message to conversation
-	message = Messages(conversation=conversation,message=request.POST.get("message-entry"),sent_by=request.POST.get("sender"))
-	message.save()
-	return HttpResponse("Success")
-
-#function for loading more messages
-@require_auth
-@require_ajax
-def more_msg(request,convo_pk):
-	user = request.user
-	page_no = int(request.GET.get("page_no"))
-	conversation = Conversation.objects.get(Q(pk=convo_pk),Q(sender=user.get_username()) | Q(reciever=user))
-	messages = conversation.messages_set.all()
-	paginator = Paginator(messages,16)
-	try:
-		data = paginator.page(page_no)
-	except EmptyPage:
-		return HttpResponse("Empty")
-	data = list(data.object_list)
-	data.reverse()			
-	#Message template
-	data = Template('''
-{% load custom_filter %}
-		{% for msg in messages_set %} 	
-    {% if msg.sent_by == user.get_username %}
-    <div class="ml-auto d-flex flex-column" style="width: 70%;padding: 0;">
-      <div class="d-flex flex-column"
-        style="background: linear-gradient(#330033 90%,white 0); border-radius: 5px;">
-        <p class="text-light p-3 m-0">
-          {{msg.message}}
-        </p>
-        <div class="thumb m-0 ml-auto">
-          <img class="rounded-circle" style="width: 35px; height: 35px;" alt="" src="{{user.profile_picture.url}}">
-        </div>
-
-      </div>
-      <small class="text-muted ml-auto" style="text-align: end;">{{msg.message_datetime|timesince }} ago</small>
-
-    </div>
-    {% else %}
-    <div class="mr-auto" style="width: 70%;padding: 0;">
-      <div class="d-flex flex-column"
-        style="background: linear-gradient(black 90%,white 0); border-radius: 5px;">
-        <p class="text-light p-3 m-0">
-          {{msg.message}}
-        </p>
-        <div class="thumb m-0 mr-auto">
-          {% if conversation.sender == user.get_username %}
-          <img class="rounded-circle" style="width: 35px; height: 35px;" alt="" src="{{conversation.reciever.profile_picture.url}}">
-          {% else %}
-          {% with other_user=conversation.sender|get_user %}
-          <img class="rounded-circle" style="width: 35px; height: 35px;" alt="" src="{{other_user.profile_picture.url}}">
-          {% endwith %}
-          {% endif %}
-        </div>
-      </div>
-      <small class="text-muted mr-auto">{{msg.message_datetime|timesince }} ago</small>
-    </div>
-    {% endif %}
-		{% endfor %}
-				 ''').render(Context({"messages_set" : data,"user":user,"conversation":conversation}))
-	return JsonResponse({"next_page_no":page_no+1,"data" : data})
-
-#Function to check for new messages
-@require_auth
-@require_ajax
-def check_msg(request,convo_pk):
-	user = request.user
-	conversation = Conversation.objects.get(Q(pk=convo_pk),Q(sender=user.get_username()) | Q(reciever=user))
-	#Get messages sent by other person that hasn't been read yet
-	msgs = conversation.messages_set.filter(message_read=False).exclude(sent_by=request.user.get_username())
-	#Message template
-	data = Template('''
-{% load custom_filter %}
-		{% for msg in messages_set %} 	
-    <div class="mr-auto" style="width: 70%;padding: 0;">
-      <div class="d-flex flex-column"
-        style="background: linear-gradient(black 90%,white 0); border-radius: 5px;">
-        <p class="text-light p-3 m-0">
-          {{msg.message}}
-        </p>
-        <div class="thumb m-0 mr-auto">
-          {% if conversation.sender == user.get_username %}
-          <img class="rounded-circle" style="width: 35px; height: 35px;" alt="" src="{{conversation.reciever.profile_picture.url}}">
-          {% else %}
-          {% with other_user=conversation.sender|get_user %}
-          <img class="rounded-circle" style="width: 35px; height: 35px;" alt="" src="{{other_user.profile_picture.url}}">
-          {% endwith %}
-          {% endif %}
-        </div>
-      </div>
-      <small class="text-muted mr-auto">{{msg.message_datetime|timesince }} ago</small>
-    </div>
-		{% endfor %}
-				 ''').render(Context({"messages_set" : msgs,"user":user,"conversation":conversation}))
-	msgs.update(message_read=True)
-	return HttpResponse(data)
 
 #Notifications view
 @view_for("admin")
@@ -494,17 +329,18 @@ def notifications(request,sch_pk):
 		try:
 			page = request.GET.get("page")
 			activity_log = activity_log_paginator.page(page)
-			res = ""
-			for activity in activity_log:
-				#Notification template
-				res += f'''
-			<blockquote class="generic-blockquote mt-3" style="background-color:#f2f2f2;">                           <h6 >Date : {activity.Activity_date_and_time.date}</h6>
+			#Notification template
+			res = Template('''
+			{% load tz %}
+			{% for activity in activity_log %}
+			<blockquote class="generic-blockquote mt-3" style="background-color:#f2f2f2;">                           <h6 >Date : {{activity.Activity_date_and_time|localtime|date:"N j,Y"}}</h6>
 			<hr>
-			<h6>Time : {activity.Activity_date_and_time.time}</h6>
+			<h6>Time : {{activity.Activity_date_and_time|localtime|date:"P"}}</h6>
 			<hr>
-			<b class="text-dark">{activity.Activity_info}</b>
+			<b class="text-dark">{{activity.Activity_info}}</b>
 			</blockquote>
-			'''
+			{% endfor %}
+				  ''').render(Context({"activity_log":activity_log}))
 			return HttpResponse(res)
 
 		except EmptyPage:
@@ -567,7 +403,4 @@ def show_profile(request,type,lookup):
 		return render(request,"teachers/show-teachers-profile.html",{"teacher":teacher})
 	elif type == "parent":
 		parent = get_user_model().objects.get(username=lookup).parent
-
-
-
 		return render(request,"parents/show-parent-profile.html",{"parent":parent})

@@ -14,7 +14,7 @@
 <form class="update-profile-form mx-auto" style="max-width:300px; display:none;" method="post" id="password-form">
 	{% csrf_token %}
 	{{ password_change_form | crispy }}
-	<button class="genric-btn success radius w-100 update-confirm-btn" type="submit">Change</button>
+	<button class="genric-btn success radius w-100 update-confirm-btn mb-1" type="submit">Change</button>
 </form>
 <script>
 	$("#change-password-btn").click(function (event) {
@@ -44,7 +44,10 @@
 					btn.html("Updated.");
 
 				} else if (data == "REDIRECT") {
-					window.location.href = "{% url 'accounts:login' %}";
+					form.append(write_alert("Password has been changed successfully. You will be redirected to login page soon."));
+                    window.setTimeout(function(){
+					    window.location.href = "{% url 'accounts:login' %}";
+                    },2000);
 				}
 				else {
 					form.append('<div class="alert alert-danger alert-dismissible fade show mt-3" id="update-status" role="alert"> <strong >Failed!</strong>' + data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');

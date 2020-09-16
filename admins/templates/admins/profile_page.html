@@ -34,7 +34,7 @@
 		</li>
 		<li>
 			<h6><u class="text-dark">Home Address</u></h6>
-			<b>{{student.address}}.</b>
+			<b>{{student.address}}</b>
 		</li>
 		<li>
 			<h6><u class="text-dark">Sex</u></h6>
@@ -73,7 +73,7 @@
 		</li>
 		<li>
 			<h6><u class="text-dark">Teacher</u></h6>
-			<b>{{student.Class.teacher}}</b>
+			<b>{{student.Class.teacher.full_name}}</b>
 		</li>
 		<li>
 			<h6><u class="text-dark">Email</u></h6>
@@ -140,7 +140,13 @@
 				$("#performance-view").html(data);
 			},
 			error: function (req, status, error) {
-				$("#performance-view").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
+				var msg;
+				if(req.responseText){
+					msg=req.responseText;
+				}else{
+					msg="Something went wrong.";
+				}
+				$("#performance-view").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>" + msg +"</div>");
 			}
 		});
 		//Attendance ajax request

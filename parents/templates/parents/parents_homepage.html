@@ -48,8 +48,8 @@
 					<li class="nav-item w-25">
 						<a class="nav-link" href="#edit-profile-tab" data-toggle="tab">Edit Profile</a>
 					</li>
-					<li class="nav-item w-25">
-						<a class="nav-link" href="#messages-tab" data-toggle="tab">Messages
+					<li class="nav-item w-25" onclick="this.children[0].lastElementChild.innerHTML=0;">
+						<a class="nav-link" href="#messages-tab" data-toggle="tab">Messages <span class="badge badge-pill badge-dark">{{unread_msg_count}}</span>
 						</a>
 					</li>
 			</ul>
@@ -193,7 +193,7 @@
 									<input name="type" value="Password" type="hidden">
 									{{password_change_form|crispy}}
 
-									<button class="genric-btn success radius mx-auto w-100" style="max-width:300px;"
+									<button class="genric-btn success radius mx-auto w-100 mb-1" style="max-width:300px;"
 										type="submit">Change</button>
 								</form>
 							</div>
@@ -298,7 +298,7 @@
 <script>
 	$(function () {
 		$("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small>Fetching conversations.....</small></div>');
-		$.get("{% url 'message_list' %}", {}).done(function (data) {
+		$.get("{% url 'accounts:message_list' %}", {}).done(function (data) {
 			$("#main").html(data);
 		});
 	});
@@ -364,7 +364,11 @@
 				body.html(data);
 			},
 			error: function (req, status, error) {
-				body.html(write_alert("Something went wrong, your request failed. Please try again","danger"));
+				if(req.responseText){
+				body.html(write_alert(req.responseText,"danger"));
+				}else{
+					body.html(write_alert("Something went wrong, your request failed. Please try again","danger"));}					
+					
 			}
 		});
 	});
@@ -390,7 +394,10 @@
 
 				}
 				else if (data == "Redirect") {
-					window.location.href = "{% url 'accounts:login' %}";
+					form.append(write_alert("Password has been changed successfully. You will be redirected to login page soon."));
+                    window.setTimeout(function(){
+					    window.location.href = "{% url 'accounts:login' %}";
+                    },2000);
 				}
 				else {
 					form.append('<div class="alert alert-danger alert-dismissible fade show mt-3 mx-auto" id="update-status" role="alert" style="max-width: 400px;"> <strong >Failed!</strong>' + data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');

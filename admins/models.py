@@ -27,8 +27,9 @@ class Admin(BasicInfo):
 #School model
 class School(models.Model):
 	type_choices=(
-	('Secondary_School','Secondary_School'),
-		('Primary_School','Primary_School')
+		('Secondary School','Secondary School'),
+		('Primary School','Primary School'),
+		('Others','Others')
 	)
 	admin = models.ForeignKey(Admin,on_delete=models.CASCADE,related_name="schools")
 	school_name =models.CharField(max_length=100,unique=True)
@@ -46,31 +47,3 @@ class School(models.Model):
 		return self.school_name
 		
 		
-#username validator
-def username_exists(value):
-	print(User.objects.all())
-	if not User.objects.filter(username=value).exists():
-		raise ValidationError(f"{value} username does not exists")
-
-class Conversation(models.Model):
-	sender = models.CharField(max_length=30,validators=[username_exists],null=True)
-	reciever = models.ForeignKey(get_user_model(),on_delete=models.SET_NULL,null=True,blank=True)
-	subject = models.CharField(max_length=100)
-	updated_at = models.DateTimeField(auto_now=True)
-	def __str__(self):
-		return f"Subject : {self.subject} ,From {self.sender} ,To {self.reciever} at {self.updated_at}"
-	class Meta:
-		ordering = ["-updated_at"]
-
-
-class Messages(models.Model):
-	conversation = models.ForeignKey(Conversation,on_delete=models.CASCADE)
-	message = models.TextField()
-	message_datetime = models.DateTimeField(auto_now_add=True)
-	message_read = models.BooleanField(default=False)
-	sent_by = models.CharField(max_length=30,validators=[username_exists],null=True)
-	def __str__(self):
-		return f"{self.conversation} Message : {self.message}"
-	class Meta:
-		ordering = ["-message_datetime"]
-

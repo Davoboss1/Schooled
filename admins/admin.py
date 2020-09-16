@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import School, Admin,Messages,Conversation
+from .models import School, Admin
 # Register your models here.
 	
 class SchoolAdmin(admin.ModelAdmin):
@@ -12,5 +12,3 @@ class AdminAdmin(admin.ModelAdmin):
 
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Admin, AdminAdmin)
-admin.site.register(Conversation)
-admin.site.register(Messages)

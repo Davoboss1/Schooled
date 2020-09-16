@@ -27,10 +27,6 @@ path("manage_teachers/<class_pk>/",views.manage_teachers,name="manage_teachers")
 
 path("manage_parents/",views.manage_parents,name="manage_parents"),
 path("manage_parents/<class_pk>/",views.manage_parents,name="manage_parents"),
-path("message_list/",views.message_list,name="message_list"),
-path("message_list/<sch_pk>/",views.message_list,name="message_list"),
-path("messages/",views.messages,name="messages"),
-path("messages/<convo_pk>/",views.messages,name="messages"),
 path("notifications/",views.notifications,name="notifications"),
 path("notifications/<int:sch_pk>/",views.notifications,name="notifications"),
 path("profile_page/",views.profile_page,name="profile_page"),

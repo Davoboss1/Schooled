@@ -1,7 +1,7 @@
 import os
 from django.db.models.signals import pre_save,post_save,post_delete
 from django.contrib.auth import get_user_model
-from admins.models import Conversation,Messages
+from .models import Conversation,Messages
 
 
 def user_pre_save(sender,instance,**kwargs):

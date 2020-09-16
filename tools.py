@@ -38,8 +38,9 @@ def years_ago(date):
     year = td.year - date.year
     if td.month < date.month :
         year-=1
-    elif td.day < date.day:
-        year-=1
+    elif td.month == date.month:
+        if td.day < date.day:
+            year-=1
     if year < 0:
         year = 0
     return year

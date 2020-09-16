@@ -1,7 +1,9 @@
 from django.shortcuts import render,Http404,HttpResponse,redirect
 from django.db.utils import IntegrityError
+from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
 from accounts.forms import UserUpdateForm
+from accounts.models import Messages
 from .forms import ParentForm
 from students.models import Term
 from admins.views import get_errors_in_text
@@ -10,17 +12,20 @@ from tools import save_picture,view_for,require_ajax
 #Parents homepage view
 @view_for("parent")
 def parents_homepage(request):
+	user = request.user
 	term= Term.objects.first()
 	#current parent
-	parent = request.user.parent
+	parent = user.parent
 	#Form to change password
-	password_change_form = PasswordChangeForm(user = request.user)
-	user_update_form = UserUpdateForm(instance=request.user)
+	password_change_form = PasswordChangeForm(user = user)
+	user_update_form = UserUpdateForm(instance=user)
 	#Form to update information
 	parent_form = ParentForm(instance=parent)
+	#Gets user unread messages
+	unread_msg_count = Messages.objects.filter(Q(conversation__reciever=user) | Q(conversation__sender=user.get_username()),message_read=False).exclude(sent_by=user.get_username()).count()
 	
 	#rendering 
-	return render(request,"parents/parents_homepage.html",{"parent":parent,"password_change_form":password_change_form,"parent_form":parent_form,"user_update_form":user_update_form})
+	return render(request,"parents/parents_homepage.html",{"parent":parent,"password_change_form":password_change_form,"parent_form":parent_form,"user_update_form":user_update_form,"unread_msg_count":unread_msg_count})
 	
 #update parent info
 @view_for("parent")

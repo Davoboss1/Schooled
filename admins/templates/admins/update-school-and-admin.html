@@ -40,7 +40,10 @@
             success:function(data){
                 submitBtn.html("Updated Successfully");
                 {% if type == "password" %}
-                    window.location.href="{% url 'accounts:login' %}";
+					$("#status").html(write_alert("Password has been changed successfully. You will be redirected to login page soon."));
+                    window.setTimeout(function(){
+					    window.location.href = "{% url 'accounts:login' %}";
+                    },2000);
                 {% endif %}
             },
             error:function(res,status,error){

@@ -61,7 +61,7 @@ def performance_page(request,type):
 				except Term.DoesNotExist:
 					return HttpResponse("DOE_ERROR")
 				except ValueError:
-					return HttpResponseServerError("Invalid term detected")
+					return HttpResponseServerError("Invalid session detected")
 				#get all students in the paginated object list
 				for student in all_Info.object_list:
 					#filter the performance by term
@@ -433,7 +433,10 @@ def view_only_performance(request,pk):
 	if "parent" in request.GET:
 		#Get all needed variables form term
 		terms=Term.objects.filter(school=student.Class.school)
-		current_term = terms.get(current_session=True)
+		try:
+			current_term = terms.get(current_session=True)
+		except Term.DoesNotExist:
+			return HttpResponseServerError("Sorry performances are not available for you to view yet")
 		year = current_term.year
 		term_text = current_term.term
 		#Render it in a template
@@ -464,8 +467,11 @@ def view_only_performance(request,pk):
 		#Assign term_html to template
 		term_html = Template(data).render(Context({"current_term":current_term,"terms":terms}))
 	else:
-		year = int(request.GET.get("year"))
-		term_text = request.GET.get("term")
+		try:
+			year = int(request.GET.get("year"))
+			term_text = request.GET.get("term")
+		except ValueError:
+			return HttpResponseServerError("Invalid session detected.")
 
 	#try to get term object
 	try:
@@ -607,6 +613,9 @@ def csv_handler(request):
 		csv_file = csv_file.read()
 		#Convert from bytes to string and splitlines to enable csvreader to read
 		csv_file = csv_file.decode("utf-8").splitlines()
+		#Sometimes csv file may come with \ufeff char
+		#Strip that character from first list index
+		csv_file[0] = csv_file[0].lstrip("\ufeff")
 		#Csv reader
 		csv_reader = csv.DictReader(csv_file)
 		#Line count var to count number of lines
