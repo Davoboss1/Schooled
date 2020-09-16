@@ -1,28 +1,26 @@
 from django.test import TestCase,Client
 from django.template import Context
-from admins.models import School,Admin,SchoolUser
+from admins.models import School,Admin
 from teachers.models import Teacher,Class
 from parents.models import Parent
-from django.contrib.auth.models import User,AnonymousUser
+from django.contrib.auth.models import AnonymousUser
+from .models import User
 # Create your tests here.
 class accounts_test(TestCase):
     @classmethod
     def setUpTestData(self):
         #Admin test model objects definitions
         admin_user = User.objects.create_user(username="TestUser",password="testpassword",first_name="Test_fn",last_name="Test_ln",email="testemail@gmail.com")
-        school_user = SchoolUser.objects.create(user=admin_user,level="Admin")
-        admin = Admin.objects.create(school_user=school_user,address="123, Address lagos",date_of_birth="2001-09-15",sex="male",state_of_origin="Lagos state",phone_no="080555555555")
+        admin = Admin.objects.create(user=admin_user,address="123, Address lagos",phone_no="080555555555")
         #School objects definition
         school = School.objects.create(admin=admin,school_name="The test school",school_address="123, Test street. Test area.",type="Secondary_school",approved=True,school_email="testemail@test.com")
         teacher_user = User.objects.create_user(username="TeacherTestUser",password="testpassword",first_name="Test_fn",last_name="Test_ln",email="testemail@gmail.com")
-        teacher_school_user = SchoolUser.objects.create(user=teacher_user,level="Teacher")
-        teacher = Teacher.objects.create(school_user=teacher_school_user,address="123, Address lagos",date_of_birth="2001-09-15",sex="male",state_of_origin="Lagos state",phone_no="080555555555")
+        teacher = Teacher.objects.create(user=teacher_user,address="123, Address lagos",phone_no="080555555555")
         teacher_class = Class.objects.create(teacher=teacher,school=school,class_name="JS1")
 
         #Parents model objects definition
         parent_user = User.objects.create_user(username="ParentTestUser",password="testpassword",first_name="Test_fn",last_name="Test_ln",email="testemail@gmail.com")
-        parent_school_user = SchoolUser.objects.create(user=parent_user,level="Parent")
-        parent = Parent.objects.create(school_user=parent_school_user,address="123, Address lagos",date_of_birth="2001-09-15",sex="male",state_of_origin="Lagos state",phone_no="080555555555")
+        parent = Parent.objects.create(user=parent_user,address="123, Address lagos",phone_no="080555555555")
         
     def test_redirects(self):
         client = Client()
@@ -51,7 +49,7 @@ class accounts_test(TestCase):
         
     def test_register(self):
         client = Client()
-        post_data = {'username': 'Admin', 'password1': 'Davo2001', 'password2': 'Davo2001', 'firstname': 'David', 'lastname': 'Akinfenwa', 'email': 'davidakinfenwa@gmail.com', 'user-profile-picture': '', 'address': '5 Salami close afromedia,ojo', 'date_of_birth': '1983-06-20', 'sex': 'male', 'state_of_origin': 'Oyo state', 'state_of_residence': 'Lagos state', 'religion': 'Christianity', 'phone_no': '08185415249', 'marital_status': 'Single', 'school_name': 'Test Comprehensive School', 'school_address': '5 Salami close afromedia,ojo', 'type': 'Secondary_School', 'approved': 'on', 'motto': '', 'school_Anthem': '', 'vision': '', 'mission': '', 'school_email': 'testschool@email.com', 'school-image': ''}
+        post_data = {'username': 'Admin', 'password1': 'Davo2001', 'password2': 'Davo2001', 'firstname': 'David', 'lastname': 'Akinfenwa', 'email': 'davidakinfenwa@gmail.com', 'address': '5 Salami close afromedia,ojo', 'phone_no': '08185415249', 'school_name': 'Test Comprehensive School', 'school_address': '5 Salami close afromedia,ojo', 'type': 'Secondary_School', 'approved': True, 'motto': '', 'school_email': 'testschool@email.com'}
         response = client.post("/accounts/register/",post_data)
         username = post_data['username']
         school_name = post_data['school_name']

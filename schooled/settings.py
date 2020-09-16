@@ -21,11 +21,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'pm&&*&x($d2x$)5i(stzi5hxmp-(-+lpj*m%&!vul19yd0+996'
+SECRET_KEY = os.environ.get("SCHOOLED_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["10.61.120.22","127.0.0.1","192.168.43.1","localhost","d843721730be.ngrok.io","davoboss1.pagekite.me","schooled.pythonanywhere.com"]
+ALLOWED_HOSTS = ["10.61.120.22","127.0.0.1","192.168.43.1","localhost","d843721730be.ngrok.io","Userboss1.pagekite.me","schooled.pythonanywhere.com"]
 #ALLOWED_HOSTS = ["*"]
 
 
@@ -86,12 +86,6 @@ WSGI_APPLICATION = 'schooled.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-'''
-    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'Schooled$default',
         'USER' : 'Schooled',
@@ -101,6 +95,12 @@ DATABASES = {
         }, 
         'HOST' : 'Schooled.mysql.pythonanywhere-services.com'
     },
+}
+'''
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 '''
 
 # Password validation
@@ -142,7 +142,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'schooledcontact@gmail.com'
-EMAIL_HOST_PASSWORD = 'Davoakin2001$'
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 EMAIL_PORT = 587
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
@@ -153,11 +153,11 @@ MESSAGE_TAGS = {
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL ='/media/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'accounts:accounts_handler'
