@@ -186,7 +186,11 @@ def view_performance(request,pk):
 	#get all students in current_class
 	students_in_class = current_class.student_set.all()
 	terms = Term.objects.filter(school=current_class.school.pk)
-	current_term = terms.get(current_session=True)
+	#Check if existing session exists and return server error if no session exists
+	if terms.exists():
+		current_term = terms.get(current_session=True)
+	else:
+		return HttpResponseServerError("SESSIONERROR")
 	context = {"all_students":students_in_class,"class_pk":pk,"terms":terms,"current_term":current_term}
 
 	#Pagination

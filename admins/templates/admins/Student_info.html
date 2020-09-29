@@ -10,6 +10,7 @@
 		<h6>Name</h6>
 	</li>
 	<!-- Actual first list item -->
+    {% if all_students.exists %}
 	{% for student in all_students %}
 	<li class="list-group-item d-flex" style="border-bottom:2px ridge #53375A;">
 		<input class="border-less" value="{{student.pk}}" style="display:none" readonly>
@@ -19,7 +20,12 @@
 			<button class="view-info-button">View Info</button>
 		</div>
 	</li>
-	{% endfor %}
+{% endfor %}
+{% else %}
+    <div class="border-left border-right border-danger py-3">
+    <h5 class="text-center text-danger">No student in this class</h5>
+    </div>
+{% endif %}
 </ul>
 </div>
 

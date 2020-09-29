@@ -4,6 +4,7 @@
 	<!-- Attendance List Group-->
 	<div class="list-group spaced-list">
 		<!-- First list item -->
+        {% if all_students.object_list.exists %}
 		{% for student in all_students %}
 
 		<a data-target="#student-attendance{{student.pk}}" data-toggle="collapse"
@@ -18,6 +19,11 @@
 
 		</div>
 		{% endfor %}
+{% else %}
+    <div class="border-left border-right border-danger py-3">
+    <h5 class="text-center text-danger">No student in this class</h5>
+    </div>
+{% endif %}
 
 		<!-- pagination -->
 		<div class="row py-3 border-top border-bottom">

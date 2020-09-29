@@ -12,7 +12,6 @@
 								<th>Comment</th>
 							</thead>
 							<tbody >
-								{% if performance %}
 							{% for performance in performance %}
 								<tr>
 									<td>{{performance.subject}}</td>
@@ -22,11 +21,11 @@
 									<td>{{performance.comment}}</td>
 								</tr>			
 								{% endfor %}
-								{% else %}
-									<h4 class="text-center my-3">No Performance for this term</h4>
-								{% endif %}
 							</tbody>				
 						</table>
+								{% if not performance.object_list %}
+									<div class="alert alert-info text-center my-3">No Performance for this term</div>
+								{% endif %}
 			
     <!-- pagination -->
     <div class="row py-3 border-top border-bottom" >

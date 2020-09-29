@@ -34,6 +34,7 @@
 
 
 <div class="row">
+    {% if conversations.exists %}
     {% for conversation in conversations %}
 
     {% if conversation.reciever.get_username == user.get_username %}
@@ -108,13 +109,18 @@
 
     {% endif  %}
     {% endfor %}
+    {% else %}
+        <h6 class="m-3 text-center">
+            <u class="text-danger">You currently have no conversations.</u>
+            Click the new conversation button above to start a new conversation.</h6>
+    {% endif %}
 
 </div>
 </div>
 <script>
     //Set unread messages number to 0
     $("#unread-messages-count").html("0");
-    //New conversarion event hander
+    //New conversation event hander
     $("#newConvoForm").submit(function (event) {
         event.preventDefault();
         //Get message value

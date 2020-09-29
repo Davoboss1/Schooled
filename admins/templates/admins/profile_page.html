@@ -65,7 +65,7 @@
 						<td>
 							{{parent.user.get_username}}
 						</td>
-						<td class="btn btn-light w-100" id="view-parent-profile"><span class="fa fa-eye" ></span></td>
+						<td class="btn btn-light w-100 view-parent-profile" ><span class="fa fa-eye" ></span></td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -164,7 +164,7 @@
 
 	});
 
-	$("#view-parent-profile").click(function (e) {
+	$(".view-parent-profile").click(function (e) {
 		var parent_username = $(this).prev().text();
 		get_data("{% url 'show_profile' %}"+"parent/"+parent_username+"/",{},$("#profile-body")[0]);
 	});

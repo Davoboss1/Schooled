@@ -4,6 +4,7 @@
 		<h5 class="mr-auto">Notifications</h5> <span
 			class="badge badge-danger badge-pill text-center my-auto">{{total_no}}</span>
 	</div>
+    {% if activity_log.object_list.exists %}
 	{% for activity in activity_log %}
 	<blockquote class="generic-blockquote mt-3" style="background-color:#f2f2f2;">
 		<h6>Date : {{activity.Activity_date_and_time|localtime|date:"N j,Y"}}</h6>
@@ -14,7 +15,12 @@
 		<hr>
 		<b class="text-dark">{{activity.Activity_info}}</b>
 	</blockquote>
-	{% endfor %}
+    {% endfor %}
+    {% else %}
+        <div class="alert alert-info" >
+            <h6 class="text-center">You currently have no notifications.</h6>
+        </div>
+    {% endif %}
 </div>
 <div class="d-flex">
 	<button class="genric-btn info mx-auto circle w-100 mt-2" id="load-more-btn" data-page-no="2"

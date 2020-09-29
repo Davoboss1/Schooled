@@ -56,9 +56,10 @@ def get_expirable_session(request,key):
     else:
         return session["data"]
 
-#Saves image to image field while delimg previous image
+#Saves image to image field while deleting previous image
 def save_picture(image_field,picture_file):
 	if picture_file is not None:
+		#Check if file.is not default image
 		if image_field.name != "default.jpg":
 			try:
 				image_field.delete()

@@ -79,6 +79,7 @@
     {% elif type == "Parent" %}
     <H3 class="text-center">Students</H3>
     <div class="list-group spaced-list">
+        {% if students.object_list.exists %}
         {% for student in students %}
         <a data-toggle="collapse" data-target="#student-collapse{{student.pk}}"
             class="list-group-item list-group-item-action text-center">{{student.name}}</a>
@@ -147,6 +148,13 @@
             <!-- End of  Collapse of button group for teacher actions-->
         </div>
         {% endfor %}
+        {% else %}
+    <div class="border-left border-right border-danger py-3">
+    <h5 class="text-center text-danger">No student in this class</h5>
+    </div>
+            
+        {% endif %}
+
         <!-- pagination -->
     </div>
     <!-- End of List group -->

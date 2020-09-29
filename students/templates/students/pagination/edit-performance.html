@@ -1,4 +1,5 @@
 {% load custom_filter %}
+{% if all_Info.object_list.exists %}
 {% for info in all_Info %}
     <a class="list-group-item list-group-item-action d-flex">{{info.name}}
         <span class="ml-auto">
@@ -89,6 +90,10 @@
         <!-- Subject List end -->
     </div>
 {% endfor %}  	 	
+{% else %}
+    <a class="list-group-item text-center text-danger">No students in this class</a>
+
+{% endif %}
 
 <!-- pagination -->
 <div class="row py-3 border-top border-bottom">

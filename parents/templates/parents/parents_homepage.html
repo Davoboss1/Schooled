@@ -58,6 +58,7 @@
 		<div class="card-body tab-content" style="padding-left:0; padding-right:0;">
 			<div class="tab-pane fade show active mx-3" id="my-wards-tab" role="tabpanel">
 
+                {% if parent.student_set.exists %}
 				{% for child in parent.student_set.all %}
 				<div class="student-view mb-3">
 					<img src="{{child.photo.url}}" class="rounded" alt="Photo"
@@ -117,7 +118,13 @@
 						<small class="border-top border-bottom py-3">Information provided by school</small>
 					</div>
 				</div>
-				{% endfor %}
+            {% endfor %}
+            {% else %}
+                <div class="alert alert-warning text-center">
+                    No children/wards profile available.
+                    Contact teacher to add your children/wards profile.
+                </div>
+            {% endif %}
 			</div>
 			<!-- Start of View profile tab -->
 			<div class="student-view tab-pane fade mx-3" id="view-profile-tab" role="tabpanel">

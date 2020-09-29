@@ -57,6 +57,11 @@
         </tbody>
 
     </table>
+    {% if not attendance.object_list %}
+        <div class="alert alert-info text-center">
+            No attendance for this student has been recorded.
+        </div>
+    {% endif %}
 
     <!-- pagination -->
     <div class="row py-3 border-top border-bottom" >

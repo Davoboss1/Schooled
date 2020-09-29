@@ -17,6 +17,11 @@
         </div>
     </div>
     <div class="m-2" id="date-error"></div>
+    {% if not all_students.exists %}
+        <div class="alert alert-warning text-center">
+            No students in this class
+        </div>
+    {% endif %}
 
 
     <div id="attendance-mark">
@@ -58,8 +63,6 @@
                                                                                                {% if students in attendance %}checked{% endif %}></td>
                         </tr>
                     {% endfor %}
-
-
 
                     <!-- Loop Should end here -->
                     <!-- Remaining rows -->

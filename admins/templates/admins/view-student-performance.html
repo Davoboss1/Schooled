@@ -28,6 +28,7 @@
 <!-- Performance List -->
  <div class="list-group spaced-list" id="performance-container{{class_pk}}">
 <!-- First list item -->
+{% if all_students.object_list.exists %}
 {% for student in all_students %}
   <a data-toggle="collapse" data-target="#student-performance{{student.pk}}" class="list-group-item list-group-item-action d-flex "  role="button">
    <h6  class="vcenter">
@@ -39,6 +40,8 @@
 			
 			<!-- Performance Table -->
 			
+            {% with performances=student|current_term_filter|slice:":10" %}
+            {% if  performances.exists %}
 			<table class="table table-striped table-bordered performance-table table-responsive" >
 			 <thead >
 			  	<th>Subject</th>
@@ -48,7 +51,7 @@
 				 <th>Comment</th>
 			 </thead>
 				<tbody id="table-body-{{student.pk}}">
-                    {% for performance in student|current_term_filter|slice:":10" %}
+                    {% for performance in performances %}
 					<tr>
 						<td>{{performance.subject}}</td>
 						<td>{{performance.test}}</td>
@@ -57,9 +60,12 @@
 						<td>{{performance.comment}}</td>
 					</tr>
 					{% endfor %}
-						
 				</tbody>				
-			</table>
+            </table>
+            {% else %}
+                <div class="alert alert-info">No performance for this term</div>
+            {% endif %}
+			{% endwith %}
 			<div class="d-flex">
 				<button class="btn mx-auto loadmore-btn" data-student-pk="{{student.pk}}" data-page="2">Load more <span class="fa fa-arrow-circle-down"></span></button>
 			</div>
@@ -67,6 +73,11 @@
 		</div>
 				
 		{% endfor %}
+{% else %}
+    <div class="border-left border-right border-danger py-3">
+    <h5 class="text-center text-danger">No student in this class</h5>
+    </div>
+{% endif %}
 		<!-- End of view performance tab body-->	 						
 		
 			<!-- pagination -->

@@ -53,7 +53,7 @@ class Student(models.Model):
 	
 	name = models.CharField(max_length=100)
 	parents = models.ManyToManyField(Parent)
-	email = models.EmailField(blank=True,null=True)
+	student_email = models.EmailField(blank=True,null=True)
 	phone_no= models.CharField(max_length=100,blank=True,null =True)
 	Class = models.ForeignKey(Class,on_delete=models.SET_NULL,null=True)
 	photo = models.ImageField(default='default.jpg', upload_to = 'Student_Pictures')

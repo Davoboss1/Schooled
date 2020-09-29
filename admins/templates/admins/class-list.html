@@ -4,7 +4,7 @@
 {# if type is view_performance add an add session container above class list container #}
 <button class="genric-btn primary my-3 mx-auto w-100"  type="button" data-toggle="collapse"
     data-target="#newSession" aria-expanded="false" aria-controls="newSession">
-    Sekect Session
+    Select Session
 </button>
 <div class="collapse mb-3 mx-auto w-100" id="newSession">
     <div class="card card-body">
@@ -103,6 +103,7 @@
             <b class="dark-red w-50 text-center">No of students</b>
             <span class="w-25 text-right mr-2"><span class="btn btn-light fa fa-edit" data-checked="false" id="edit-class"></span></span>
         </li>
+        {% if classes.exists %}
         {% for class in classes %}
         <li class="list-group-item list-group-item-action d-flex align-items-center class-list"
              data-toggle="collapse" data-target="#class-collapse{{class.pk}}"
@@ -123,7 +124,13 @@
             <div class="card card-body"></div>
         </div>
         {% endfor %}
-
+        {% else %}
+        <div class="alert alert-warning">
+            <h6 style="color:darkred;">Sorry, seems like you haven't added any class.</h6>
+            <hr>
+        <small>Go to manage teachers to add a teacher and a class.</small>
+        </div>
+        {% endif %}
     </ul>
 </div>
 {% if type == "manage_teachers" %}
@@ -264,7 +271,12 @@
                     collapse.html(data);
                 },
                 error: function (data) {
-                    collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Failed!</strong> Something went wrong, The request you made was not successful. Please try again <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+					if(data.responseText == "SESSIONERROR"){
+						collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Error!</strong> Invalid session detected, Click the select session button to select your school current session. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+					}
+					else{
+						collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Failed!</strong> Something went wrong, The request you made was not successful. Please try again <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+					}
                 }
             });
 

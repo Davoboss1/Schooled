@@ -13,6 +13,7 @@
 			<h6 class="w-75">Name</h6>
 		</li>
 		<!-- Actual first list item -->
+        {% if all_students.exists %}
 		{% for student in all_students %}
 		<li class="list-group-item d-flex flex-column" style="border-bottom:2px ridge #53375A;">
 			<input class="border-less" value="{{student.pk}}" style="display:none" readonly>
@@ -27,6 +28,11 @@
 			</div>
 		</li>
 		{% endfor %}
+{% else %}
+		<li class="list-group-item" style="border-bottom:2px ridge #53375A;">
+    <h5 class="text-center text-danger">No student in this class</h5>
+    </li>
+{% endif %}
 	</ul>
 
 </div>
