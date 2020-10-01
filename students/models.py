@@ -104,7 +104,7 @@ class Performance(models.Model):
 	def total(self):
 		return self.test + self.exam
 	class Meta:
-		ordering = ["student"]
+		ordering = ["subject"]
 		constraints = [models.UniqueConstraint(fields=["term","subject","student"],name="unique_performance"),]
 
 	

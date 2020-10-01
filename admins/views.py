@@ -295,7 +295,7 @@ def manage_teachers(request,class_pk):
 	if selected_class.teacher == None:
 		#Return template with "No teacher in class" message
 		return HttpResponse(f'''<div class="alert alert-warning my-3" role="alert">
-  No teacher for this class. <a href="#add-teachers" data-toggle="collapse" class="alert-link" onclick="add_class('{selected_class.class_name}');" >Click here to add teacher</a>. 
+  No teacher for this class. <a href="#add-teachers" data-toggle="collapse" class="alert-link text-light" onclick="add_class('{selected_class.class_name}');" >Click here to add teacher</a>. 
 </div>''')
 
 	return render(request,"admins/manage-teachers-or-parents.html",{"type":"Teacher","teacher":selected_class.teacher,"form":form})

@@ -16,7 +16,7 @@
             <input class="form-control w-75 mt-2 ml-2" type="hidden" name="name" value="{{info.name}}">
             <label class="vcenter mt-3 ml-2" >Enter Subject : 
             </label>
-                <input class="form-control w-75 mt-2 ml-2" type="text" name="subject">
+                <input class="form-control w-75 mt-2 ml-2" type="text" name="subject" list="subject-list" autocomplete="off" >
                 <div class="form-row ml-1 mr-1">					  	 		
                     <div class="col-5">
                         <label>Enter Test Score</label>
@@ -90,6 +90,14 @@
         <!-- Subject List end -->
     </div>
 {% endfor %}  	 	
+<!-- All added subject datalist -->
+<datalist id="subject-list">
+    {% for subject in available_subjects %}
+        <option>{{subject}}</option>
+    {% endfor %}
+</datalist>
+
+
 {% else %}
     <a class="list-group-item text-center text-danger">No students in this class</a>
 

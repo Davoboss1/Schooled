@@ -212,7 +212,7 @@
 			success: function (data) {
 				span_icon.removeClass("fa-spin");
 				if (data == "DOE_ERROR") {
-					$("#performance-view").html('<div class="alert alert-warning my-3" role="alert"> <h6 class="text-center">Term selected does not exist. </div></h6>');
+					$("#performance-view").html('<div class="alert alert-warning my-3" role="alert"> <h6 class="text-center text-light">Term selected does not exist. </div></h6>');
 				} else {
 					$("#performance-view").html(data);
 				}

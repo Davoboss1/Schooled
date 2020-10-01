@@ -48,6 +48,9 @@ def performance_page(request,type):
 		context["all_Info"] = all_Info
 		#If type of request is edit-performance just render edit-performance template
 		if type == "edit-performance":
+			teacher_class = request.user.teacher.teacher_class
+			available_subjects = teacher_class.performance_set.only("subject").values_list('subject',flat=True).distinct()
+			context["available_subjects"] = available_subjects
 			return render(request,"students/pagination/edit-performance.html",context)
 		else:
 			context['url'] = reverse("students:performance_page",kwargs={"type":"view-performance"})
@@ -621,23 +624,19 @@ def csv_handler(request):
 		#Line count var to count number of lines
 		line_count = 0
 		for row in csv_reader:
-			#Perform no action on first line
-			if line_count == 0:
-				pass
-			else:
-				#Try to get performance if it exists or create new one
-				try:
-					performance = term.performance_set.get(subject=row["subject"],student=student)
-					performance.test = row["test_score"]
-					performance.exam = row["exam_score"]
-					performance.comment = row["comment"]
-					performance.save()
-				except:
-					performance = Performance.objects.create(term=term,Class=current_class,student=student,subject=row["subject"],test=row["test_score"],exam=row["exam_score"],comment=row["comment"])
+			#Try to get performance if it exists or create new one
+			try:
+				performance = term.performance_set.get(subject=row["subject"],student=student)
+				performance.test = row["test_score"]
+				performance.exam = row["exam_score"]
+				performance.comment = row["comment"]
+				performance.save()
+			except:
+				performance = Performance.objects.create(term=term,Class=current_class,student=student,subject=row["subject"],test=row["test_score"],exam=row["exam_score"],comment=row["comment"])
 
 			line_count+=1
 		#Return success message with number of performances added(line_count-1 because the first line is not counted)
-		return HttpResponse(f"{line_count-1} performances for {student.name} added successfully.")
+		return HttpResponse(f"{line_count} performances for {student.name} added successfully.")
 	else:
 		response = HttpResponse(content_type="text/csv")
 		response['Content-Disposition'] = 'attachment; filename="template.csv"'
