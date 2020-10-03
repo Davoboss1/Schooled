@@ -7,7 +7,7 @@
         {% if all_students.object_list.exists %}
 		{% for student in all_students %}
 
-		<a data-target="#student-attendance{{student.pk}}" data-toggle="collapse"
+		<a href="#student-attendance{{student.pk}}" data-toggle="collapse"
 			class="list-group-item list-group-item-action d-flex " role="button">
 			<h6 class="vcenter">
 				{{student.name}}

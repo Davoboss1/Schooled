@@ -30,7 +30,7 @@
 <!-- First list item -->
 {% if all_students.object_list.exists %}
 {% for student in all_students %}
-  <a data-toggle="collapse" data-target="#student-performance{{student.pk}}" class="list-group-item list-group-item-action d-flex "  role="button">
+  <a data-toggle="collapse" href="#student-performance{{student.pk}}" class="list-group-item list-group-item-action d-flex "  role="button">
    <h6  class="vcenter">
 	  	{{student.name}}
  	  </h6>

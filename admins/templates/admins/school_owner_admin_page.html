@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zxx" class="no-js">
+<html lang="zxx" class="no-js" style="overflow:scroll;  -webkit-overflow-scrolling: touch;">
 {% load static %}
 {% load crispy_forms_tags %}
 
@@ -22,9 +22,7 @@
             CSS
             =============================================
         -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat&family=Neuton:ital,wght@0,200;0,300;0,400;0,700;1,400&family=Roboto&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Neuton:ital,wght@0,200;0,300;0,400;0,700;1,400&family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'css/linearicons.css'%}" />
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}" />
@@ -120,13 +118,13 @@
 </head>
 
 <body>
-    <div id="help-container" class="close" >
+    <div id="help-container" class="close">
         <div class="mt-3 mx-3 d-flex justify-content-between">
             <button class="btn btn-dark lnr lnr-cross text-white" onclick="toggleHelp(false)" id="closeHelp" style="font-size: 30px;"></button>
             <h3 class="brand-name my-auto">Schooled</h3>
         </div>
-        
-        <div class="container my-3" id="help-container-body" >
+
+        <div class="container my-3" id="help-container-body">
         </div>
     </div>
     <!-- ================ Start Header Area ================= -->
@@ -137,23 +135,19 @@
                     <a class="navbar-brand" href="{% url 'accounts:accounts_handler' %}">
                         <h3 class="brand-name">Schooled</h3>
                     </a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse"
-                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="lnr lnr-menu"></span>
                     </button>
 
-                    <div class="collapse navbar-collapse justify-content-end align-items-center"
-                        id="navbarSupportedContent" style="background-color: #04091e;">
+                    <div class="collapse navbar-collapse justify-content-end align-items-center" id="navbarSupportedContent" style="background-color: #04091e;">
                         <ul class="navbar-nav">
                             <li>
                                 <div class="d-flex">
                                     <div class="input-group mx-3" id="search-website-container">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text bg-white"><span
-                                                    class="fa fa-search"></span></span>
+                                            <span class="input-group-text bg-white"><span class="fa fa-search"></span></span>
                                         </div>
-                                        <input type="text" class="form-control" placeholder="Search website" >
+                                        <input type="text" class="form-control" placeholder="Search website">
                                     </div>
                                 </div>
 
@@ -166,26 +160,17 @@
                                 </a>
                                 <div class="dropdown-menu">
                                     {% if request.user.level == "Teacher" %}
-                                    <a class="dropdown-item" onclick="animateScrollToId('#teacher-tools');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
-                                    <a class="dropdown-item" onclick="animateScrollToId('#teacherProfile');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Profile </a>
-                                    <a class="dropdown-item" onclick="animateScrollToId('#main');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Workspace</a>
+                                    <a class="dropdown-item" onclick="animateScrollToId('#teacher-tools');" data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
+                                    <a class="dropdown-item" onclick="animateScrollToId('#teacherProfile');" data-toggle="collapse" data-target="#navbarSupportedContent">Profile </a>
+                                    <a class="dropdown-item" onclick="animateScrollToId('#main');" data-toggle="collapse" data-target="#navbarSupportedContent">Workspace</a>
                                     {% elif request.user.level == "Admin" %}
-                                    <a class="dropdown-item" onclick="animateScrollToId('#admin-tools');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
-                                    <a class="dropdown-item" onclick="animateScrollToId('#main');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Workspace</a>
+                                    <a class="dropdown-item" onclick="animateScrollToId('#admin-tools');" data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
+                                    <a class="dropdown-item" onclick="animateScrollToId('#main');" data-toggle="collapse" data-target="#navbarSupportedContent">Workspace</a>
                                     {% else %}
 
                                     {% endif %}
-                                    <a class="dropdown-item" data-toggle="collapse"
-                                        data-target="#navbarSupportedContent"
-                                        onclick="animateScrollToElem('header:first-of-type');">Header</a>
-                                    <a class="dropdown-item" data-toggle="collapse"
-                                        data-target="#navbarSupportedContent"
-                                        onclick="animateScrollToId('#page-footer');">Footer</a>
+                                    <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent" onclick="animateScrollToElem('header:first-of-type');">Header</a>
+                                    <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent" onclick="animateScrollToId('#page-footer');">Footer</a>
                                 </div>
                             </li>
                             <li class="dropdown">
@@ -228,8 +213,7 @@
                             <h2 class="text-white text-center" id="school-banner">
                                 {{user.admin.schools.first.school_name}}
                             </h2>
-                            <h6 class="text-white py-2 mt-3 text-center border-top border-bottom"
-                                id="school-motto-banner">{{user.admin.schools.first.motto}}</h6>
+                            <h6 class="text-white py-2 mt-3 text-center border-top border-bottom" id="school-motto-banner">{{user.admin.schools.first.motto}}</h6>
                         </div>
                     </div>
                 </div>
@@ -247,15 +231,13 @@
                         </h3>
                         <select class="form-control my-3" id="selected-school">
                             {% for school in schools %}
-                            <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}"
-                                value="{{school.pk}}">
+                            <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}" value="{{school.pk}}">
                                 {{school.school_name}}
                             </option>
                             {% endfor %}
                         </select>
                         <div class="d-flex mt-2">
-                            <button class="btn btn-success mx-auto"
-                                onclick="document.getElementById('body-row').style.display='none'; document.getElementById('new-sch-cont').style.display='flex';">
+                            <button class="btn btn-success mx-auto" onclick="document.getElementById('body-row').style.display='none'; document.getElementById('new-sch-cont').style.display='flex';">
                                 Create new school
                             </button>
                             <button class="btn btn-danger mx-auto" id="delete-school-btn">
@@ -276,19 +258,15 @@
                                 Performance </li>
                             <li data-history="view-attendance" data-url="{% url 'class_list' 'view_attendance' %}">View
                                 Attendance</li>
-                            <li data-history="view-student-information"
-                                data-url="{% url 'class_list' 'view_student_info' %}">View Students Information</li>
+                            <li data-history="view-student-information" data-url="{% url 'class_list' 'view_student_info' %}">View Students Information</li>
                             <li data-history="view-manage-teachers" data-url="{% url 'class_list' 'manage_teachers' %}">
                                 Manage Teachers</li>
                             <li data-history="view-manage-parents" data-url="{% url 'class_list' 'manage_parents' %}">
                                 Manage
                                 Parents</li>
-                            <li data-history="view-messages" data-url="{% url 'accounts:message_list' %}">Messages <span
-                                    class="badge badge-dark badge-pill ml-3"
-                                    id="unread-messages-count">{{unread_msg_count}}</span></li>
+                            <li data-history="view-messages" data-url="{% url 'accounts:message_list' %}">Messages <span class="badge badge-dark badge-pill ml-3" id="unread-messages-count">{{unread_msg_count}}</span></li>
                             <li data-history="view-notifications" data-url="{% url 'notifications' %}">Notifications
-                                <span class="badge badge-dark badge-pill ml-3"
-                                    id="unviewed-notifications-count">{{unviewed_notifications_count}}</span></li>
+                                <span class="badge badge-dark badge-pill ml-3" id="unviewed-notifications-count">{{unviewed_notifications_count}}</span></li>
                             <li data-history="view-request-for-changes" data-url="{% url 'coming_soon' %}">Request for
                                 changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
                             <li data-history="view-post-and-news" data-url="{% url 'coming_soon' %}">Post and News</li>
@@ -298,16 +276,14 @@
                     <div class="col-12 col-sm-12 col-md-8 col-lg-8 py-3 d-flex flex-column">
                         <div class="d-flex flex-column" id="main">
                             <h4 class="text-center">No Current Work</h4>
-                            <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
-                                class="text-center">Nothing to show</small>
+                            <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small class="text-center">Nothing to show</small>
                         </div>
                     </div>
                     <!--End of Col container -->
                 </div>
                 <div class="" style="display:none;" id="new-sch-cont">
                     <div class="mx-auto">
-                        <button class="btn btn-outline-primary ml-3"
-                            onclick="document.getElementById('new-sch-cont').style.display='none'; document.getElementById('body-row').style.display='flex';">
+                        <button class="btn btn-outline-primary ml-3" onclick="document.getElementById('new-sch-cont').style.display='none'; document.getElementById('body-row').style.display='flex';">
                             <span class="fa fa-angle-left mr-2"></span>
                             Go back to workspace and menu
                         </button>
@@ -317,9 +293,7 @@
                             <div class="form-group">
                                 <label for="customFile1">School Logo</label>
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="school-image" id="customFile1"
-                                        onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected successfully' : this.nextElementSibling.innerHTML = 'Choose file')"
-                                        accept="image/*">
+                                    <input type="file" class="custom-file-input" name="school-image" id="customFile1" onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected successfully' : this.nextElementSibling.innerHTML = 'Choose file')" accept="image/*">
                                     <label class="custom-file-label" for="customFile1" id="file-label1">Choose
                                         file</label>
                                 </div>
@@ -344,8 +318,7 @@
                 <div class="row">
                     <div class="col-12 col-sm-12 col-md-6 col-lg-6 d-flex flex-column">
 
-                        <a class="text-white mt-3 mx-auto" href="{% url 'accounts:accounts_handler' %}"
-                            style="font-size:30px;"><span class="fa fa-graduation-cap mr-3"></span> Schooled</a>
+                        <a class="text-white mt-3 mx-auto" href="{% url 'accounts:accounts_handler' %}" style="font-size:30px;"><span class="fa fa-graduation-cap mr-3"></span> Schooled</a>
                         <blockquote class="generic-blockquote bg-dark mt-2 mb-3 text-white p-2">Schooled helps the data
                             management of a school. With this application the school is able to manage students,teachers
                             and
@@ -405,7 +378,9 @@
     </div>
 
     <!-- ================ End footer Area ================= -->
+
     {% if new_user %}
+    <!-- First time usage message area -->
     <div id="new-user" style="display: none;">
         <h4>Welcome to schooled</h4>
         <div id="new-user-body">
@@ -459,10 +434,8 @@
     {% block script %}
 
     <script>
-
-
         //Create new school event handler
-        $("#new-school-form").submit(function (e) {
+        $("#new-school-form").submit(function(e) {
             e.preventDefault();
             var form = $(this);
             var formdata = new FormData(this);
@@ -473,7 +446,7 @@
                 data: formdata,
                 processData: false,
                 contentType: false,
-                success: function (data) {
+                success: function(data) {
                     //Create option element and add newly created school to it
                     var option = document.createElement("option");
                     option.textContent = data.name;
@@ -482,7 +455,7 @@
                     document.getElementById("selected-school").append(option);
                     status.html('<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Success</strong> New School has been created successfully.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
                 },
-                error: function (res) {
+                error: function(res) {
                     if (res.responseText) {
                         status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Failed!</strong> Sorry, But the form was not submitted. <hr> <h4 class="text-center"><u class="text-dark"> Reasons </u></h4>' + res.responseText + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
                     } else {
@@ -493,7 +466,7 @@
             });
         });
 
-        $("#delete-school-btn").click(function () {
+        $("#delete-school-btn").click(function() {
             var btn = $(this);
             var sch_select = $("#selected-school")[0];
             Swal.mixin({
@@ -503,8 +476,7 @@
                 showCloseButton: true,
                 showCancelButton: true,
                 progressSteps: ['1', '2']
-            }).queue([
-                {
+            }).queue([{
                     confirmButtonText: 'Yes &rarr;',
                     html: ' <h4 class="text-danger">Are you sure you want to permernently delete school</h4> <hr> <b class="text-danger">You will lose all school records and data and this process cannot be undone.</b>'
                 },
@@ -513,15 +485,19 @@
                     html: '<b class="text-danger">Enter your password to confirm delete.</b>',
                     input: 'password',
                     showLoaderOnConfirm: true,
-                    preConfirm: function (password) {
+                    preConfirm: function(password) {
                         btn.html("Deleting school...");
                         this.disabled = true;
                         return $.ajax({
                             type: "POST",
                             url: "{% url 'delete_school' %}",
-                            data: { csrfmiddlewaretoken: "{{csrf_token}}", sch_pk: sch_select.value, password: password },
+                            data: {
+                                csrfmiddlewaretoken: "{{csrf_token}}",
+                                sch_pk: sch_select.value,
+                                password: password
+                            },
                             timeout: 15000,
-                            success: function (data) {
+                            success: function(data) {
                                 var sch_name = sch_select[sch_select.selectedIndex].textContent;
                                 sch_select.remove(sch_select.selectedIndex);
                                 btn.html("Delete school");
@@ -531,7 +507,7 @@
                                     text: "School has been deleted successfully"
                                 });
                             },
-                            error: function (res, status, textStatus) {
+                            error: function(res, status, textStatus) {
                                 var msg = "";
                                 if (res.responseText == "WP") {
                                     msg = "Wrong password entered."
@@ -551,7 +527,7 @@
             ]);
 
         });
-        var request_body = function (arg) {
+        var request_body = function(arg) {
 
             var item = null;
             if (!(arg.target)) {
@@ -580,10 +556,10 @@
             $.ajax({
                 url: item.getAttribute("data-url") + document.getElementById("selected-school").value + "/",
                 type: "GET",
-                success: function (data) {
+                success: function(data) {
                     $("#main").html(data);
                 },
-                error: function (response, status, error) {
+                error: function(response, status, error) {
                     $("#main").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
                 }
             });
@@ -606,16 +582,23 @@
             var browser_history = [];
             var current_history = null;
             var history_id = 1;
+
             function setHistory(e) {
                 var text = this.getAttribute("data-history");
-                var obj = { history: text, item_id: this.id, history_id: history_id++ };
+                var obj = {
+                    history: text,
+                    item_id: this.id,
+                    history_id: history_id++
+                };
                 history.pushState(obj, "List url", text);
                 browser_history.push(obj);
                 last_page = text;
 
             }
-            window.onpopstate = function (event) {
-                if (event.state == null) { return; }
+            window.onpopstate = function(event) {
+                if (event.state == null) {
+                    return;
+                }
                 if (!confirm("Are you sure you want to go leave session ?")) {
                     if (current_history == null) {
                         current_history = browser_history[0];
@@ -634,23 +617,26 @@
             };
         })();
 
-        $("#selected-school").change(function (e) {
+        $("#selected-school").change(function(e) {
             var notif_count = this.options[this.selectedIndex].getAttribute("data-notif-count");
             var sch_motto = this.options[this.selectedIndex].getAttribute("data-motto");
             var school_name = this.options[this.selectedIndex].textContent;
             $("#unviewed-notifications-count").html(notif_count);
             $("#school-banner").text(school_name);
             $("#school-motto-banner").text(sch_motto);
-        });
-        {% if new_user %}
+        }); {
+            %
+            if new_user %
+        }
         Swal.fire({
             html: $("#new-user").html(),
             showCloseButton: true,
             showCancelButton: false,
             showConfirmButton: false,
             background: '#efefef'
-        });
-        {% endif %}
+        }); {
+            % endif %
+        }
     </script>
     {% endblock %}
 </body>

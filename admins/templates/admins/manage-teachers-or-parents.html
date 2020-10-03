@@ -5,7 +5,7 @@
     <!-- List of all teachers or parents list Group -->
     {% if type == "Teacher" %}
     <div class="list-group spaced-list">
-        <a data-toggle="collapse" data-target="#collapse-{{teacher.pk}}"
+        <a data-toggle="collapse" href="#collapse-{{teacher.pk}}"
             class="list-group-item list-group-item-action text-center">{{teacher.full_name|default:teacher.user.username}}</a>
         <!-- Collapse of button group for teacher or parents actions -->
         <div class="collapse" id="collapse-{{teacher.pk}}">
@@ -81,7 +81,7 @@
     <div class="list-group spaced-list">
         {% if students.object_list.exists %}
         {% for student in students %}
-        <a data-toggle="collapse" data-target="#student-collapse{{student.pk}}"
+        <a data-toggle="collapse" href="#student-collapse{{student.pk}}"
             class="list-group-item list-group-item-action text-center">{{student.name}}</a>
         <!-- Collapse of button group for teacher or parents actions -->
         <div class="collapse" id="student-collapse{{student.pk}}">

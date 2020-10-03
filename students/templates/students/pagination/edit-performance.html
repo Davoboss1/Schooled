@@ -3,9 +3,9 @@
 {% for info in all_Info %}
     <a class="list-group-item list-group-item-action d-flex">{{info.name}}
         <span class="ml-auto">
-            <span class="fa fa-minus-circle mr-3" style="color:red;" data-toggle="collapse" data-target="#delete-performance{{info.id}}">					  	 			
+            <span class="fa fa-minus-circle mr-3" style="color:red;" data-toggle="collapse" data-target="#delete-performance{{info.id}}" onclick="">					  	 			
             </span>
-            <span class="fa fa-plus-circle" style="color:green;" data-toggle="collapse" data-target="#add-performance-form{{info.pk}}"></span>					
+            <span class="fa fa-plus-circle" style="color:green;" data-toggle="collapse" data-target="#add-performance-form{{info.pk}}" onclick=""></span>					
         </span>
     </a>
     <!-- Collapsed container for add performance -->

@@ -1,6 +1,6 @@
 {% if all_Info.object_list.exists %}
 {% for info in all_Info %}
-<a data-toggle="collapse" data-target="#student_performance{{info.pk}}"
+<a data-toggle="collapse" href="#student_performance{{info.pk}}"
 	class="list-group-item list-group-item-action d-flex " role="button">
 	<h6 class="vcenter">
 		{{info.name}}
