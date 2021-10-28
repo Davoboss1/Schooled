@@ -43,7 +43,6 @@ def about_view(request):
 #View to register school and admin information
 #Url = /register/
 def register(request):
-	return HttpResponse("<h1>Temporarily not available</h1>")
 	#form for creating new user
 	userform = UserCreationForm()
 	#Set first_name,last_name,email fields to be required
