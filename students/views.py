@@ -28,7 +28,7 @@ from tools import view_for,require_ajax,require_auth
 #View for viewing performance
 #Used by teachers
 @view_for("teacher")
-@require_ajax
+
 def performance_page(request,type):
 	school = request.user.teacher.teacher_class.school
 	context={
@@ -91,7 +91,7 @@ def performance_page(request,type):
 
 #Function for STUDENTS ATTENDANCE
 @view_for("teacher")
-@require_ajax
+
 def attendance_page(request,type):
 	#get all student in in teachers class
 	all_Info= request.user.teacher.teacher_class.student_set.all()
@@ -146,7 +146,7 @@ def attendance_page(request,type):
 
 #ADD STUDENTS	
 @view_for("teacher")
-@require_ajax
+
 def update(request):
 	if request.method == 'POST':
 		#form to add new student
@@ -236,7 +236,7 @@ def update(request):
 	
 #update student and shows student edit form 
 @view_for("teacher")
-@require_ajax
+
 def update_students(request,pk):
 	#get student form of student by pk
 	form = StudentForm(instance=Student.objects.get(pk=pk))
@@ -290,7 +290,7 @@ def update_students(request,pk):
 #also deletes student
 #It shouldn't be like this i know.
 @view_for("teacher")
-@require_ajax
+
 def edit_students(request):
 	#can be used to delete students
 	#On post request delete student
@@ -304,7 +304,7 @@ def edit_students(request):
 
 #View for creating and updating performance
 @view_for("teacher")
-@require_ajax
+
 def p_create_or_update(request, student_id):
 	try:
 		teacher =  request.user.teacher
@@ -332,18 +332,15 @@ def p_create_or_update(request, student_id):
 		
 #delete performance view
 @view_for("teacher")
-@require_ajax
 def delete(request):
-	if request.is_ajax():
-		if request.method == "POST":
-			#get performance then delete it
-			performance= get_object_or_404(Performance, pk=int(request.POST.get("pk")))
-			performance.delete()
-			return HttpResponse(f"Subject {performance.subject} was deleted successfully" )
+	if request.method == "POST":
+		#get performance then delete it
+		performance= get_object_or_404(Performance, pk=int(request.POST.get("pk")))
+		performance.delete()
+		return HttpResponse(f"Subject {performance.subject} was deleted successfully" )
 	
 #mark attendance view
 @view_for("teacher")
-@require_ajax
 def mark(request,Date):
 	if request.method == "POST":
 		print(request.POST)
@@ -368,7 +365,7 @@ def mark(request,Date):
 
 #view for uploading student photo
 @view_for("teacher")
-@require_ajax
+
 def handle_uploads(request):
 	if request.method == "POST":
 		#Get photo fron request.FILES

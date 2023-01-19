@@ -29,7 +29,7 @@ def parents_homepage(request):
 	
 #update parent info
 @view_for("parent")
-@require_ajax
+
 def update(request):
 	#Check if request method is post
 	if request.method == "POST":

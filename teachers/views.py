@@ -82,7 +82,6 @@ def update_class(request):
 #teacher uses this view to update his/her profile		
 @view_for("teacher")
 def update_profile(request):
-	if request.is_ajax():
 		teacher = request.user.teacher
 		if request.method == "POST":
 			user = request.user
@@ -129,7 +128,7 @@ def update_profile(request):
 		
 #Admin uses this view to delete teacher
 @view_for("admin")
-@require_ajax
+
 def teacher_delete(request):
 	if request.method == "POST":
 		if request.user.level == "Admin":

@@ -60,7 +60,7 @@ def school_owner_home_page(request):
 
 #View for creating a new school
 @view_for("admin")
-@require_ajax
+
 def create_new_school(request):
 	sch_form = SchoolForm(request.POST)
 	if sch_form.is_valid():
@@ -76,7 +76,7 @@ def create_new_school(request):
 	
 #Delete school view (Obvi)
 @view_for("admin")
-@require_ajax
+
 def delete_school(request):
 	#Get password and verify if its user correct password
 	password = request.POST.get("password")
@@ -99,7 +99,7 @@ def delete_school(request):
 #Changes admin password.
 #Basically it performs all functions on the school profile page
 @view_for("admin")
-@require_ajax
+
 def school_profile(request,sch_pk):
 	current_user = request.user
 	admin = current_user.admin
@@ -155,7 +155,7 @@ def school_profile(request,sch_pk):
 	
 #view which shows list of all classes
 @view_for("admin")
-@require_ajax
+
 def class_list(request,sch_pk,type):
 	admin = request.user.admin
 	school = School.objects.get(admin=admin,pk=sch_pk)
@@ -178,7 +178,7 @@ def class_list(request,sch_pk,type):
 	
 #view that handles performance viewing for admin
 @view_for("admin")
-@require_ajax
+
 def view_performance(request,pk):
 	admin = request.user.admin
 	#Get current class by pk
@@ -256,7 +256,7 @@ def loadmore_performance(queryset,no_of_items,page):
 		
 #view for viewing attendance for admin
 @view_for("admin")
-@require_ajax
+
 def view_attendance(request,pk):
 	admin = request.user.admin
 	#Get current class by pk
@@ -286,7 +286,7 @@ def view_student_info(request,**kwargs):
 	
 # View to manage teachers.
 @view_for("admin")
-@require_ajax
+
 def manage_teachers(request,class_pk):
 	selected_class = Class.objects.get(pk=class_pk)
 	#form for updating teacher info
@@ -302,7 +302,7 @@ def manage_teachers(request,class_pk):
 	
 #view to manage parents
 @view_for("admin")
-@require_ajax
+
 def manage_parents(request,class_pk):
 	selected_class = Class.objects.get(pk=class_pk)
 	#get all students. 
@@ -316,7 +316,7 @@ def manage_parents(request,class_pk):
 
 #Notifications view
 @view_for("admin")
-@require_ajax
+
 def notifications(request,sch_pk):
 	admin = request.user.admin 
 	school = School.objects.get(pk=sch_pk,admin=admin)
@@ -377,7 +377,7 @@ def  coming_soon(request,pk):
 
 #View for creating new term or sessions
 @view_for("admin")
-@require_ajax
+
 def add_sessions(request,sch_pk):
 	if request.method == "POST":
 		year = request.POST.get("year")
@@ -396,7 +396,7 @@ def add_sessions(request,sch_pk):
 
 #View for showing teacher or admin or parents profile
 @require_auth
-@require_ajax
+
 def show_profile(request,type,lookup):
 	if type == "school":
 		sch = School.objects.get(pk=lookup)

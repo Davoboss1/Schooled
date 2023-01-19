@@ -176,12 +176,12 @@ def account_handler(request):
 #View that lists all conversations
 #View handles all conversation requests and differenciates requests by arguments in get request
 @require_auth
-@require_ajax
+
 def message_list(request,sch_pk=None):
 	#Get conversations in which the user is either the sender or the reciever
 	conversations = Conversation.objects.filter(sender=request.user.get_username()) | Conversation.objects.filter(reciever=request.user)
 	user = request.user
-	if request.is_ajax() and request.method == "POST":
+	if request.method == "POST":
 		#Request for creating new conversation
 		if "convo" in request.POST:
 			return new_conversation(request)
@@ -195,24 +195,23 @@ def message_list(request,sch_pk=None):
 #View that lists all messages
 #View handles all messaging requests and differenciates requests by arguments in get request
 @require_auth
-@require_ajax
+
 def messages(request,convo_pk):
 	user = request.user
 	#Get conversation by pk
 	conversation = Conversation.objects.get(Q(pk=convo_pk),Q(sender=user.get_username()) | Q(reciever=user))
-	if request.is_ajax():
-		if "more_msg" in request.GET:
-			#Request for loading more messages
-			return more_msg(request,convo_pk)
-		elif "check_msg" in request.GET:
-			#Request for checking for new messages
-			return check_msg(request,convo_pk)
-		#If it was a post request.
-		#A new message was sent
-		if request.POST:
-			message = Messages(conversation=conversation,message=request.POST.get("message"),sent_by=request.POST.get("sender"))
-			message.save()
-			return HttpResponse("Success")
+	if "more_msg" in request.GET:
+		#Request for loading more messages
+		return more_msg(request,convo_pk)
+	elif "check_msg" in request.GET:
+		#Request for checking for new messages
+		return check_msg(request,convo_pk)
+	#If it was a post request.
+	#A new message was sent
+	if request.POST:
+		message = Messages(conversation=conversation,message=request.POST.get("message"),sent_by=request.POST.get("sender"))
+		message.save()
+		return HttpResponse("Success")
 
 	msgs = conversation.messages_set.all()
 	#Paginate messages i.e show only 16 messages at once
@@ -227,7 +226,7 @@ def messages(request,convo_pk):
 
 #Funtion for creating new conversation
 @require_auth
-@require_ajax
+
 def new_conversation(request):
 	try:
 		#Try to check if new conversation exactly matches an old conversation
@@ -248,7 +247,7 @@ def new_conversation(request):
 
 #function for loading more messages
 @require_auth
-@require_ajax
+
 def more_msg(request,convo_pk):
 	user = request.user
 	page_no = int(request.GET.get("page_no"))
@@ -306,7 +305,7 @@ def more_msg(request,convo_pk):
 
 #Function to check for new messages
 @require_auth
-@require_ajax
+
 def check_msg(request,convo_pk):
 	user = request.user
 	conversation = Conversation.objects.get(Q(pk=convo_pk),Q(sender=user.get_username()) | Q(reciever=user))

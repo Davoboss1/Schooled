@@ -21,11 +21,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SCHOOLED_SECRET_KEY")
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+#SECRET_KEY = os.environ.get("SCHOOLED_SECRET_KEY")
+SECRET_KEY = "pm&&*&x($d2x$)5i(stzi5hxmp-(-+lpj*m%&!vul19yd0+996"
 
-ALLOWED_HOSTS = ["10.61.120.22","127.0.0.1","192.168.43.1","localhost","d843721730be.ngrok.io","Userboss1.pagekite.me","schooled.pythonanywhere.com"]
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ["localhost","127.0.0.1","schooled.pythonanywhere.com"]
 #ALLOWED_HOSTS = ["*"]
 
 
@@ -84,8 +86,14 @@ WSGI_APPLICATION = 'schooled.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
+DATABASES = {  
     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+'''
+'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'Schooled$default',
         'USER' : 'Schooled',
@@ -95,12 +103,6 @@ DATABASES = {
         }, 
         'HOST' : 'Schooled.mysql.pythonanywhere-services.com'
     },
-}
-'''
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
 '''
 
 # Password validation
@@ -153,11 +155,12 @@ MESSAGE_TAGS = {
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL ='/media/'
 
-#STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'accounts:accounts_handler'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
