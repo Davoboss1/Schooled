@@ -10,12 +10,27 @@ function animateScrollToId(id,backwards=50) {
 	});
 }
 
+function animateScrollToMain() {
+	let body = document.querySelector("html");
+	body.scrollTop = 450;
+}
+
 function animateScrollTo(selector) {
 	let body = document.querySelectorAll("html,body");
 	body.forEach(function(elem) {
 		elem.scrollTop = document.querySelector(selector).offsetTop - 50;
 	});
 }
+
+let block_list = document.querySelectorAll(".block-list li")
+block_list.forEach(function (elem) {
+	elem.onclick = function (e) {
+		for(let i=0; i<block_list.length;i++){
+			block_list[i].classList.remove("active");
+		}
+		elem.classList.add("active")
+	}
+});
 
 //make navbar transparent when user scrolls down.
 var main_nav = document.getElementById("main-nav");
