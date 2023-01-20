@@ -1,3 +1,5 @@
 schooled/settings-dev.py
 .env
 media/
+venv/
+*.pyc
