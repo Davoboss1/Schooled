@@ -27,7 +27,7 @@ html {
 
 
 .navbar {
-    padding: 25px 15px;
+    padding: 15px 15px;
 }
 
 @media (max-width: 992px) {
@@ -139,6 +139,7 @@ html {
     color: white;
     font-family: courier;
     font-weight: 600;
+    margin-top: 5px;
     font-size: 25px;
 }
 /* Temporarily hide search */
@@ -690,7 +691,7 @@ ul {
 
 .contact-link {
     color: #E5F6FF !important;
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .infoContainer * {
@@ -908,15 +909,15 @@ ul {
 
 @media screen and (min-width:768px) {
     #main {
-        max-height: 80vh;
-        overflow-y: auto;
+        
     }
 
     .block-list {
-        max-height: 700px;
         overflow-y: auto;
     }
 }
+
+
 
 .motto {
     display: flex;

@@ -5,14 +5,7 @@
 {% block style %}
 <style>
     @media screen and (min-width:768px) {
-        #main {
-
-            max-height: 90vh;
-            overflow-y: auto;
-            padding-top: 7%;
-            width: 100%;
-        }
-
+       
         #main>* {
             max-width: 500px;
             width: 100%;
@@ -27,12 +20,27 @@
             margin-right: auto;
         }
 
-        .block-list,
         #teacher-tools,
         #teacherProfile {
             max-height: 90vh;
             overflow-y: auto;
             padding-top: 7%;
+        }
+
+        body{
+            padding-left: 350px;
+        }
+
+        #admin-tools{
+            position: fixed;
+            left: 0;
+            top: 80px;
+            width: 350px;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+        .block-list{
+            padding: 0 10px;
         }
     }
 
@@ -87,6 +95,14 @@
     .help-card .body {
         padding: 5px;
     }
+    .top-left{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 350px;
+        height: 80px;
+        background-color: #04091e;
+    }
 </style>
 {% endblock %}
 
@@ -112,9 +128,57 @@
 
 <!-- ================ Start Body Area ================= -->
 <section x-data>
+    <div class="top-left"></div>
+    <div class="bg-light thick-horizontal-border" id="admin-tools">
+        <!-- main list -->
+        <ul class="block-list">
+            <a class="text-decoration-none" href="#main">
+                <li data-history="view-school-profile"
+                    :hx-get="'{% url 'school_profile' %}'+ $refs.school_select.value + '/'" hx-indicator="#loader" hx-target="#main">
+                    School Profile
+                </li>
+                <li data-history="view-performance"
+                    :hx-get="'{% url 'class_list' 'view_performance' %}'+ $refs.school_select.value + '/'"
+                    hx-target="#main">
+                    View
+                    Performance </li>
+                <li data-history="view-attendance"
+                    :hx-get="'{% url 'class_list' 'view_attendance' %}'+ $refs.school_select.value + '/'"
+                    hx-target="#main">View
+                    Attendance</li>
+                <li data-history="view-student-information"
+                    :hx-get="'{% url 'class_list' 'view_student_info' %}'+ $refs.school_select.value + '/'"
+                    hx-target="#main">
+                    View Students Information</li>
+                <li data-history="view-manage-teachers"
+                    :hx-get="'{% url 'class_list' 'manage_teachers' %}'+ $refs.school_select.value + '/'"
+                    hx-target="#main">
+                    Manage Teachers</li>
+                <li data-history="view-manage-parents"
+                    :hx-get="'{% url 'class_list' 'manage_parents' %}'+ $refs.school_select.value + '/'"
+                    hx-target="#main">
+                    Manage
+                    Parents</li>
+                <li data-history="view-messages" hx-get="{% url 'accounts:message_list' %}" hx-target="#main">
+                    Messages <span class="badge badge-dark badge-pill ml-3"
+                        id="unread-messages-count">{{unread_msg_count}}</span></li>
+                <li data-history="view-notifications"
+                    :hx-get="'{% url 'notifications' %}'+ $refs.school_select.value + '/'" hx-target="#main">
+                    Notifications
+                    <span class="badge badge-dark badge-pill ml-3"
+                        id="unviewed-notifications-count">{{unviewed_notifications_count}}</span>
+                </li>
+                <li data-history="view-request-for-changes" hx-get="{% url 'coming_soon' %}" hx-target="#main">
+                    Request for
+                    changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
+                <li data-history="view-post-and-news" hx-get="{% url 'coming_soon' %}" hx-target="#main">Post
+                    and News</li>
+
+            </a>
+        </ul>
+    </div>
     <div class="container-fluid">
-        <div class="row">
-            <div class="mx-auto py-3 my-3 col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3 border">
+            <div class="mx-auto p-3 my-3 w-100 border" style="max-width: 400px;">
                 <h3>
                     Select current school :
                 </h3>
@@ -135,60 +199,10 @@
                         Delete school
                     </button>
                 </div>
-            </div>
         </div>
         <div class="row" id="body-row">
-            <!-- Admin List -->
-            <div class="col-12 col-sm-12 col-md-4 col-lg-3 bg-light thick-horizontal-border" id="admin-tools">
-                <!-- main list -->
-                <ul class="block-list my-3">
-                    <a class="text-decoration-none" onclick="animateScrollToId('#main',500)">
-                        <li data-history="view-school-profile"
-                            :hx-get="'{% url 'school_profile' %}'+ $refs.school_select.value + '/'" hx-indicator="#loader" hx-target="#main">
-                            School Profile
-                        </li>
-                        <li data-history="view-performance"
-                            :hx-get="'{% url 'class_list' 'view_performance' %}'+ $refs.school_select.value + '/'"
-                            hx-target="#main">
-                            View
-                            Performance </li>
-                        <li data-history="view-attendance"
-                            :hx-get="'{% url 'class_list' 'view_attendance' %}'+ $refs.school_select.value + '/'"
-                            hx-target="#main">View
-                            Attendance</li>
-                        <li data-history="view-student-information"
-                            :hx-get="'{% url 'class_list' 'view_student_info' %}'+ $refs.school_select.value + '/'"
-                            hx-target="#main">
-                            View Students Information</li>
-                        <li data-history="view-manage-teachers"
-                            :hx-get="'{% url 'class_list' 'manage_teachers' %}'+ $refs.school_select.value + '/'"
-                            hx-target="#main">
-                            Manage Teachers</li>
-                        <li data-history="view-manage-parents"
-                            :hx-get="'{% url 'class_list' 'manage_parents' %}'+ $refs.school_select.value + '/'"
-                            hx-target="#main">
-                            Manage
-                            Parents</li>
-                        <li data-history="view-messages" hx-get="{% url 'accounts:message_list' %}" hx-target="#main">
-                            Messages <span class="badge badge-dark badge-pill ml-3"
-                                id="unread-messages-count">{{unread_msg_count}}</span></li>
-                        <li data-history="view-notifications"
-                            :hx-get="'{% url 'notifications' %}'+ $refs.school_select.value + '/'" hx-target="#main">
-                            Notifications
-                            <span class="badge badge-dark badge-pill ml-3"
-                                id="unviewed-notifications-count">{{unviewed_notifications_count}}</span>
-                        </li>
-                        <li data-history="view-request-for-changes" hx-get="{% url 'coming_soon' %}" hx-target="#main">
-                            Request for
-                            changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
-                        <li data-history="view-post-and-news" hx-get="{% url 'coming_soon' %}" hx-target="#main">Post
-                            and News</li>
-
-                    </a>
-                </ul>
-            </div>
             <!-- Main Right Area -->
-            <div class="col-12 col-sm-12 col-md-8 col-lg-9 py-3 d-flex flex-column">
+            <div class="col-12 py-3 d-flex flex-column">
                 
                 <div class="d-flex flex-column" id="main">
                     <h4 class="text-center">No Current Work</h4>
