@@ -930,13 +930,13 @@ ul {
 }
 
 .block-list li {
-    border-left: 10px solid #1F364E;
+    border-left: 5px solid #1F364E;
     text-align: center;
     margin-top: 10%;
-    font-size: 25px;
+    font-size: 20px;
     padding: 3% 0;
 
-    color: #856887;
+    color: #29002c;
 }
 
 .block-list .active {

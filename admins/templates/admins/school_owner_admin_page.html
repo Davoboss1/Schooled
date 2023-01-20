@@ -139,10 +139,10 @@
         </div>
         <div class="row" id="body-row">
             <!-- Admin List -->
-            <div class="col-12 col-sm-12 col-md-4 col-lg-4 bg-light thick-horizontal-border" id="admin-tools">
+            <div class="col-12 col-sm-12 col-md-4 col-lg-3 bg-light thick-horizontal-border" id="admin-tools">
                 <!-- main list -->
                 <ul class="block-list my-3">
-                    <a class="text-decoration-none" href="#main">
+                    <a class="text-decoration-none" onclick="animateScrollToId('#main',500)">
                         <li data-history="view-school-profile"
                             :hx-get="'{% url 'school_profile' %}'+ $refs.school_select.value + '/'" hx-indicator="#loader" hx-target="#main">
                             School Profile
@@ -188,7 +188,7 @@
                 </ul>
             </div>
             <!-- Main Right Area -->
-            <div class="col-12 col-sm-12 col-md-8 col-lg-8 py-3 d-flex flex-column">
+            <div class="col-12 col-sm-12 col-md-8 col-lg-9 py-3 d-flex flex-column">
                 
                 <div class="d-flex flex-column" id="main">
                     <h4 class="text-center">No Current Work</h4>
