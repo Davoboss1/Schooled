@@ -215,10 +215,12 @@
 
     {% block default_scripts %}
 
-    <script src="{% static 'js/sweetalert.js' %}"></script>
+    <script src="{% static 'js/vendor/sweetalert.js' %}"></script>
     <script src="{% static 'js/vendor/jquery-3.4.1.min.js'%}"></script>
     <script src="{% static 'js/vendor/popper.min.js'%}"></script>
     <script src="{% static 'js/vendor/bootstrap.min.js'%}"></script>
+    <script src="{% static 'js/vendor/htmx.min.js'%}"></script>
+    <script src="{% static 'js/vendor/alpine.min.js'%}"></script>
     <!--<script src="{% static 'js/tippy.js' %}"></script>-->
     <script src="{% static 'js/utils.js' %}"></script>
     {% endblock %}

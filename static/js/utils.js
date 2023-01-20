@@ -1,16 +1,17 @@
 //Scrolls to element with scrolling animation
 function animateScrollToId(id) {
-
-	$('html, body').animate({
-		scrollTop: ($(id).offset().top - 50)
-	}, 1000);
+	let body = document.querySelectorAll("html,body");
+	body.forEach(function(elem) {
+		elem.scrollTop = document.querySelector(id).offsetTop - 50;
+	});
 	window.location.href = id;
 }
 
-function animateScrollToElem(elem) {
-	$('html, body').animate({
-		scrollTop: $(elem)[0].offsetTop
-	}, 1000);
+function animateScrollTo(selector) {
+	let body = document.querySelectorAll("html,body");
+	body.forEach(function(elem) {
+		elem.scrollTop = document.querySelector(id).offsetTop - 50;
+	});
 }
 
 //make navbar transparent when user scrolls down.

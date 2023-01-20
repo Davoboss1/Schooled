@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied,ValidationError
 def require_ajax(func):
     @wraps(func)
     def innerfunc(request,*args,**kwargs):
-        if request.is_ajax():
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return func(request,*args,**kwargs)
         else:
             raise PermissionDenied()
