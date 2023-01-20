@@ -54,13 +54,13 @@
                         <h3 class="brand-name">Schooled</h3>
                     </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse"
-                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        data-target="#nav-dropdown" aria-controls="nav-dropdown"
                         aria-expanded="false" aria-label="Toggle navigation">
                         <span class="lnr lnr-menu"></span>
                     </button>
 
                     <div class="collapse navbar-collapse justify-content-end align-items-center"
-                        id="navbarSupportedContent" style="background-color: #04091e;">
+                        id="nav-dropdown" style="background-color: #04091e;">
                         <ul class="navbar-nav">
                             <li>
                                 <div class="d-flex">
@@ -83,25 +83,25 @@
                                 <div class="dropdown-menu">
                                     {% if request.user.level == "Teacher" %}
                                     <a class="dropdown-item" onclick="animateScrollToId('#teacher-tools');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
+                                        data-toggle="collapse" data-target="#nav-dropdown">Tool list</a>
                                     <a class="dropdown-item" onclick="animateScrollToId('#teacherProfile');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Profile </a>
+                                        data-toggle="collapse" data-target="#nav-dropdown">Profile </a>
                                     <a class="dropdown-item" onclick="animateScrollToId('#main');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Workspace</a>
+                                        data-toggle="collapse" data-target="#nav-dropdown">Workspace</a>
                                     {% elif request.user.level == "Admin" %}
                                     <a class="dropdown-item" onclick="animateScrollToId('#admin-tools');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Tool list</a>
+                                        data-toggle="collapse" data-target="#nav-dropdown">Tool list</a>
                                     <a class="dropdown-item" onclick="animateScrollToId('#main');"
-                                        data-toggle="collapse" data-target="#navbarSupportedContent">Workspace</a>
+                                        data-toggle="collapse" data-target="#nav-dropdown">Workspace</a>
                                     {% else %}
 
                                     {% endif %}
                                     <a class="dropdown-item" data-toggle="collapse"
-                                        data-target="#navbarSupportedContent"
-                                        onclick="animateScrollToElem('header:first-of-type');">Header</a>
+                                        data-target="#nav-dropdown"
+                                        onclick="animateScrollTo('header:first-of-type');">Header</a>
                                     <a class="dropdown-item" data-toggle="collapse"
-                                        data-target="#navbarSupportedContent"
-                                        onclick="animateScrollToId('#page-footer');">Footer</a>
+                                        data-target="#nav-dropdown" onclick="animateScrollToId('#page-footer');"
+                                        >Footer</a>
                                 </div>
                             </li>
                             <li class="dropdown">
@@ -125,7 +125,7 @@
                             </li>
                             <li><a href="{% url 'accounts:about_page' %}">About</a></li>
                             <li><a href="javascript:void(0)" data-toggle="collapse"
-                                    data-target="#navbarSupportedContent" onclick="toggleHelp(true)">Help</a></li>
+                                    data-target="#nav-dropdown" onclick="toggleHelp(true)">Help</a></li>
                         </ul>
                     </div>
                 </div>

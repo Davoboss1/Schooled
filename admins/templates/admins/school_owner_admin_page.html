@@ -111,7 +111,7 @@
 <!-- ================ End banner Area ================= -->
 
 <!-- ================ Start Body Area ================= -->
-<section>
+<section x-data>
     <div class="container-fluid">
         <div class="row">
             <div class="mx-auto py-3 my-3 col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3 border">
@@ -121,7 +121,7 @@
                 <select class="form-control my-3" id="selected-school">
                     {% for school in schools %}
                     <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}"
-                        value="{{school.pk}}">
+                        value="{{school.pk}}" x-ref="school_select">
                         {{school.school_name}}
                     </option>
                     {% endfor %}
@@ -142,34 +142,54 @@
             <div class="col-12 col-sm-12 col-md-4 col-lg-4 bg-light thick-horizontal-border" id="admin-tools">
                 <!-- main list -->
                 <ul class="block-list my-3">
-                    <li data-history="view-school-profile" data-url="{% url 'school_profile' %}">School Profile
-                    </li>
-                    <li data-history="view-performance" data-url="{% url 'class_list' 'view_performance' %}">
-                        View
-                        Performance </li>
-                    <li data-history="view-attendance" data-url="{% url 'class_list' 'view_attendance' %}">View
-                        Attendance</li>
-                    <li data-history="view-student-information" data-url="{% url 'class_list' 'view_student_info' %}">
-                        View Students Information</li>
-                    <li data-history="view-manage-teachers" data-url="{% url 'class_list' 'manage_teachers' %}">
-                        Manage Teachers</li>
-                    <li data-history="view-manage-parents" data-url="{% url 'class_list' 'manage_parents' %}">
-                        Manage
-                        Parents</li>
-                    <li data-history="view-messages" data-url="{% url 'accounts:message_list' %}">Messages <span
-                            class="badge badge-dark badge-pill ml-3"
-                            id="unread-messages-count">{{unread_msg_count}}</span></li>
-                    <li data-history="view-notifications" data-url="{% url 'notifications' %}">Notifications
-                        <span class="badge badge-dark badge-pill ml-3"
-                            id="unviewed-notifications-count">{{unviewed_notifications_count}}</span>
-                    </li>
-                    <li data-history="view-request-for-changes" data-url="{% url 'coming_soon' %}">Request for
-                        changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
-                    <li data-history="view-post-and-news" data-url="{% url 'coming_soon' %}">Post and News</li>
+                    <a class="text-decoration-none" href="#main">
+                        <li data-history="view-school-profile"
+                            :hx-get="'{% url 'school_profile' %}'+ $refs.school_select.value + '/'" hx-indicator="#loader" hx-target="#main">
+                            School Profile
+                        </li>
+                        <li data-history="view-performance"
+                            :hx-get="'{% url 'class_list' 'view_performance' %}'+ $refs.school_select.value + '/'"
+                            hx-target="#main">
+                            View
+                            Performance </li>
+                        <li data-history="view-attendance"
+                            :hx-get="'{% url 'class_list' 'view_attendance' %}'+ $refs.school_select.value + '/'"
+                            hx-target="#main">View
+                            Attendance</li>
+                        <li data-history="view-student-information"
+                            :hx-get="'{% url 'class_list' 'view_student_info' %}'+ $refs.school_select.value + '/'"
+                            hx-target="#main">
+                            View Students Information</li>
+                        <li data-history="view-manage-teachers"
+                            :hx-get="'{% url 'class_list' 'manage_teachers' %}'+ $refs.school_select.value + '/'"
+                            hx-target="#main">
+                            Manage Teachers</li>
+                        <li data-history="view-manage-parents"
+                            :hx-get="'{% url 'class_list' 'manage_parents' %}'+ $refs.school_select.value + '/'"
+                            hx-target="#main">
+                            Manage
+                            Parents</li>
+                        <li data-history="view-messages" hx-get="{% url 'accounts:message_list' %}" hx-target="#main">
+                            Messages <span class="badge badge-dark badge-pill ml-3"
+                                id="unread-messages-count">{{unread_msg_count}}</span></li>
+                        <li data-history="view-notifications"
+                            :hx-get="'{% url 'notifications' %}'+ $refs.school_select.value + '/'" hx-target="#main">
+                            Notifications
+                            <span class="badge badge-dark badge-pill ml-3"
+                                id="unviewed-notifications-count">{{unviewed_notifications_count}}</span>
+                        </li>
+                        <li data-history="view-request-for-changes" hx-get="{% url 'coming_soon' %}" hx-target="#main">
+                            Request for
+                            changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
+                        <li data-history="view-post-and-news" hx-get="{% url 'coming_soon' %}" hx-target="#main">Post
+                            and News</li>
+
+                    </a>
                 </ul>
             </div>
             <!-- Main Right Area -->
             <div class="col-12 col-sm-12 col-md-8 col-lg-8 py-3 d-flex flex-column">
+                
                 <div class="d-flex flex-column" id="main">
                     <h4 class="text-center">No Current Work</h4>
                     <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
@@ -367,7 +387,7 @@
             scrollValue = 100;
         }
         $('html, body').animate({
-            scrollTop: ($("#main").offset().top - scrollValue)
+            scrollTop: ($("#main").offset().top - 100)
         }, 1000);
 
         document.getElementById("main").innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
@@ -385,49 +405,16 @@
 
     };
 
-    $(".block-list li").click(request_body);
+    //$(".block-list li").click(request_body);
 
-    //history management
-    (function history_management() {
-        var li_items = document.querySelectorAll(".block-list li");
-        for (var index = 0; index < li_items.length; index++) {
-            item = li_items[index];
-            item.id = "item-" + index;
-            item.onclick = setHistory;
-        }
+    document.addEventListener("htmx:sendError", function (event) {
+        document.getElementById("main").innerHTML = "<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>";
+    });
 
-
-        var last_page = "";
-        var browser_history = [];
-        var current_history = null;
-        var history_id = 1;
-        function setHistory(e) {
-            var text = this.getAttribute("data-history");
-            var obj = { history: text, item_id: this.id, history_id: history_id++ };
-            history.pushState(obj, "List url", text);
-            browser_history.push(obj);
-            last_page = text;
-
-        }
-        window.onpopstate = function (event) {
-            if (event.state == null) { return; }
-            if (!confirm("Are you sure you want to go leave session ?")) {
-                if (current_history == null) {
-                    current_history = browser_history[0];
-                }
-
-                history.pushState(current_history, "List url", current_history.history);
-                $('html, body').animate({
-                    scrollTop: ($("#main").offset().top - 50)
-                }, 1000);
-            } else {
-                var current_item = document.getElementById(event.state.item_id);
-                request_body(current_item);
-                current_history = event.state;
-            }
-
-        };
-    })();
+    document.addEventListener("htmx:xhr:loadstart", function (event) {
+        console.log("Called");
+        document.getElementById("main").innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
+    });
 
     $("#selected-school").change(function (e) {
         var notif_count = this.options[this.selectedIndex].getAttribute("data-notif-count");

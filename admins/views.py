@@ -372,7 +372,7 @@ def profile_page(request,pk):
 		current_term = None
 	return render(request,"admins/profile_page.html",{"student":student,"all_attendance" : attendance,"current_term":current_term,"terms":terms,})
 
-def  coming_soon(request,pk):
+def  coming_soon(request):
 	return render(request,"admins/coming_soon.html",{})
 
 #View for creating new term or sessions

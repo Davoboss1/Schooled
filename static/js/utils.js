@@ -10,7 +10,7 @@ function animateScrollToId(id) {
 function animateScrollTo(selector) {
 	let body = document.querySelectorAll("html,body");
 	body.forEach(function(elem) {
-		elem.scrollTop = document.querySelector(id).offsetTop - 50;
+		elem.scrollTop = document.querySelector(selector).offsetTop - 50;
 	});
 }
 
