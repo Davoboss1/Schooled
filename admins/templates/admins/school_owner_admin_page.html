@@ -5,7 +5,7 @@
 {% block style %}
 <style>
     @media screen and (min-width:768px) {
-       
+
         #main>* {
             max-width: 600px;
             width: 100%;
@@ -20,11 +20,11 @@
             margin-right: auto;
         }
 
-        body{
+        body {
             padding-left: 350px;
         }
 
-        #admin-tools{
+        #admin-tools {
             position: fixed;
             left: 0;
             top: 80px;
@@ -32,7 +32,8 @@
             height: calc(100vh - 100px);
             overflow-y: auto;
         }
-        .block-list{
+
+        .block-list {
             padding: 0 10px;
         }
     }
@@ -88,7 +89,8 @@
     .help-card .body {
         padding: 5px;
     }
-    .top-left{
+
+    .top-left {
         position: fixed;
         top: 0;
         left: 0;
@@ -120,35 +122,35 @@
 <!-- ================ End banner Area ================= -->
 
 <!-- ================ Start Body Area ================= -->
-<section x-data>
+<section x-data="main" >
     <div class="top-left"></div>
     <div class="bg-light thick-horizontal-border" id="admin-tools">
         <!-- main list -->
         <ul class="block-list">
             <a class="text-decoration-none" onclick="ScrollToId('#main',100)">
-                <li data-history="view-school-profile"
-                    :hx-get="'{% url 'school_profile' %}'+ $refs.school_select.value + '/'" hx-indicator="#loader" hx-target="#main">
+                <li data-history="view-school-profile" :hx-get="'{% url 'school_profile' %}' + sch_value + '/'"
+                    hx-target="#main">
                     School Profile
                 </li>
                 <li data-history="view-performance"
-                    :hx-get="'{% url 'class_list' 'view_performance' %}'+ $refs.school_select.value + '/'"
+                    :hx-get="'{% url 'class_list' 'view_performance' %}'+ sch_value + '/'"
                     hx-target="#main">
                     View
                     Performance </li>
                 <li data-history="view-attendance"
-                    :hx-get="'{% url 'class_list' 'view_attendance' %}'+ $refs.school_select.value + '/'"
+                    :hx-get="'{% url 'class_list' 'view_attendance' %}'+ sch_value + '/'"
                     hx-target="#main">View
                     Attendance</li>
                 <li data-history="view-student-information"
-                    :hx-get="'{% url 'class_list' 'view_student_info' %}'+ $refs.school_select.value + '/'"
+                    :hx-get="'{% url 'class_list' 'view_student_info' %}'+ sch_value + '/'"
                     hx-target="#main">
                     View Students Information</li>
                 <li data-history="view-manage-teachers"
-                    :hx-get="'{% url 'class_list' 'manage_teachers' %}'+ $refs.school_select.value + '/'"
+                    :hx-get="'{% url 'class_list' 'manage_teachers' %}'+ sch_value + '/'"
                     hx-target="#main">
                     Manage Teachers</li>
                 <li data-history="view-manage-parents"
-                    :hx-get="'{% url 'class_list' 'manage_parents' %}'+ $refs.school_select.value + '/'"
+                    :hx-get="'{% url 'class_list' 'manage_parents' %}'+ sch_value + '/'"
                     hx-target="#main">
                     Manage
                     Parents</li>
@@ -156,7 +158,7 @@
                     Messages <span class="badge badge-dark badge-pill ml-3"
                         id="unread-messages-count">{{unread_msg_count}}</span></li>
                 <li data-history="view-notifications"
-                    :hx-get="'{% url 'notifications' %}'+ $refs.school_select.value + '/'" hx-target="#main">
+                    :hx-get="'{% url 'notifications' %}'+ sch_value + '/'" hx-target="#main">
                     Notifications
                     <span class="badge badge-dark badge-pill ml-3"
                         id="unviewed-notifications-count">{{unviewed_notifications_count}}</span>
@@ -171,35 +173,35 @@
         </ul>
     </div>
     <div class="container-fluid">
-            <div class="mx-auto p-3 my-3 w-100 border" style="max-width: 400px;">
-                <h3>
-                    Select current school :
-                </h3>
-                <select class="form-control my-3" id="selected-school">
-                    {% for school in schools %}
-                    <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}"
-                        value="{{school.pk}}" x-ref="school_select">
-                        {{school.school_name}}
-                    </option>
-                    {% endfor %}
-                </select>
-                <div class="d-flex mt-2">
-                    <button class="btn btn-success mx-auto"
-                        onclick="document.getElementById('body-row').style.display='none'; document.getElementById('new-sch-cont').style.display='flex';">
-                        Create new school
-                    </button>
-                    <button class="btn btn-danger mx-auto" id="delete-school-btn">
-                        Delete school
-                    </button>
-                </div>
+        <div class="mx-auto p-3 my-3 w-100 border" style="max-width: 400px;">
+            <h3>
+                Select current school :
+            </h3>
+            <select class="form-control my-3" id="selected-school" @click="setSchoolValue($event.target.value)"
+                >
+                {% for school in schools %}
+                <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}" value="{{school.pk}}">
+                    {{school.school_name}}
+                </option>
+                {% endfor %}
+            </select>
+            <div class="d-flex mt-2">
+                <button class="btn btn-success mx-auto"
+                    onclick="document.getElementById('body-row').style.display='none'; document.getElementById('new-sch-cont').style.display='flex';">
+                    Create new school
+                </button>
+                <button class="btn btn-danger mx-auto" id="delete-school-btn">
+                    Delete school
+                </button>
+            </div>
         </div>
         <div class="row" id="body-row">
             <!-- Main Right Area -->
             <div class="col-12 py-3 d-flex flex-column" id="main">
-                
-                    <h4 class="text-center">No Current Work</h4>
-                    <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
-                        class="text-center">Nothing to show</small>
+
+                <h4 class="text-center">No Current Work</h4>
+                <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
+                    class="text-center">Nothing to show</small>
             </div>
             <!--End of Col container -->
         </div>
@@ -210,7 +212,8 @@
                     <span class="fa fa-angle-left mr-2"></span>
                     Go back to workspace and menu
                 </button>
-                <form method="post" style="max-width:350px;" class="m-3" hx-post="{% url 'create_new_school' %}" hx-encoding="multipart/form-data" hx-indicator="#new-school-status" hx-target="#new-school-status" >
+                <form method="post" id="create-school-form" style="max-width:350px;" class="m-3" hx-post="{% url 'create_new_school' %}"
+                    hx-encoding="multipart/form-data" hx-indicator="#new-school-status" hx-target="#new-school-status">
                     {% csrf_token %}
                     {{schoolform|crispy}}
                     <div class="form-group">
@@ -371,7 +374,7 @@
         ]);
 
     });
-    
+
     document.addEventListener("htmx:sendError", function (event) {
         let triggeredElement = event.target;
         let target_selector = triggeredElement.getAttribute("hx-target");
@@ -379,12 +382,40 @@
         target.innerHTML = "<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>";
     });
 
-    document.addEventListener("htmx:xhr:loadstart", function (event, e) {
+    document.addEventListener("htmx:xhr:loadstart", function (event) {
         let triggeredElement = event.target;
         let target_selector = triggeredElement.getAttribute("hx-target");
         let target = document.querySelector(target_selector);
         target.innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
     });
+
+    document.querySelector("#create-school-form").addEventListener("htmx:afterRequest", function (event) {
+        let data = JSON.parse(event.detail.xhr.response);
+        let select_element = document.getElementById('selected-school');
+        select_element.innerHTML = (`
+        <option data-notif-count="{{school.notif_count}}" data-motto="${data.motto}" value="${data.pk}">
+                    ${data.school_name}
+                </option>`);
+    });
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('main', () => ({
+            init(){
+                this.$watch('sch_value', value => htmxProcess('.block-list li'));
+            },
+            sch_value: "{{schools.first.pk}}",
+
+            setSchoolValue(value) {
+                this.sch_value = value;
+            }
+        }))
+    })
+
+    const htmxProcess = (selector) => {
+        document.querySelectorAll(selector).forEach((elem) => {
+            htmx.process(elem);
+        });
+    }
 
     $("#selected-school").change(function (e) {
         var notif_count = this.options[this.selectedIndex].getAttribute("data-notif-count");
