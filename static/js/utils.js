@@ -1,5 +1,5 @@
 //Scrolls to element with scrolling animation
-function animateScrollToId(id,backwards=50) {
+function ScrollToId(id,backwards=50) {
 	console.log(backwards)
 	console.log(document.querySelector(id).offsetTop)
 	window.location.href = id;
@@ -10,7 +10,7 @@ function animateScrollToId(id,backwards=50) {
 	});
 }
 
-function animateScrollToMain() {
+function ScrollToMain() {
 	let body = document.querySelector("html");
 	body.scrollTop = 450;
 }

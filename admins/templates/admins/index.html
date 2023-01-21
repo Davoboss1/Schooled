@@ -82,16 +82,16 @@
                                 </a>
                                 <div class="dropdown-menu">
                                     {% if request.user.level == "Teacher" %}
-                                    <a class="dropdown-item" onclick="animateScrollToId('#teacher-tools');"
+                                    <a class="dropdown-item" onclick="ScrollToId('#teacher-tools');"
                                         data-toggle="collapse" data-target="#nav-dropdown">Tool list</a>
-                                    <a class="dropdown-item" onclick="animateScrollToId('#teacherProfile');"
+                                    <a class="dropdown-item" onclick="ScrollToId('#teacherProfile');"
                                         data-toggle="collapse" data-target="#nav-dropdown">Profile </a>
-                                    <a class="dropdown-item" onclick="animateScrollToId('#main');"
+                                    <a class="dropdown-item" onclick="ScrollToId('#main');"
                                         data-toggle="collapse" data-target="#nav-dropdown">Workspace</a>
                                     {% elif request.user.level == "Admin" %}
-                                    <a class="dropdown-item" onclick="animateScrollToId('#admin-tools');"
+                                    <a class="dropdown-item" onclick="ScrollToId('#admin-tools');"
                                         data-toggle="collapse" data-target="#nav-dropdown">Tool list</a>
-                                    <a class="dropdown-item" onclick="animateScrollToId('#main');"
+                                    <a class="dropdown-item" onclick="ScrollToId('#main');"
                                         data-toggle="collapse" data-target="#nav-dropdown">Workspace</a>
                                     {% else %}
 
@@ -100,7 +100,7 @@
                                         data-target="#nav-dropdown"
                                         onclick="animateScrollTo('header:first-of-type');">Header</a>
                                     <a class="dropdown-item" data-toggle="collapse"
-                                        data-target="#nav-dropdown" onclick="animateScrollToId('#page-footer');"
+                                        data-target="#nav-dropdown" onclick="ScrollToId('#page-footer');"
                                         >Footer</a>
                                 </div>
                             </li>
@@ -139,13 +139,13 @@
         {% endblock %}
 
         <!-- ================ start footer Area ================= -->
-        <footer class="footer-area section-gap" id="page-footer">
+        <footer class="footer-area section-gap pb-3" id="page-footer">
             <div class="container-fluid">
 
                 <div class="row">
-                    <div class="col-12 col-sm-12 col-md-6 col-lg-6 d-flex flex-column">
+                    <div class="col-12 col-sm-12 col-lg-6 d-flex flex-column">
 
-                        <a class="text-white mt-3 mx-auto" href="{% url 'accounts:accounts_handler' %}"
+                        <a class="text-white mt-auto mx-auto" href="{% url 'accounts:accounts_handler' %}"
                             style="font-size:30px;"><span class="fa fa-graduation-cap mr-3"></span> Schooled</a>
                         <blockquote class="generic-blockquote bg-dark mt-2 mb-3 text-white p-2">Schooled helps the data
                             management of a school. With this application the school is able to manage students,teachers
@@ -178,8 +178,8 @@
                         <h5 class="text-white text-center my-3">Thank you for using schooled.</h5>
 
                     </div>
-                    <div class="col-12 col-sm-12 col-md-6 col-md-6">
-                        <h6 class="text-white text-center mt-3">For any information or issues</h6>
+                    <div class="col-12 col-sm-12 col-lg-6 d-flex flex-column">
+                        <h6 class="text-white text-center mt-auto">For any information or issues</h6>
                         <h6 class="text-white text-center">Contact us </h6>
                         <nav class="nav flex-column my-3">
                             <a class="nav-link mx-auto contact-link" href="mailto:schooledcontact@gmail.com"

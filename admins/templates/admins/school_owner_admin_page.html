@@ -132,7 +132,7 @@
     <div class="bg-light thick-horizontal-border" id="admin-tools">
         <!-- main list -->
         <ul class="block-list">
-            <a class="text-decoration-none" onclick="animateScrollToMain()">
+            <a class="text-decoration-none" onclick="ScrollToMain()">
                 <li data-history="view-school-profile"
                     :hx-get="'{% url 'school_profile' %}'+ $refs.school_select.value + '/'" hx-indicator="#loader" hx-target="#main">
                     School Profile
