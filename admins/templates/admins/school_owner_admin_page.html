@@ -210,7 +210,7 @@
                     <span class="fa fa-angle-left mr-2"></span>
                     Go back to workspace and menu
                 </button>
-                <form method="post" style="max-width:350px;" class="m-3" id="new-school-form">
+                <form method="post" style="max-width:350px;" class="m-3" hx-post="{% url 'create_new_school' %}" hx-encoding="multipart/form-data" hx-indicator="#new-school-status" hx-target="#new-school-status" >
                     {% csrf_token %}
                     {{schoolform|crispy}}
                     <div class="form-group">
@@ -226,7 +226,7 @@
                     <button class="btn btn-info ">
                         Create new school
                     </button>
-                    <div class="my-2" id="new-school-status">
+                    <div class="my-2" class="htmx-indicator" id="new-school-status">
                     </div>
                 </form>
             </div>
