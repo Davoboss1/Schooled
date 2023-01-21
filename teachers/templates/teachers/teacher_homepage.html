@@ -101,43 +101,43 @@
 				<!-- Teacher tools list-->
 				<!-- Onclick event requests data-url attribute value and applies it in div with Id main. -->
 				<ul class="list-group my-3" id="toolsList">
-					<li class="list-group-item tools-list" data-history="show-add-student-information"
-						data-url="{% url 'students:update' %}">
+					<li class="list-group-item tools-list" 
+						hx-get="{% url 'students:update' %}" hx-target="#main">
 						<h6 class="student-list-link">Add Student Information.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" data-history="show-edit-student-information"
-						data-url="{% url 'students:edit_students' %}">
+					<li class="list-group-item tools-list" 
+						hx-get="{% url 'students:edit_students' %}" hx-target="#main">
 						<h6 class="student-list-link">Edit Student Information.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" data-history="show-student-information"
-						data-url="{% url 'view_student_info' %}">
+					<li class="list-group-item tools-list" 
+						hx-get="{% url 'view_student_info' %}" hx-target="#main">
 						<h6 class="student-list-link">View Student Information.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" data-history="show-view-student-performance"
-						data-url="{% url 'students:performance_page' 'view-performance' %}">
+					<li class="list-group-item tools-list" 
+						hx-get="{% url 'students:performance_page' 'view-performance' %}" hx-target="#main">
 						<h6 class="student-list-link">View Student Performance.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" data-history="show-edit-student-performance"
-						data-url="{% url 'students:performance_page' 'edit-performance' %}">
+					<li class="list-group-item tools-list" 
+						hx-get="{% url 'students:performance_page' 'edit-performance' %}" hx-target="#main">
 						<h6 class="student-list-link">Edit Student Performance</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" data-history="show-mark-student-attendance"
-						data-url="{% url 'students:attendance_page' 'mark-attendance' %}">
+					<li class="list-group-item tools-list" 
+						hx-get="{% url 'students:attendance_page' 'mark-attendance' %}" hx-target="#main">
 						<h6 class="student-list-link">Mark Student Attendance.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" data-history="show-view-student-attendance"
-						data-url="{% url 'students:attendance_page' 'view-attendance' %}">
+					<li class="list-group-item tools-list" 
+						hx-get="{% url 'students:attendance_page' 'view-attendance' %}" hx-target="#main">
 						<h6 class="student-list-link">View Student Attendance</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" data-history="show-messages"
-						data-url="{% url 'accounts:message_list' %}">
+					<li class="list-group-item tools-list" 
+						hx-get="{% url 'accounts:message_list' %}" hx-target="#main">
 						<h6 class="student-list-link">Messages</h6>
 						<span class="badge badge-danger badge-pill"
 							id="unread-messages-count">{{unread_msg_count}}</span>
@@ -387,8 +387,6 @@
 		});
 	});
 
-	//history management
-	(function history_management() {
 		var li_items = document.querySelectorAll(".tools-list");
 
 		for (var index = 0; index < li_items.length; index++) {

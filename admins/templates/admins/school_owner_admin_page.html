@@ -20,13 +20,6 @@
             margin-right: auto;
         }
 
-        #teacher-tools,
-        #teacherProfile {
-            max-height: 90vh;
-            overflow-y: auto;
-            padding-top: 7%;
-        }
-
         body{
             padding-left: 350px;
         }
@@ -426,7 +419,7 @@
     });
 
     document.addEventListener("htmx:xhr:loadstart", function (event) {
-        console.log("Called");
+        console.log(event)
         document.getElementById("main").innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
     });
 
