@@ -89,16 +89,14 @@
                                     <a class="dropdown-item" onclick="ScrollToId('#main');"
                                         data-toggle="collapse" data-target="#nav-dropdown">Workspace</a>
                                     {% elif request.user.level == "Admin" %}
-                                    <a class="dropdown-item" onclick="ScrollToId('#admin-tools');"
-                                        data-toggle="collapse" data-target="#nav-dropdown">Tool list</a>
-                                    <a class="dropdown-item" onclick="ScrollToId('#main');"
+                                    <a class="dropdown-item" onclick="ScrollToId('#main',100);"
                                         data-toggle="collapse" data-target="#nav-dropdown">Workspace</a>
                                     {% else %}
 
                                     {% endif %}
                                     <a class="dropdown-item" data-toggle="collapse"
                                         data-target="#nav-dropdown"
-                                        onclick="animateScrollTo('header:first-of-type');">Header</a>
+                                        onclick="ScrollTo('header:first-of-type');">Header</a>
                                     <a class="dropdown-item" data-toggle="collapse"
                                         data-target="#nav-dropdown" onclick="ScrollToId('#page-footer');"
                                         >Footer</a>
@@ -145,26 +143,27 @@
                 <div class="row">
                     <div class="col-12 col-sm-12 col-lg-6 d-flex flex-column">
 
-                        <a class="text-white mt-auto mx-auto" href="{% url 'accounts:accounts_handler' %}"
-                            style="font-size:30px;"><span class="fa fa-graduation-cap mr-3"></span> Schooled</a>
-                        <blockquote class="generic-blockquote bg-dark mt-2 mb-3 text-white p-2">Schooled helps the data
+                        <blockquote class="generic-blockquote mt-auto bg-dark mt-2 mb-3 text-white p-2">Schooled helps the data
                             management of a school. With this application the school is able to manage students,teachers
                             and
                             parents/guardians effortlessly.</blockquote>
+                            <a class="text-white mx-auto" href="{% url 'accounts:accounts_handler' %}"
+                            style="font-size:30px;"><span class="fa fa-graduation-cap mr-3"></span> Schooled</a>
+                        
                         <div class="footer-profile my-3">
                             <img class="rounded-circle" src="{{request.user.profile_picture.url|default:'/media/default.jpg'}}">
 
-                            <div class="my-1">
-                                <h6 class="text-white mb-0">Name : {{request.user.get_full_name|default:"Guest"}}</h6>
-                                <h6 class="text-white mb-0">User Type : {{request.user.level|default:"Guest"}}</h6>
+                            <div class="my-1 fs-6">
+                                <p class="text-white mb-0">Name : {{request.user.get_full_name|default:"Guest"}}</p>
+                                <p class="text-white mb-0">User Type : {{request.user.level|default:"Guest"}}</p>
                                 {% if user.level == "Admin" %}
-                                <h6 class="text-white mb-0">School :
+                                <p class="text-white mb-0">School :
                                     {{request.user.admin.schools.first.school_name}}
-                                </h6>
+                                </p>
                                 {% elif user.level == "Teacher" %}
-                                <h6 class="text-white mb-0">School :
+                                <p class="text-white mb-0">School :
                                     {{request.user.teacher.teacher_class.school.school_name}}
-                                </h6>
+                                </p>
                                 {% endif %}
                             </div>
                         </div>
@@ -175,7 +174,7 @@
                             </button>
                         </a>
                         {% endif %}
-                        <h5 class="text-white text-center my-3">Thank you for using schooled.</h5>
+                        <h6 class="text-white text-center my-3">Thank you for using schooled.</h6>
 
                     </div>
                     <div class="col-12 col-sm-12 col-lg-6 d-flex flex-column">

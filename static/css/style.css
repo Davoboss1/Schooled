@@ -539,7 +539,6 @@ ul {
 }
 
 .profile-list li * {
-    margin-left: 5%;
     color: white;
 }
 
@@ -908,10 +907,6 @@ ul {
 }
 
 @media screen and (min-width:768px) {
-    #main {
-        
-    }
-
     .block-list {
         overflow-y: auto;
     }

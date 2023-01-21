@@ -125,7 +125,7 @@
     <div class="bg-light thick-horizontal-border" id="admin-tools">
         <!-- main list -->
         <ul class="block-list">
-            <a class="text-decoration-none" onclick="ScrollToMain()">
+            <a class="text-decoration-none" onclick="ScrollToId('#main',100)">
                 <li data-history="view-school-profile"
                     :hx-get="'{% url 'school_profile' %}'+ $refs.school_select.value + '/'" hx-indicator="#loader" hx-target="#main">
                     School Profile
@@ -195,13 +195,11 @@
         </div>
         <div class="row" id="body-row">
             <!-- Main Right Area -->
-            <div class="col-12 py-3 d-flex flex-column">
+            <div class="col-12 py-3 d-flex flex-column" id="main">
                 
-                <div class="d-flex flex-column" id="main">
                     <h4 class="text-center">No Current Work</h4>
                     <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
                         class="text-center">Nothing to show</small>
-                </div>
             </div>
             <!--End of Col container -->
         </div>
@@ -373,54 +371,19 @@
         ]);
 
     });
-    var request_body = function (arg) {
-
-        var item = null;
-        if (!(arg.target)) {
-            item = arg;
-        } else {
-            item = this;
-        }
-        var list = $(".block-list li");
-        for (var i = 0; i < list.length; i++) {
-            list[i].className = null;
-        }
-        item.className = "active";
-        var media = window.matchMedia("(min-width: 768px)");
-        var scrollValue;
-        if (media.matches) {
-            scrollValue = 50;
-        } else {
-            scrollValue = 100;
-        }
-        $('html, body').animate({
-            scrollTop: ($("#main").offset().top - 100)
-        }, 1000);
-
-        document.getElementById("main").innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
-
-        $.ajax({
-            url: item.getAttribute("data-url") + document.getElementById("selected-school").value + "/",
-            type: "GET",
-            success: function (data) {
-                $("#main").html(data);
-            },
-            error: function (response, status, error) {
-                $("#main").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
-            }
-        });
-
-    };
-
-    //$(".block-list li").click(request_body);
-
+    
     document.addEventListener("htmx:sendError", function (event) {
-        document.getElementById("main").innerHTML = "<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>";
+        let triggeredElement = event.target;
+        let target_selector = triggeredElement.getAttribute("hx-target");
+        let target = document.querySelector(target_selector);
+        target.innerHTML = "<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>";
     });
 
-    document.addEventListener("htmx:xhr:loadstart", function (event) {
-        console.log(event)
-        document.getElementById("main").innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
+    document.addEventListener("htmx:xhr:loadstart", function (event, e) {
+        let triggeredElement = event.target;
+        let target_selector = triggeredElement.getAttribute("hx-target");
+        let target = document.querySelector(target_selector);
+        target.innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
     });
 
     $("#selected-school").change(function (e) {
