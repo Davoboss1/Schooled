@@ -104,41 +104,41 @@
 				<h2 class="text-center text-white">Teacher Tools</h2>
 				<!-- Teacher tools list-->
 				<!-- Onclick event requests data-url attribute value and applies it in div with Id main. -->
-				<ul class="list-group my-3" id="toolsList" onclick="ScrollToId('#main',70)">
-					<li class="list-group-item tools-list" hx-get="{% url 'students:update' %}" hx-target="#main">
+				<ul class="list-group my-3" id="toolsList"  hx-target="#main"  hx-error-target="#main" onclick="ScrollToId('#main',70)">
+					<li class="list-group-item tools-list" hx-get="{% url 'students:update' %}" >
 						<h6 class="student-list-link">Add Student Information.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
 					<li class="list-group-item tools-list" hx-get="{% url 'students:edit_students' %}"
-						hx-target="#main">
+						>
 						<h6 class="student-list-link">Edit Student Information.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" hx-get="{% url 'view_student_info' %}" hx-target="#main">
+					<li class="list-group-item tools-list" hx-get="{% url 'view_student_info' %}" >
 						<h6 class="student-list-link">View Student Information.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
 					<li class="list-group-item tools-list"
-						hx-get="{% url 'students:performance_page' 'view-performance' %}" hx-target="#main">
+						hx-get="{% url 'students:performance_page' 'view-performance' %}" >
 						<h6 class="student-list-link">View Student Performance.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
 					<li class="list-group-item tools-list"
-						hx-get="{% url 'students:performance_page' 'edit-performance' %}" hx-target="#main">
+						hx-get="{% url 'students:performance_page' 'edit-performance' %}" >
 						<h6 class="student-list-link">Edit Student Performance</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
 					<li class="list-group-item tools-list"
-						hx-get="{% url 'students:attendance_page' 'mark-attendance' %}" hx-target="#main">
+						hx-get="{% url 'students:attendance_page' 'mark-attendance' %}" >
 						<h6 class="student-list-link">Mark Student Attendance.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
 					<li class="list-group-item tools-list"
-						hx-get="{% url 'students:attendance_page' 'view-attendance' %}" hx-target="#main">
+						hx-get="{% url 'students:attendance_page' 'view-attendance' %}" >
 						<h6 class="student-list-link">View Student Attendance</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" hx-get="{% url 'accounts:message_list' %}" hx-target="#main">
+					<li class="list-group-item tools-list" hx-get="{% url 'accounts:message_list' %}" >
 						<h6 class="student-list-link">Messages</h6>
 						<span class="badge badge-danger badge-pill"
 							id="unread-messages-count">{{unread_msg_count}}</span>

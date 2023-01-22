@@ -126,50 +126,47 @@
     <div class="top-left"></div>
     <div class="bg-light thick-horizontal-border" id="admin-tools">
         <!-- main list -->
-        <ul class="block-list">
-            <a class="text-decoration-none" onclick="ScrollToId('#main',100)">
+        <ul class="block-list" onclick="ScrollToId('#main',100)" hx-target="#main">
                 <li data-history="view-school-profile" :hx-get="'{% url 'school_profile' %}' + sch_value + '/'"
-                    hx-target="#main">
+                    >
                     School Profile
                 </li>
                 <li data-history="view-performance"
                     :hx-get="'{% url 'class_list' 'view_performance' %}'+ sch_value + '/'"
-                    hx-target="#main">
+                    >
                     View
                     Performance </li>
                 <li data-history="view-attendance"
                     :hx-get="'{% url 'class_list' 'view_attendance' %}'+ sch_value + '/'"
-                    hx-target="#main">View
+                    >View
                     Attendance</li>
                 <li data-history="view-student-information"
                     :hx-get="'{% url 'class_list' 'view_student_info' %}'+ sch_value + '/'"
-                    hx-target="#main">
+                    >
                     View Students Information</li>
                 <li data-history="view-manage-teachers"
                     :hx-get="'{% url 'class_list' 'manage_teachers' %}'+ sch_value + '/'"
-                    hx-target="#main">
+                    >
                     Manage Teachers</li>
                 <li data-history="view-manage-parents"
                     :hx-get="'{% url 'class_list' 'manage_parents' %}'+ sch_value + '/'"
-                    hx-target="#main">
+                    >
                     Manage
                     Parents</li>
-                <li data-history="view-messages" hx-get="{% url 'accounts:message_list' %}" hx-target="#main">
+                <li data-history="view-messages" hx-get="{% url 'accounts:message_list' %}" >
                     Messages <span class="badge badge-dark badge-pill ml-3"
                         id="unread-messages-count">{{unread_msg_count}}</span></li>
                 <li data-history="view-notifications"
-                    :hx-get="'{% url 'notifications' %}'+ sch_value + '/'" hx-target="#main">
+                    :hx-get="'{% url 'notifications' %}'+ sch_value + '/'" >
                     Notifications
                     <span class="badge badge-dark badge-pill ml-3"
                         id="unviewed-notifications-count">{{unviewed_notifications_count}}</span>
                 </li>
-                <li data-history="view-request-for-changes" hx-get="{% url 'coming_soon' %}" hx-target="#main">
+                <li data-history="view-request-for-changes" hx-get="{% url 'coming_soon' %}" >
                     Request for
                     changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
-                <li data-history="view-post-and-news" hx-get="{% url 'coming_soon' %}" hx-target="#main">Post
+                <li data-history="view-post-and-news" hx-get="{% url 'coming_soon' %}" >Post
                     and News</li>
-
-            </a>
         </ul>
     </div>
     <div class="container-fluid">
@@ -213,7 +210,7 @@
                     Go back to workspace and menu
                 </button>
                 <form method="post" id="create-school-form" style="max-width:350px;" class="m-3" hx-post="{% url 'create_new_school' %}"
-                    hx-encoding="multipart/form-data" hx-indicator="#new-school-status" hx-target="#new-school-status">
+                    hx-encoding="multipart/form-data" hx-indicator="#new-school-status"  hx-error-target="#new-school-status" hx-target="#new-school-status">
                     {% csrf_token %}
                     {{schoolform|crispy}}
                     <div class="form-group">
@@ -284,38 +281,7 @@
 
 {% block script %}
 <script>
-    //Create new school event handler
-    $("#new-school-form").submit(function (e) {
-        e.preventDefault();
-        var form = $(this);
-        var formdata = new FormData(this);
-        var status = $("#new-school-status");
-        status.html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="mx-auto">Submiting...</small></div>');
-        $.post({
-            url: "{% url 'create_new_school' %}",
-            data: formdata,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                //Create option element and add newly created school to it
-                var option = document.createElement("option");
-                option.textContent = data.name;
-                option.value = data.pk;
-                option.setAttribute("data-motto", data.motto);
-                document.getElementById("selected-school").append(option);
-                status.html('<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Success</strong> New School has been created successfully.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-            },
-            error: function (res) {
-                if (res.responseText) {
-                    status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Failed!</strong> Sorry, But the form was not submitted. <hr> <h4 class="text-center"><u class="text-dark"> Reasons </u></h4>' + res.responseText + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-                } else {
-                    status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Failed!</strong> Ooops, Sorry we could not connect to the server.Please recheck your connection and try again.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-                }
-
-            }
-        });
-    });
-
+    
     $("#delete-school-btn").click(function () {
         var btn = $(this);
         var sch_select = $("#selected-school")[0];
@@ -375,27 +341,20 @@
 
     });
 
-    document.addEventListener("htmx:sendError", function (event) {
-        let triggeredElement = event.target;
-        let target_selector = triggeredElement.getAttribute("hx-target");
-        let target = document.querySelector(target_selector);
-        target.innerHTML = "<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>";
-    });
-
-    document.addEventListener("htmx:xhr:loadstart", function (event) {
-        let triggeredElement = event.target;
-        let target_selector = triggeredElement.getAttribute("hx-target");
-        let target = document.querySelector(target_selector);
-        target.innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
-    });
+    
 
     document.querySelector("#create-school-form").addEventListener("htmx:afterRequest", function (event) {
-        let data = JSON.parse(event.detail.xhr.response);
-        let select_element = document.getElementById('selected-school');
-        select_element.innerHTML = (`
-        <option data-notif-count="{{school.notif_count}}" data-motto="${data.motto}" value="${data.pk}">
-                    ${data.school_name}
-                </option>`);
+        detail = event.detail;
+        if(detail.successful){
+            let data = JSON.parse(detail.xhr.response);
+            let select_element = document.getElementById('selected-school');
+            target = document.querySelector(detail.elt.getAttribute("hx-target"));
+            select_element.innerHTML += `
+            <option data-motto="${data.motto}" value="${data.pk}">
+                        ${data.name}
+                    </option>`;
+            target.innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Success</strong> New School has been created successfully.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+        }
     });
 
     document.addEventListener('alpine:init', () => {
