@@ -1,8 +1,7 @@
 from django.shortcuts import render,HttpResponse,Http404,reverse,redirect
 from django.http.response import HttpResponseServerError
 from django.contrib.auth.forms import PasswordChangeForm
-from django.db import IntegrityError
-from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 from django.template.loader import render_to_string
 from django.db.models import Q
 from accounts.forms import UserCreationForm,UserUpdateForm
@@ -66,8 +65,10 @@ def teacher_create(request):
 		
 
 @view_for("Admin")
+@require_POST
 #View for updating class name
 def update_class(request):
+	print(request.POST)
 	admin = request.user.admin
 	class_pk = request.POST.get("class_pk")
 	class_name = request.POST.get("class_name")

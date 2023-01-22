@@ -97,7 +97,7 @@
 
 
 <div class="accordion mx-auto w-100" id="itemAccordion">
-    <ul class="list-group" x-data="{ showEdit: false }" >
+    <ul class="list-group" x-data="{ showEdit: false, class_value: '' }" >
         <li class="list-group-item d-flex align-items-center text-dark pr-0">
             <span class="w-25">Class</span>
             <b class="dark-red w-50 text-center">No of students</b>
@@ -115,12 +115,12 @@
 
             </div>
             <div class="displayFlex align-items-center" x-show="showEdit">
-                <input class="form-control w-25" value="{{class.class_name}}" >
+                <input class="form-control w-25" x-ref="class_input" x-init="class_value = '{{class.class_name}}'" x-model="class_value" value="class_value" >
                 <span class="w-50 text-center"><span
                     class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>
                 <span class="w-25 text-right" >
                 <span
-                    class="badge badge-success badge-pill edit-class-btn" hx-post="{% url 'update_class' %}" hx-target="#none" hx-vals="" data-pk="{{class.pk}}">
+                    class="badge badge-success badge-pill " hx-post="{% url 'teachers:update_class' %}" hx-target="#none" @click="htmx.process($el)" :hx-vals='`{ "csrfmiddlewaretoken" : "{{csrf_token}}", "class_pk" : "{{class.pk}}", "class_name" : "${class_value}" }`' >
                     <span
                         class="fa fa-check"></span>
                 </span>
@@ -309,7 +309,7 @@
         icon.className = "fa fa-spinner fa-spin";
 
         $.ajax({
-            url: "{% url 'update_class' %}",
+            url: "{% url 'teachers:update_class' %}",
             type: "Post",
             timeout: 20000,
             data: { csrfmiddlewaretoken: "{{csrf_token}}", class_pk: btn.attr("data-pk"), class_name: input.val() },
