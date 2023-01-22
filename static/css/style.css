@@ -906,6 +906,10 @@ ul {
     background: #385968;
 }
 
+.block-list {
+    padding: 0 10px;
+}
+
 @media screen and (min-width:768px) {
     .block-list {
         overflow-y: auto;
@@ -1478,4 +1482,56 @@ ul {
 
 html {
   scroll-behavior: smooth;
+}
+
+#register-form .form-group {
+    margin-right: auto;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 350px;
+}
+
+.column-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.student-view {
+    border: 1px dotted #E2DBDB;
+    border-radius: 5px;
+    font-size: 15px;
+    color: black;
+}
+
+.no-space {
+    margin: 0;
+    padding: 0;
+}
+
+#new-user-body {
+    width: 100%;
+    text-align: left;
+    margin-top: 5%;
+}
+
+#new-user-body p {
+    font-size: 1em;
+}
+
+.help-card {
+    padding: 5%;
+    background-color: #FFFFFF;
+    box-shadow: 10px 10px 4px #e8e8e8;
+}
+
+.help-card .title {
+    background-color: purple;
+    border-radius: 5px;
+    color: white;
+    padding: 5px;
+}
+
+.help-card .body {
+    padding: 5px;
 }

@@ -44,33 +44,7 @@
 		}
 	}
 
-	#register-form .form-group {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.column-form .form-group {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.student-view {
-		border: 1px dotted #E2DBDB;
-		border-radius: 5px;
-		font-size: 15px;
-		color: black;
-	}
-
-	.no-space {
-		margin: 0;
-		padding: 0;
-	}
-
-	.update-profile-form {
-		max-width: 350px;
-		margin-left: auto;
-		margin-right: auto;
-	}
+	
 </style>
 {% endblock %}
 {% block content %}
@@ -261,7 +235,7 @@
 							</li>
 
 						</ul>
-						<button class="btn btn-outline-light my-2" id="edit-profile-btn">
+						<button class="btn btn-outline-light my-2" hx-get="{% url 'update_profile' %}" hx-target="#edit-profile-modal-body" id="edit-profile-btn">
 							Edit Profile
 						</button>
 
@@ -301,29 +275,10 @@
 
 	$("#edit-profile-btn").click(function (event) {
 		$("#update-profile-modal").modal("show");
-		var body = $("#edit-profile-modal-body");
-		body.html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small>Fetching requested items</small></div>');
-		$.ajax({
-			url: "{% url 'update_profile' %}",
-			type: "GET",
-			success: function (data) {
-				body.html(data);
-			},
-			error: function (req, status, error) {
-				body.html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
-			},
-		});
+		
 	});
 
 </script>
 
-<script>
-	document.addEventListener("htmx:xhr:loadstart", function (event, e) {
-		let triggeredElement = event.target;
-		let target_selector = triggeredElement.getAttribute("hx-target");
-		let target = document.querySelector(target_selector);
-		target.innerHTML = '<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Fetching requested items</small></div>';
-	});
-</script>
 
 {% endblock %}

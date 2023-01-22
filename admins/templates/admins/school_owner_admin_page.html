@@ -33,208 +33,154 @@
             overflow-y: auto;
         }
 
-        .block-list {
-            padding: 0 10px;
+        .top-left {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 350px;
+            height: 80px;
+            background-color: #04091e;
         }
     }
 
-    #register-form .form-group {
-        margin-right: auto;
-        margin-left: auto;
-        display: flex;
-        flex-direction: column;
-        max-width: 350px;
-    }
-
-    .column-form .form-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .student-view {
-        border: 1px dotted #E2DBDB;
-        border-radius: 5px;
-        font-size: 15px;
-        color: black;
-    }
-
-    .no-space {
-        margin: 0;
-        padding: 0;
-    }
-
-    #new-user-body {
-        width: 100%;
-        text-align: left;
-        margin-top: 5%;
-    }
-
-    #new-user-body p {
-        font-size: 1em;
-    }
-
-    .help-card {
-        padding: 5%;
-        background-color: #FFFFFF;
-        box-shadow: 10px 10px 4px #e8e8e8;
-    }
-
-    .help-card .title {
-        background-color: purple;
-        border-radius: 5px;
-        color: white;
-        padding: 5px;
-    }
-
-    .help-card .body {
-        padding: 5px;
-    }
-
-    .top-left {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 350px;
-        height: 80px;
-        background-color: #04091e;
-    }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- ================ start banner Area ================= -->
-<section class="home-banner-area">
-    <!-- Header area -->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="main-header">
-                <div>
-                    <h2 class="text-white text-center" id="school-banner">
-                        {{user.admin.schools.first.school_name}}
-                    </h2>
-                    <h6 class="text-white py-2 mt-3 text-center border-top border-bottom" id="school-motto-banner">
-                        {{user.admin.schools.first.motto}}</h6>
+
+<div x-data="main">
+    <!-- ================ start banner Area ================= -->
+    <section class="home-banner-area">
+        <!-- Header area -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="main-header">
+                    <div>
+                        <h2 class="text-white text-center" x-text="school_name" id="school-banner">
+
+                        </h2>
+                        <h6 class="text-white py-2 mt-3 text-center border-top border-bottom" x-text="school_motto"
+                            id="school-motto-banner">
+                        </h6>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-<!-- ================ End banner Area ================= -->
+    </section>
+    <!-- ================ End banner Area ================= -->
 
-<!-- ================ Start Body Area ================= -->
-<section x-data="main" >
-    <div class="top-left"></div>
-    <div class="bg-light thick-horizontal-border" id="admin-tools">
-        <!-- main list -->
-        <ul class="block-list" onclick="ScrollToId('#main',100)" hx-target="#main">
-                <li data-history="view-school-profile" :hx-get="'{% url 'school_profile' %}' + sch_value + '/'"
-                    >
+    <!-- ================ Start Body Area ================= -->
+    <section>
+        <div class="top-left"></div>
+        <div class="bg-light thick-horizontal-border" id="admin-tools">
+            <!-- main list -->
+            <ul class="block-list" onclick="ScrollToId('#main',100)" hx-target="#main">
+                <li data-history="view-school-profile" :hx-get="'{% url 'school_profile' %}' + sch_value + '/'">
                     School Profile
                 </li>
                 <li data-history="view-performance"
-                    :hx-get="'{% url 'class_list' 'view_performance' %}'+ sch_value + '/'"
-                    >
+                    :hx-get="'{% url 'class_list' 'view_performance' %}'+ sch_value + '/'">
                     View
                     Performance </li>
                 <li data-history="view-attendance"
-                    :hx-get="'{% url 'class_list' 'view_attendance' %}'+ sch_value + '/'"
-                    >View
+                    :hx-get="'{% url 'class_list' 'view_attendance' %}'+ sch_value + '/'">
+                    View
                     Attendance</li>
                 <li data-history="view-student-information"
-                    :hx-get="'{% url 'class_list' 'view_student_info' %}'+ sch_value + '/'"
-                    >
+                    :hx-get="'{% url 'class_list' 'view_student_info' %}'+ sch_value + '/'">
                     View Students Information</li>
                 <li data-history="view-manage-teachers"
-                    :hx-get="'{% url 'class_list' 'manage_teachers' %}'+ sch_value + '/'"
-                    >
+                    :hx-get="'{% url 'class_list' 'manage_teachers' %}'+ sch_value + '/'">
                     Manage Teachers</li>
                 <li data-history="view-manage-parents"
-                    :hx-get="'{% url 'class_list' 'manage_parents' %}'+ sch_value + '/'"
-                    >
+                    :hx-get="'{% url 'class_list' 'manage_parents' %}'+ sch_value + '/'">
                     Manage
                     Parents</li>
-                <li data-history="view-messages" hx-get="{% url 'accounts:message_list' %}" >
+                <li data-history="view-messages" hx-get="{% url 'accounts:message_list' %}">
                     Messages <span class="badge badge-dark badge-pill ml-3"
                         id="unread-messages-count">{{unread_msg_count}}</span></li>
-                <li data-history="view-notifications"
-                    :hx-get="'{% url 'notifications' %}'+ sch_value + '/'" >
+                <li data-history="view-notifications" :hx-get="'{% url 'notifications' %}'+ sch_value + '/'">
                     Notifications
                     <span class="badge badge-dark badge-pill ml-3"
                         id="unviewed-notifications-count">{{unviewed_notifications_count}}</span>
                 </li>
-                <li data-history="view-request-for-changes" hx-get="{% url 'coming_soon' %}" >
+                <li data-history="view-request-for-changes" hx-get="{% url 'coming_soon' %}">
                     Request for
                     changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
-                <li data-history="view-post-and-news" hx-get="{% url 'coming_soon' %}" >Post
+                <li data-history="view-post-and-news" hx-get="{% url 'coming_soon' %}">Post
                     and News</li>
-        </ul>
-    </div>
-    <div class="container-fluid">
-        <div class="mx-auto p-3 my-3 w-100 border" style="max-width: 400px;">
-            <h3>
-                Select current school :
-            </h3>
-            <select class="form-control my-3" id="selected-school" @click="setSchoolValue($event.target.value)"
-                >
-                {% for school in schools %}
-                <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}" value="{{school.pk}}">
-                    {{school.school_name}}
-                </option>
-                {% endfor %}
-            </select>
-            <div class="d-flex mt-2">
-                <button class="btn btn-success mx-auto"
-                    onclick="document.getElementById('body-row').style.display='none'; document.getElementById('new-sch-cont').style.display='flex';">
-                    Create new school
-                </button>
-                <button class="btn btn-danger mx-auto" id="delete-school-btn">
-                    Delete school
-                </button>
-            </div>
+            </ul>
         </div>
-        <div class="row" id="body-row">
-            <!-- Main Right Area -->
-            <div class="col-12 py-3 d-flex flex-column" id="main">
-
-                <h4 class="text-center">No Current Work</h4>
-                <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
-                    class="text-center">Nothing to show</small>
-            </div>
-            <!--End of Col container -->
-        </div>
-        <div class="" style="display:none;" id="new-sch-cont">
-            <div class="mx-auto">
-                <button class="btn btn-outline-primary ml-3"
-                    onclick="document.getElementById('new-sch-cont').style.display='none'; document.getElementById('body-row').style.display='flex';">
-                    <span class="fa fa-angle-left mr-2"></span>
-                    Go back to workspace and menu
-                </button>
-                <form method="post" id="create-school-form" style="max-width:350px;" class="m-3" hx-post="{% url 'create_new_school' %}"
-                    hx-encoding="multipart/form-data" hx-indicator="#new-school-status"  hx-error-target="#new-school-status" hx-target="#new-school-status">
-                    {% csrf_token %}
-                    {{schoolform|crispy}}
-                    <div class="form-group">
-                        <label for="customFile1">School Logo</label>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="school-image" id="customFile1"
-                                onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected successfully' : this.nextElementSibling.innerHTML = 'Choose file')"
-                                accept="image/*">
-                            <label class="custom-file-label" for="customFile1" id="file-label1">Choose
-                                file</label>
-                        </div>
-                    </div>
-                    <button class="btn btn-info ">
+        <div class="container-fluid">
+            <div class="mx-auto p-3 my-3 w-100 border" style="max-width: 400px;">
+                <h3>
+                    Select current school :
+                </h3>
+                <select class="form-control my-3" id="selected-school" x-bind="school_select">
+                    {% for school in schools %}
+                    <option data-notif-count="{{school.notif_count}}" data-motto="{{school.motto}}"
+                        value="{{school.pk}}">
+                        {{school.school_name}}
+                    </option>
+                    {% endfor %}
+                </select>
+                <div class="d-flex mt-2">
+                    <button class="btn btn-success mx-auto"
+                        onclick="document.getElementById('body-row').style.display='none'; document.getElementById('new-sch-cont').style.display='flex';">
                         Create new school
                     </button>
-                    <div class="my-2" class="htmx-indicator" id="new-school-status">
-                    </div>
-                </form>
+                    <button class="btn btn-danger mx-auto" x-bind="delete_school_btn">
+                        Delete school
+                    </button>
+                </div>
             </div>
-        </div>
+            <div class="row" id="body-row">
+                <!-- Main Right Area -->
+                <div class="col-12 py-3 d-flex flex-column" id="main">
 
-    </div>
-</section>
-<!-- ================ End Body Area -->
+                    <h4 class="text-center">No Current Work</h4>
+                    <span class="fa fa-signal mx-auto text-center mt-3" style="font-size:40px;"></span><small
+                        class="text-center">Nothing to show</small>
+                </div>
+                <!--End of Col container -->
+            </div>
+            <div class="" style="display:none;" id="new-sch-cont">
+                <div class="mx-auto">
+                    <button class="btn btn-outline-primary ml-3"
+                        onclick="document.getElementById('new-sch-cont').style.display='none'; document.getElementById('body-row').style.display='flex';">
+                        <span class="fa fa-angle-left mr-2"></span>
+                        Go back to workspace and menu
+                    </button>
+                    <form method="post" id="create-school-form" style="max-width:350px;" class="m-3"
+                        hx-post="{% url 'create_new_school' %}" hx-encoding="multipart/form-data"
+                        hx-indicator="#new-school-status" hx-error-target="#new-school-status"
+                        hx-target="#new-school-status">
+                        {% csrf_token %}
+                        {{schoolform|crispy}}
+                        <div class="form-group">
+                            <label for="customFile1">School Logo</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="school-image" id="customFile1"
+                                    onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected successfully' : this.nextElementSibling.innerHTML = 'Choose file')"
+                                    accept="image/*">
+                                <label class="custom-file-label" for="customFile1" id="file-label1">Choose
+                                    file</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-info ">
+                            Create new school
+                        </button>
+                        <div class="my-2" class="htmx-indicator" id="new-school-status">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <!-- ================ End Body Area -->
+</div>
+
 
 {% if new_user %}
 <div id="new-user" style="display: none;">
@@ -281,109 +227,103 @@
 
 {% block script %}
 <script>
-    
-    $("#delete-school-btn").click(function () {
-        var btn = $(this);
-        var sch_select = $("#selected-school")[0];
-        Swal.mixin({
-            icon: 'error',
-            confirmButtonText: 'Confirm &rarr;',
-            confirmButtonColor: '#d33',
-            showCloseButton: true,
-            showCancelButton: true,
-            progressSteps: ['1', '2']
-        }).queue([
-            {
-                confirmButtonText: 'Yes &rarr;',
-                html: ' <h4 class="text-danger">Are you sure you want to permernently delete school</h4> <hr> <b class="text-danger">You will lose all school records and data and this process cannot be undone.</b>'
-            },
-            {
-                title: 'Verify it\'s you',
-                html: '<b class="text-danger">Enter your password to confirm delete.</b>',
-                input: 'password',
-                showLoaderOnConfirm: true,
-                preConfirm: function (password) {
-                    btn.html("Deleting school...");
-                    this.disabled = true;
-                    return $.ajax({
-                        type: "POST",
-                        url: "{% url 'delete_school' %}",
-                        data: { csrfmiddlewaretoken: "{{csrf_token}}", sch_pk: sch_select.value, password: password },
-                        timeout: 15000,
-                        success: function (data) {
-                            var sch_name = sch_select[sch_select.selectedIndex].textContent;
-                            sch_select.remove(sch_select.selectedIndex);
-                            btn.html("Delete school");
-                            Swal.fire({
-                                icon: 'success',
-                                title: sch_name,
-                                text: "School has been deleted successfully"
-                            });
-                        },
-                        error: function (res, status, textStatus) {
-                            var msg = "";
-                            if (res.responseText == "WP") {
-                                msg = "Wrong password entered."
-                            } else {
-                                msg = "Error. Something went wrong."
-                            }
-                            Swal.fire({
-                                icon: 'error',
-                                html: '<b class="text-danger">' + msg + '</b>',
-                            });
-                            btn[0].disabled = false;
-                            btn.html("Delete school");
-                        }
-                    });
-                }
-            }
-        ]);
-
-    });
-
-    
 
     document.querySelector("#create-school-form").addEventListener("htmx:afterRequest", function (event) {
         detail = event.detail;
-        if(detail.successful){
+        if (detail.successful) {
             let data = JSON.parse(detail.xhr.response);
             let select_element = document.getElementById('selected-school');
             target = document.querySelector(detail.elt.getAttribute("hx-target"));
             select_element.innerHTML += `
-            <option data-motto="${data.motto}" value="${data.pk}">
-                        ${data.name}
-                    </option>`;
+        <option data-motto="${data.motto}" value="${data.pk}">
+                    ${data.name}
+                </option>`;
             target.innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Success</strong> New School has been created successfully.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
         }
     });
 
     document.addEventListener('alpine:init', () => {
         Alpine.data('main', () => ({
-            init(){
+            init() {
                 this.$watch('sch_value', value => htmxProcess('.block-list li'));
             },
             sch_value: "{{schools.first.pk}}",
-
+            school_name: '{{user.admin.schools.first.school_name}}',
+            school_motto: '{{user.admin.schools.first.motto}}',
             setSchoolValue(value) {
                 this.sch_value = value;
+            },
+            setSchoolData() {
+                let sch_select = document.querySelector("#selected-school");
+                let option = sch_select.options[sch_select.selectedIndex];
+                this.school_name = option.textContent;
+                this.school_motto = option.getAttribute("data-motto");
             }
-        }))
-    })
+        }));
 
-    const htmxProcess = (selector) => {
-        document.querySelectorAll(selector).forEach((elem) => {
-            htmx.process(elem);
-        });
-    }
+        Alpine.bind('school_select', () => ({
+            '@change'() {
+                this.$data.setSchoolValue(this.$event.target.value);
+                this.$data.setSchoolData();
+            },
+        }));
 
-    $("#selected-school").change(function (e) {
-        var notif_count = this.options[this.selectedIndex].getAttribute("data-notif-count");
-        var sch_motto = this.options[this.selectedIndex].getAttribute("data-motto");
-        var school_name = this.options[this.selectedIndex].textContent;
-        $("#unviewed-notifications-count").html(notif_count);
-        $("#school-banner").text(school_name);
-        $("#school-motto-banner").text(sch_motto);
+        Alpine.bind('delete_school_btn', () => ({
+            '@click'() {
+                Swal.mixin({
+                    icon: 'error',
+                    confirmButtonText: 'Confirm &rarr;',
+                    confirmButtonColor: '#d33',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    progressSteps: ['1', '2']
+                }).queue([
+                    {
+                        confirmButtonText: 'Yes &rarr;',
+                        html: ' <h4 class="text-danger">Are you sure you want to permernently delete school</h4> <hr> <b class="text-danger">You will lose all school records and data and this process cannot be undone.</b>'
+                    },
+                    {
+                        title: 'Verify it\'s you',
+                        html: '<b class="text-danger">Enter your password to confirm delete.</b>',
+                        input: 'password',
+                        showLoaderOnConfirm: true,
+                        preConfirm: function (password) {
+                            //Runs after alert has been confirmed and password has been entered
+                            let sch_select = document.querySelector("#selected-school");
+                            let data = { csrfmiddlewaretoken: "{{csrf_token}}", sch_pk: sch_select.value, password: password };
+                            return htmx.ajax("POST", "{% url 'delete_school' %}", {
+                                target: "#none", values: data, handler: (elt, res) => {
+                                    if (res.xhr.status === 200) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: sch_select[sch_select.selectedIndex].textContent,
+                                            text: "School has been deleted successfully"
+                                        });
+                                        //Remove element from dom based on index
+                                        sch_select.remove(sch_select.selectedIndex);
+                                    } else {
+                                        let msg = "";
+                                        if (res.xhr.responseText == "WP") {
+                                            msg = "Wrong password entered."
+                                        } else {
+                                            msg = "Error. Something went wrong."
+                                        }
+                                        Swal.fire({
+                                            icon: 'error',
+                                            html: '<b class="text-danger">' + msg + '</b>',
+                                        });
+                                    }
+
+                                }
+                            });
+
+                        }
+                    }
+                ]);
+            },
+        }));
     });
+
 
     {% if new_user %}
     Swal.fire({
