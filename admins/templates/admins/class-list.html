@@ -106,7 +106,7 @@
         {% if classes.exists %}
         {% for class in classes %}
         <li class="list-group-item list-group-item-action class-list" data-toggle="collapse"
-            data-target="#class-collapse{{class.pk}}" data-url="{{url}}{{class.pk}}/">
+            data-target="#class-collapse{{class.pk}}" data-url="{{url}}{{class.pk}}/" :disabled="showEdit">
             <div x-show="!showEdit" class="displayFlex align-items-center">
                 <strong class="w-25">{{class.class_name}}</strong>
                 <span class="w-50 text-center"><span
