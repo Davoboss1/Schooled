@@ -49,15 +49,11 @@ window.onscroll = function () {
 	main_nav.style.opacity = "0.5";
 }
 
-function write_alert(msg, type) {
-	if (type === undefined) { type = "success" }
-	if (type == "danger") {
-		type_m = "Error";
-	} else {
-		type_m = type[0].toUpperCase() + type.substr(1);
-	}
+function write_alert(msg, type = "success") {
+	let type_display = type == "danger" ? "error" : type;
+	type_display = type[0].toUpperCase() + type.substr(1);
 
-	return '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert"><strong>' + type_m + '!</strong> ' + msg + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+	return '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert"><strong>' + type_display + '!</strong> ' + msg + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 }
 
 function write_loader(msg) {

@@ -2,13 +2,13 @@
 {# Type variable is used to identify what type of page was requested #}
 {% if type == "view_performance" %}
 {# if type is view_performance add an add session container above class list container #}
-<button class="genric-btn primary my-3 mx-auto w-100"  type="button" data-toggle="collapse"
-    data-target="#newSession" aria-expanded="false" aria-controls="newSession">
+<button class="genric-btn primary my-3 mx-auto w-100" type="button" data-toggle="collapse" data-target="#newSession"
+    aria-expanded="false" aria-controls="newSession">
     Select Session
 </button>
 <div class="collapse mb-3 mx-auto w-100" id="newSession">
     <div class="card card-body">
-        <div class="jumbotron bg-light p-0" >
+        <div class="jumbotron bg-light p-0">
             <table class="table table-bordered text-dark">
                 <thead>
                     <th scope="col">Current Session</th>
@@ -29,19 +29,19 @@
                 Please select new session</strong>
         </div>
         <div class="d-flex">
-            <h4 class="w-50 pl-3" >Year</h4>
-            <h4 class="w-50 pl-3" >Term</h4>
+            <h4 class="w-50 pl-3">Year</h4>
+            <h4 class="w-50 pl-3">Term</h4>
         </div>
         <div class="d-flex mt-2">
-            <div class="w-50 pr-3" >
+            <div class="w-50 pr-3">
                 <select class="form-control" id="session-years">
                     {% if current_term %}
-                        <option value="{{current_term.year}}">{{current_term.session}}</option>
+                    <option value="{{current_term.year}}">{{current_term.session}}</option>
                     {% endif %}
                     <option disabled>-----------</option>
                 </select>
             </div>
-            <div class="w-50 pl-3" >
+            <div class="w-50 pl-3">
                 <select class="form-control" id="session-term">
                     <option> 1st Term
                     </option>
@@ -94,26 +94,39 @@
 {% endif %}
 <!-- List of all classes area-->
 
-            
-            
-<div class="accordion mx-auto w-100"  id="itemAccordion">
-    <ul class="list-group">
+
+
+<div class="accordion mx-auto w-100" id="itemAccordion">
+    <ul class="list-group" x-data="{ showEdit: false }" >
         <li class="list-group-item d-flex align-items-center text-dark pr-0">
-            <span class="w-25">Class</span> 
+            <span class="w-25">Class</span>
             <b class="dark-red w-50 text-center">No of students</b>
-            <span class="w-25 text-right mr-2"><span class="btn btn-light fa fa-edit" data-checked="false" id="edit-class"></span></span>
+            <span class="w-25 text-right mr-2"><span class="btn btn-light fa fa-edit" @click="showEdit = !showEdit" id="edit-class"></span></span>
         </li>
         {% if classes.exists %}
         {% for class in classes %}
-        <li class="list-group-item list-group-item-action d-flex align-items-center class-list"
-             data-toggle="collapse" data-target="#class-collapse{{class.pk}}"
-            data-url="{{url}}{{class.pk}}/">
-            <strong class="w-25">{{class.class_name}}</strong>
-            <span class="w-50 text-center"><span class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>
-            <span class="w-25 text-right"><span class="fa fa-angle-down drop-icon"></span></span>
-            <input class="form-control w-25" value="{{class.class_name}}" style="display: none;">
-            <span class="w-50 text-center" style="display: none;"><span class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>  
-            <span class="w-25 text-right" style="display: none;"><span class="badge badge-success badge-pill edit-class-btn" data-pk="{{class.pk}}"><span class="fa fa-check"></span></span></span>
+        <li class="list-group-item list-group-item-action class-list" data-toggle="collapse"
+            data-target="#class-collapse{{class.pk}}" data-url="{{url}}{{class.pk}}/">
+            <div x-show="!showEdit" class="displayFlex align-items-center">
+                <strong class="w-25">{{class.class_name}}</strong>
+                <span class="w-50 text-center"><span
+                        class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>
+                <span class="w-25 text-right"><span class="fa fa-angle-down drop-icon"></span></span>
+
+            </div>
+            <div class="displayFlex align-items-center" x-show="showEdit">
+                <input class="form-control w-25" value="{{class.class_name}}" >
+                <span class="w-50 text-center"><span
+                    class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>
+                <span class="w-25 text-right" >
+                <span
+                    class="badge badge-success badge-pill edit-class-btn" hx-post="{% url 'update_class' %}" hx-target="#none" hx-vals="" data-pk="{{class.pk}}">
+                    <span
+                        class="fa fa-check"></span>
+                </span>
+            </span>
+
+            </div>
             
         </li>
 
@@ -128,7 +141,7 @@
         <div class="alert alert-warning">
             <h6>Sorry, seems like you haven't added any class.</h6>
             <hr>
-        <small>Go to manage teachers to add a teacher and a class.</small>
+            <small>Go to manage teachers to add a teacher and a class.</small>
         </div>
         {% endif %}
     </ul>
@@ -211,9 +224,9 @@
 {% if type == "view_performance" %}
 <script>
     //Create next 5 years in session select element
-    var year = new Date().getFullYear()-1;
+    var year = new Date().getFullYear() - 1;
     var session_select = document.getElementById("session-years");
-    for (var i = 0; i <5; i++) {
+    for (var i = 0; i < 5; i++) {
         var option = document.createElement("option");
         option.appendChild(document.createTextNode(year + i + "/" + (year + i + 1)));
         option.value = year + i;
@@ -271,84 +284,22 @@
                     collapse.html(data);
                 },
                 error: function (data) {
-					if(data.responseText == "SESSIONERROR"){
-						collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Error!</strong> Invalid session detected, Click the select session button to select your school current session. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-					}
-					else{
-						collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Failed!</strong> Something went wrong, The request you made was not successful. Please try again <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-					}
+                    if (data.responseText == "SESSIONERROR") {
+                        collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Error!</strong> Invalid session detected, Click the select session button to select your school current session. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                    }
+                    else {
+                        collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Failed!</strong> Something went wrong, The request you made was not successful. Please try again <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                    }
                 }
             });
 
         }
 
     }
-    
-    var class_list = $(".class-list");
-    class_list.on("click",requestData);
-    //Switch to edit class part
-    $("#edit-class").click(function(e) {
-        
-        var btn = $(this);
-        //Get check from state from html custom attribute
-        var checked = btn.attr("data-checked");
-        //Get list container (UL element)
-        var list = btn.parent().parent().parent();
-        //Get list items (LI elements)
-        var list_items = list.children();
-        //Variables that contain display style for li elements
-        var first_half,second_half;
-        //If checked
-        if(checked == "true"){
-            //Switch icon
-            btn.removeClass("fa-times");
-            btn.addClass("fa-edit");
-            //Change data-checked attribute
-            btn.attr("data-checked","false");
-            //Set display style value
-            first_half = "block";
-            second_half = "none";
-        }else{
-            //Switch icon
-            btn.removeClass("fa-edit");
-            btn.addClass("fa-times");
-            //Change data-checked attribute
-            btn.attr("data-checked","true");
-            //Set display style value
-            first_half = "none";
-            second_half = "block";
-        }
-        //Loop over all list_items (LI elements)
-        for(var i = 1;i<list_items.length;i++){
-            //Only execute code below if element is li
-            if(list_items[i].tagName == "LI"){
-                //Get list item (LI element)
-                var list_item = $(list_items[i]);
-                //Disable list item 
-                if(checked=="true"){
-                    list_items[i].disabled = false;
-                }else{
-                    list_items[i].disabled = true;
-                }
-                //Get list children
-                var children = list_item.children();
-                //Get half of children length; (Children length = 6, half_no = 3)
-                var half_no = children.length / 2;
-                //Loop over li children
-                for(var j = 0; j<children.length;j++){
-                    //If first half li elements
-                    if(j<half_no){
-                        //Apply style for first half elements
-                        children[j].style.display = first_half;
-                    }else{
-                        //Apply style for second half elements
-                        children[j].style.display = second_half;
-                    }
-                }
-            }
-        }
-    });
 
+    var class_list = $(".class-list");
+    class_list.on("click", requestData);
+   
     $(".edit-class-btn").click(function (e) {
         var btn = $(this);
         var icon = btn.children().first()[0];
@@ -361,13 +312,13 @@
             url: "{% url 'update_class' %}",
             type: "Post",
             timeout: 20000,
-            data: {csrfmiddlewaretoken:"{{csrf_token}}",class_pk:btn.attr("data-pk"),class_name:input.val()},
-            success: function(data){
+            data: { csrfmiddlewaretoken: "{{csrf_token}}", class_pk: btn.attr("data-pk"), class_name: input.val() },
+            success: function (data) {
                 icon.className = "fa fa-check";
                 //Set normal class name element to new class value
                 list.children().first().html(input.val());
             },
-            error: function(res,textStatus,errorThrown){
+            error: function (res, textStatus, errorThrown) {
                 icon.className = "fa fa-refresh";
                 btn.addClass("badge-danger");
             }

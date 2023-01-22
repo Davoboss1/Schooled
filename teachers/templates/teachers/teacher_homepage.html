@@ -235,7 +235,7 @@
 							</li>
 
 						</ul>
-						<button class="btn btn-outline-light my-2" hx-get="{% url 'update_profile' %}" hx-target="#edit-profile-modal-body" id="edit-profile-btn">
+						<button class="btn btn-outline-light my-2" data-toggle="modal" data-target="#update-profile-modal" hx-get="{% url 'update_profile' %}" hx-target="#edit-profile-modal-body" id="edit-profile-btn">
 							Edit Profile
 						</button>
 
@@ -273,10 +273,7 @@
 {% block script %}
 <script>
 
-	$("#edit-profile-btn").click(function (event) {
-		$("#update-profile-modal").modal("show");
-		
-	});
+	
 
 </script>
 

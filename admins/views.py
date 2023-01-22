@@ -1,9 +1,7 @@
 from django.shortcuts import render, redirect
-from django.db.utils import IntegrityError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import check_password
-from django.contrib import messages
 from .forms import SchoolForm, AdminForm
 from teachers.models import Class,Teacher
 from teachers.forms import TeacherForm
@@ -18,7 +16,7 @@ from django.core.paginator import Paginator,EmptyPage
 from django.http.response import Http404,HttpResponseServerError
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from tools import require_ajax,view_for,save_picture,require_auth
+from tools import require_ajax,view_for,save_picture,require_auth, render_alert
 from students.models import School_activity_log
 from accounts.models import Messages
 
@@ -113,7 +111,7 @@ def school_profile(request,sch_pk):
 			if form.is_valid():
 				form = form.save()
 				save_picture(form.image,request.FILES.get("sch-logo"))
-				return HttpResponse("Success")
+				return HttpResponse(render_alert("School has been updated successfully"))
 			else:
 				#Returns form erros
 				return HttpResponseServerError(get_errors_in_text(form))
@@ -126,7 +124,8 @@ def school_profile(request,sch_pk):
 				#for handling profile picture upload
 				save_picture(form.profile_picture,request.FILES.get("user-profile-picture"))
 				admin_form.save()
-				return HttpResponse("Success")
+				return HttpResponse(render_alert("Admin has been updated successfully"))
+
 			else:
 				return HttpResponseServerError(get_errors_in_text(form) + get_errors_in_text(admin_form))
 		elif formtype == "password":
@@ -135,7 +134,8 @@ def school_profile(request,sch_pk):
 			form = PasswordChangeForm(current_user,request.POST)
 			if form.is_valid():
 				form.save()
-				return HttpResponse("Success")
+				return HttpResponse(render_alert("Password has been changed successfully"))
+
 			else:
 				return HttpResponseServerError(get_errors_in_text(form))
 	#This checks get request for formtype and renders type of form requested.

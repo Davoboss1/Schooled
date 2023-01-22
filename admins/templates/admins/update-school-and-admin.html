@@ -1,81 +1,48 @@
 {% load crispy_forms_tags %}
-<form method="POST" class="w-100 post-form mx-auto" style="max-width:300px;" >
+<form :hx-post="'{% url 'school_profile' %}'+ sch_value + '/'" hx-target="#status" class="w-100 mx-auto post-form"
+    style="max-width:300px;">
     {% csrf_token %}
     {% if type == "admin" %}
-        {{userform|crispy}}
-			<div class="form-group">
-				<label for="customFile">Profile picture</label>
-			<div class="custom-file"> <input type="file" class="custom-file-input" name="user-profile-picture" id="customFile" onchange="document.getElementById('file-label').innerHTML='File selected sucessfully';" accept="image/*"> <label class="custom-file-label" for="customFile" id="file-label">Choose file</label> </div>
-			</div>
+    {{userform|crispy}}
+    <div class="form-group">
+        <label for="customFile">Profile picture</label>
+        <div class="custom-file"> <input type="file" class="custom-file-input" name="user-profile-picture"
+                id="customFile" onchange="document.getElementById('file-label').innerHTML='File selected sucessfully';"
+                accept="image/*"> <label class="custom-file-label" for="customFile" id="file-label">Choose file</label>
+        </div>
+    </div>
 
-        <button type="button" class="genric-btn primary w-100 update-info" data-type="password" id="password-btn" >
-            Change Password 
-        </button>
-        {% endif %}
-        <input name="formtype" value="{{type}}" type="hidden">
-        {{ form|crispy}}
-        {% if type == "school" %}
-            <div class="form-group">
-                <label for="sch-logo">School Logo</label>
-                <input name="sch-logo" accept="image/*" type="file" class="form-control-file" id="sch-logo">
-            </div>
-        {% endif %}
-        <div class="my-3" id="status"></div>
+    <button type="button" class="genric-btn primary w-100 update-info"
+        :hx-get="'{% url 'school_profile' %}'+ sch_value + '/'" hx-target="#update-modal-body"
+        hx-vals='{"type" : "password"}'>
+        Change Password
+    </button>
+    {% endif %}
+    <input name="formtype" value="{{type}}" type="hidden">
+    {{ form|crispy}}
+    {% if type == "school" %}
+    <div class="form-group">
+        <label for="sch-logo">School Logo</label>
+        <input name="sch-logo" accept="image/*" type="file" class="form-control-file" id="sch-logo">
+    </div>
+    {% endif %}
+    <div class="my-3" id="status"></div>
 
-        <button class="w-100 genric-btn success radius" id="updateButton">Update</button>
+    <button class="w-100 genric-btn success radius" id="updateButton">Update</button>
 </form>
 <script>
-    $(".post-form").submit(function(event){
-        event.preventDefault();
-        var submitBtn = $("#updateButton");
-        submitBtn.html("Updating.....");
-        var update_form_data = new FormData(this);
-        $.ajax({
-            url:"{% url 'school_profile' %}" + document.getElementById("selected-school").value +"/",
-            type:"post",
-            contentType: false,
-            processData : false,
-            timeout : 15000,
-            data: update_form_data,
-            success:function(data){
-                submitBtn.html("Updated Successfully");
-                {% if type == "password" %}
-					$("#status").html(write_alert("Password has been changed successfully. You will be redirected to login page soon."));
-                    window.setTimeout(function(){
-					    window.location.href = "{% url 'accounts:login' %}";
-                    },2000);
-                {% endif %}
-            },
-            error:function(res,status,error){
-				submitBtn.html("Update Failed, Retry");
-				if(res.responseText){
-                $("#status").html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <h5 class="text-center">Form was not submitted!</h5><hr> <h5 class="border-bottom border-dark pb-1 text-center">Reasons</h5> '+ res.responseText +' <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-				}else{
-                $("#status").html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <h5 class="text-center">Form was not submitted!</h5><hr> <h5 class="border-bottom border-dark pb-1 text-center">Reasons</h5>Something went wrong, your request was not successful <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-				}
-            },
-        });
+
+    {% if type == "password" %}
+    //Redirect after 2s on successful password change 
+    document.querySelector(".post-form").addEventListener("htmx:afterRequest", function (event) {
+        detail = event.detail;
+        if (detail.successful) {
+            document.querySelector("#status").innerHTML = (write_alert("Password has been changed successfully. You will be redirected to login page soon."));
+            window.setTimeout(function () {
+                window.location.href = "{% url 'accounts:login' %}";
+            }, 2000);
+        }
     });
-
-$("#password-btn").click(function(){
-
-    $("#update-modal-body").html("<div class='progressBar mx-auto'> </div>");
-    $.ajax({
-        url : "{% url 'school_profile' %}" + document.getElementById("selected-school").value +"/",
-        type: "get",
-        timeout : 10000,
-        data:{
-            type:$(this).attr("data-type"),
-        },
-        success:function(data){
-            $("#update-modal-body").html(data);
-        },
-        error:function(res,status,jqXHR){
-
-        },
-    });
-
-});
-
+    {% endif %}
 
 </script>

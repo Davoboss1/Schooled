@@ -1535,3 +1535,7 @@ html {
 .help-card .body {
     padding: 5px;
 }
+
+.displayFlex{
+    display: flex;
+}

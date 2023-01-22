@@ -2,6 +2,15 @@ from datetime import date as Date ,datetime
 from functools import wraps
 from django.core.exceptions import PermissionDenied,ValidationError
 
+def render_alert(msg,type = "success"):
+    if type == "danger":
+        type_display = "error"
+    else:
+        type_display = type
+
+    type_display = type_display.capitalize()
+    return '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert"><strong>' + type_display + '!</strong> ' + msg + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+
 
 def require_ajax(func):
     @wraps(func)
