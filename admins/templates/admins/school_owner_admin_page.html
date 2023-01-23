@@ -80,21 +80,21 @@
                     School Profile
                 </li>
                 <li data-history="view-performance"
-                    :hx-get="'{% url 'admins:class_list' 'view_performance' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'students:view_performance' %}'+ sch_value + '/'">
                     View
                     Performance </li>
                 <li data-history="view-attendance"
-                    :hx-get="'{% url 'admins:class_list' 'view_attendance' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'students:view_attendance' %}'+ sch_value + '/'">
                     View
                     Attendance</li>
                 <li data-history="view-student-information"
-                    :hx-get="'{% url 'admins:class_list' 'view_student_info' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'students:view_student_info' %}'+ sch_value + '/'">
                     View Students Information</li>
                 <li data-history="view-manage-teachers"
-                    :hx-get="'{% url 'admins:class_list' 'manage_teachers' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'admins:manage_teachers' %}'+ sch_value + '/'">
                     Manage Teachers</li>
                 <li data-history="view-manage-parents"
-                    :hx-get="'{% url 'admins:class_list' 'manage_parents' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'admins:manage_parents' %}'+ sch_value + '/'">
                     Manage
                     Parents</li>
                 <li data-history="view-messages" hx-get="{% url 'accounts:message_list' %}">

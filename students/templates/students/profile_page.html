@@ -166,7 +166,7 @@
 
 	$(".view-parent-profile").click(function (e) {
 		var parent_username = $(this).prev().text();
-		get_data("{% url 'show_profile' %}"+"parent/"+parent_username+"/",{},$("#profile-body")[0]);
+		get_data("{% url 'admins:show_profile' %}"+"parent/"+parent_username+"/",{},$("#profile-body")[0]);
 	});
 	//Upload image event handler
 	var uploadStatus = $("#upload-status");

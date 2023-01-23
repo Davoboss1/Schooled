@@ -79,7 +79,7 @@
 				<!-- Teacher tools list-->
 				<!-- Onclick event requests data-url attribute value and applies it in div with Id main. -->
 				<ul class="list-group my-3" id="toolsList"  hx-target="#main"  hx-error-target="#main" onclick="ScrollToId('#main',70)">
-					<li class="list-group-item tools-list" hx-get="{% url 'students:update' %}" >
+					<li class="list-group-item tools-list" hx-get="{% url 'students:register_student' %}" >
 						<h6 class="student-list-link">Add Student Information.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
@@ -88,7 +88,7 @@
 						<h6 class="student-list-link">Edit Student Information.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
-					<li class="list-group-item tools-list" hx-get="{% url 'view_student_info' %}" >
+					<li class="list-group-item tools-list" hx-get="{% url 'students:view_student_info' %}" >
 						<h6 class="student-list-link">View Student Information.</h6>
 						<span class="badge badge-info badge-pill">Show</span>
 					</li>
@@ -235,7 +235,7 @@
 							</li>
 
 						</ul>
-						<button class="btn btn-outline-light my-2" data-toggle="modal" data-target="#update-profile-modal" hx-get="{% url 'update_profile' %}" hx-target="#edit-profile-modal-body" id="edit-profile-btn">
+						<button class="btn btn-outline-light my-2" data-toggle="modal" data-target="#update-profile-modal" hx-get="{% url 'teachers:update_profile' %}" hx-target="#edit-profile-modal-body" id="edit-profile-btn">
 							Edit Profile
 						</button>
 

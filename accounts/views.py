@@ -164,9 +164,9 @@ class account_login(LoginView):
 def account_handler(request):
 	try:
 		if request.user.level=='Admin':
-			return redirect('admin_homepage')
+			return redirect('admins:admin_homepage')
 		elif request.user.level=='Teacher':
-			return redirect('teacher_homepage')
+			return redirect('teachers:teacher_homepage')
 		elif request.user.level=='Parent':
 			return redirect("parents:parents_homepage")
 	except:

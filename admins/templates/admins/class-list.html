@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 {# Type variable is used to identify what type of page was requested #}
-{% if type == "view_performance" %}
+{% if type == "students:view_performance" %}
 {# if type is view_performance add an add session container above class list container #}
 <button class="genric-btn primary my-3 mx-auto w-100" type="button" data-toggle="collapse" data-target="#newSession"
     aria-expanded="false" aria-controls="newSession">
@@ -63,7 +63,7 @@
     </div>
 </div>
 {% endif %}
-{% if type == "manage_teachers" %}
+{% if type == "admins:manage_teachers" %}
 {# if type is manage_teachers add an add teacher container above class list container #}
 <div class="d-flex flex-column my-3">
     <div class="d-flex">

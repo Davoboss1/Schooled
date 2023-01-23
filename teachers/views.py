@@ -117,6 +117,9 @@ def update_profile(request):
 @view_for("admin")
 @require_POST
 def teacher_delete(request):
-	id = int(request.POST.get("pk"))
-	Teacher.objects.get(pk=id).user.delete()
-	return HttpResponse(render_alert("Teacher deleted Successfully"))
+	try:
+		id = int(request.POST.get("pk"))
+		Teacher.objects.get(pk=id).user.delete()
+		return HttpResponse(render_alert("Teacher deleted Successfully"))
+	except Teacher.DoesNotExist:
+		return HttpResponseServerError("Teacher already deleted.")

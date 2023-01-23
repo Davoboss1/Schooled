@@ -121,7 +121,7 @@ $("button.performance-pagination-handler").click(function () {
 
 		body.html('<div class="mx-auto my-3 progressBar"></div>');
 		$.ajax({
-			url : "{% url 'admins:view_performance' class_pk %}",
+			url : "{% url 'students:view_performance' class_pk %}",
 			data : {
 				page:page_no,
 				year:$("#year").val(),
@@ -148,7 +148,7 @@ $("button.performance-pagination-handler").click(function () {
 		var loadmore_btn = $(this);
 
 		$.ajax({
-			url : "{% url 'admins:view_performance' class_pk %}",
+			url : "{% url 'students:view_performance' class_pk %}",
 			type : "GET",
 			data : {
 				page_no : page_no,
@@ -179,7 +179,7 @@ $("button.performance-pagination-handler").click(function () {
 		var span_icon = $($(this).find("span")[0]);
 		span_icon.addClass("fa-spin");
 	 	$.ajax({
-	 		url : "{% url 'admins:view_performance' class_pk %}",
+	 		url : "{% url 'students:view_performance' class_pk %}",
 	 		type : "GET",
 	 		data:{
 			page:1,

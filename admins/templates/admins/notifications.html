@@ -17,7 +17,7 @@
 	</blockquote>
     {% endfor %}
     {% else %}
-        <div class="alert alert-info" >
+        <div class="alert alert-info mt-2" >
             <h6 class="text-center">You currently have no notifications.</h6>
         </div>
     {% endif %}
@@ -35,7 +35,7 @@
 		btn.text("Loading....");
 		var page = btn.attr("data-page-no");
 		$.ajax({
-			url: "{% url 'notifications' %}" + $("#selected-school").val() + "/",
+			url: "{% url 'admins:notifications' %}" + $("#selected-school").val() + "/",
 			data: { page: page },
 			timeout: 15000,
 			success: function (data) {

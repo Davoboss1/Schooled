@@ -64,7 +64,7 @@
   		var id = $(this).parent().prev().prev().prev().val();
   		$("#profile-body").html("<div id=\"loader\" ><div class=\"d-flex flex-column \"><img src=\"{% static 'css/ajax-loader.gif' %}\" alt=\" \" class=\"mx-auto\"><small class=\"mx-auto\">Loading....</small></div></div>");
 		  $.ajax({
-			url:"{% url 'profile_page' %}"+id+"/",
+			url:"{% url 'students:profile_page' %}"+id+"/",
 			type:"GET",
 			success: function(data){
 				document.getElementById("loader").style.display="none";
