@@ -3,6 +3,7 @@ import csv
 from django.shortcuts import render, redirect, get_object_or_404, Http404, HttpResponse, reverse
 from django.http.response import HttpResponseServerError
 from .models import Student, Performance, Attendance, Term
+from .forms import StudentForm
 from teachers.models import Teacher, Class
 from parents.models import Parent
 from django.db.models import Q
@@ -17,7 +18,7 @@ from django.core.paginator import Paginator,EmptyPage
 from xhtml2pdf import pisa
 from io import StringIO
 from schooled import settings
-from tools import view_for, require_ajax, require_auth, get_errors_in_text
+from tools import view_for, require_ajax, require_auth, get_errors_in_text, render_alert
 # FUNCTION BASED VIEWS
 
 # View for viewing performance
@@ -177,11 +178,11 @@ def register_student(request):
                     except get_user_model().DoesNotExist:
                         print("Does not exist")
                         # UNF means user not found
-                        return HttpResponseServerError("UNF")
+                        return HttpResponseServerError("User was not found")
                     except get_user_model().parent.RelatedObjectDoesNotExist:
                         # UNP means user not parent
                         print("Unp")
-                        return HttpResponseServerError("UNP")
+                        return HttpResponseServerError("User is not a parent")
                # Check if s_parent_parent is not None, Validate username and user and add to many to many list
                 if s_parent:
                     try:
@@ -190,11 +191,11 @@ def register_student(request):
                     except get_user_model().DoesNotExist:
                         print("Does not exist")
                         # UNF means user not found
-                        return HttpResponseServerError("UNF")
+                        return HttpResponseServerError("User was not found")
                     except get_user_model().parent.RelatedObjectDoesNotExist:
                         # UNP means user not parent
                         print("Unp")
-                        return HttpResponseServerError("UNP")
+                        return HttpResponseServerError("User is not a parent")
                 # Save form and set parents
                 form.save()
                 form.parents.set(parent_list)
@@ -217,9 +218,9 @@ def register_student(request):
                     form.parents.add(parent)
                 else:
                     # if form is not valid return errors
-                    return HttpResponseServerError(parentform.errors.as_json())
+                    return HttpResponseServerError(get_errors_in_text(parentform))
             # if successful return this response
-            return HttpResponse('Success')
+            return HttpResponse(render_alert('Student has been aded successfully'))
         else:
             return HttpResponseServerError(form.errors.as_data)
     else:

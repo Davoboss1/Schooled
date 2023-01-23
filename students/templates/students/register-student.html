@@ -28,7 +28,10 @@
 		<button class="genric-btn primary radius w-100" id="generate-parent" type="button">
 			Generate automatically
 		</button>
+		<div class="alert alert-primary mt-2 d-none" role="alert" id="parent-alert"></div>
 		{{parent_form|crispy}}
+		
+
 		<div class="my-2" id="form-status">
 
 		</div>
@@ -39,14 +42,15 @@
 
 <script>
 
-	$("#generate-parent").click(function () {
-		$("#parent-alert").remove();
-		var student_name = $("#id_name").val();
+	document.querySelector("#generate-parent").onclick = function () {
+		let alert = document.querySelector("#parent-alert");
+		alert.classList.remove("d-none")
+		var student_name = document.querySelector("#id_name").value;
 		student_name = student_name.replace(/\s+/g, '');
-		$("#id_username").val(student_name + "Parent");
-		$("#id_password1").val("Parent1234");
-		$("#id_password2").val("Parent1234");
-		$(this).after('<div class="alert alert-primary mt-2" role="alert" id="parent-alert"> Generated Username is ' + $("#id_username").val() + '.   Default Password = Parent1234 </div>');
-	});
+		document.querySelector("#id_username").value = (student_name + "Parent");
+		document.querySelector("#id_password1").value = ("Parent1234");
+		document.querySelector("#id_password2").value = ("Parent1234");
+		alert.innerHTML = (' Generated Username is ' + (student_name + "Parent") + '.   Default Password = Parent1234 </div>');
+	};
 </script>
 {% endblock %}
