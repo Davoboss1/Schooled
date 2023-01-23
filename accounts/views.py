@@ -24,9 +24,9 @@ def homepage(request):
 		#Check user kind and redirect them to respective page.
 		user = request.user
 		if user.level == "Admin":
-			return redirect("admin_homepage")
+			return redirect("admins:admin_homepage")
 		elif user.level == "Teacher":
-			return redirect("teacher_homepage")
+			return redirect("teachers:teacher_homepage")
 		elif user.level == "Parent":
 			return redirect("parents:parents_homepage")
 	else:

@@ -115,16 +115,13 @@ def update_profile(request):
 		
 #Admin uses this view to delete teacher
 @view_for("admin")
-
+@require_POST
 def teacher_delete(request):
-	if request.method == "POST":
-		if request.user.level == "Admin":
-			id = int(request.POST.get("pk"))
-			Teacher.objects.get(pk=id).user.delete()
-			return HttpResponse("Teacher deleted Successfully")
-		else:
-			return Http404()
-		
+	if request.user.level == "Admin":
+		id = int(request.POST.get("pk"))
+		Teacher.objects.get(pk=id).user.delete()
+		return HttpResponse("Teacher deleted Successfully")
 	else:
 		return Http404()
+	
 	
