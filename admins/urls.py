@@ -2,6 +2,8 @@ from django.urls import path,re_path
 from django.shortcuts import redirect,reverse
 from . import views
 
+app_name = "admins"
+
 urlpatterns = [
 #School_owner
 path("",views.school_owner_home_page, name='admin_homepage'),

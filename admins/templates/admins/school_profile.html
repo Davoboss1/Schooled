@@ -29,7 +29,7 @@
             </div> 
 
             <div class="card-footer text-muted d-flex flex-column">Last Updated on {{school.update_at.date}}
-                <button class="genric-btn info w-50 mx-auto" data-toggle="modal" data-target="#update-modal" :hx-get="'{% url 'school_profile' %}'+ sch_value + '/'" hx-target="#update-modal-body" hx-vals='{"type" : "school"}'>
+                <button class="genric-btn info w-50 mx-auto" data-toggle="modal" data-target="#update-modal" :hx-get="'{% url 'admins:school_profile' %}'+ sch_value + '/'" hx-target="#update-modal-body" hx-vals='{"type" : "school"}'>
                     Update
                 </button>
             </div> 
@@ -76,7 +76,7 @@
             </div> 
 
             <div class="card-footer text-muted d-flex flex-column">Last Updated on {{user.admin.update_at}}
-                <button class="genric-btn info w-50 mx-auto"  data-toggle="modal" data-target="#update-modal" :hx-get="'{% url 'school_profile' %}'+ sch_value + '/'" hx-target="#update-modal-body" hx-vals='{"type" : "admin"}'>
+                <button class="genric-btn info w-50 mx-auto"  data-toggle="modal" data-target="#update-modal" :hx-get="'{% url 'admins:school_profile' %}'+ sch_value + '/'" hx-target="#update-modal-body" hx-vals='{"type" : "admin"}'>
                     Update
                 </button>
             </div> 

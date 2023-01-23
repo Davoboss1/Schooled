@@ -159,7 +159,7 @@ def school_profile(request,sch_pk):
 def class_list(request,sch_pk,type):
 	admin = request.user.admin
 	school = School.objects.get(admin=admin,pk=sch_pk)
-	link_url = reverse(type)
+	link_url = reverse(f"admins:{type}")
 	
 	if type == "manage_teachers":
 		#if type is manage_teacher
@@ -174,7 +174,8 @@ def class_list(request,sch_pk,type):
 		
 	#Get a list of all classes in school
 	all_class = school.class_set.all()
-	return render(request,"admins/class-list.html",{"url":link_url,'user':request.user,'type':type,'userform':user_form,"classes":all_class,"current_term":Term.objects.filter(school=school,current_session=True).first(),"school":school})
+	available_terms = Term.objects.filter(school=school).order_by("-current_session","year")
+	return render(request,"admins/class-list.html",{"url":link_url,'user':request.user,'type':type,'userform':user_form,"classes":all_class,"available_terms":available_terms,"school":school})
 	
 #view that handles performance viewing for admin
 @view_for("admin")
@@ -383,16 +384,14 @@ def add_sessions(request,sch_pk):
 		year = request.POST.get("year")
 		term = request.POST.get("term")
 		school = School.objects.get(admin=request.user.admin,pk=sch_pk)
-		term_obj = Term.objects.filter(school=school,year=year,term=term)
-		if term_obj.exists():
-			current_term = term_obj.first()
-			print("Session exists")
-		else:
-			current_term = Term.objects.create(school=school,year=year,term=term)
-			print("New session")
-			
-		current_term.set_as_current()
-		return HttpResponse("Session has been selected successfully")
+		print(request.POST)
+		try:
+			current_term = Term.objects.get_or_create(school=school,year=year,term=term)[0]
+			print(current_term)
+			current_term.set_as_current()
+			return HttpResponse(render_alert("Session has been selected successfully"))
+		except ValueError:
+			return HttpResponseServerError("Invalid session detected")	
 
 #View for showing teacher or admin or parents profile
 @require_auth

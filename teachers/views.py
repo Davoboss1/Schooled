@@ -10,7 +10,7 @@ from .models import Class,Teacher
 from students.models import School_activity_log
 from accounts.models import Messages
 from admins.views import get_errors_in_text
-from tools import view_for,save_picture,require_ajax
+from tools import view_for,save_picture,require_ajax,get_errors_in_text, render_alert
 # Create your views here.
 #View for teacher homepage
 @view_for("teacher")
@@ -26,42 +26,28 @@ def teacher_homepage(request):
 	
 #Admin uses this view to create teacher
 @view_for("Admin")
+@require_POST
 def teacher_create(request):
-	if request.method == "POST":
-		userform = UserCreationForm(request.POST)
-		if userform.is_valid():
-			admin = request.user.admin
-			#Perform user neccessary attributes setting
+	userform = UserCreationForm(request.POST)
+	if userform.is_valid():
+		admin = request.user.admin
+		school = admin.schools.get(pk=request.POST.get("sch_pk"))
+		teacher_class = Class.objects.get_or_create(school=school,class_name=request.POST.get("class"))[0]
+		if teacher_class.teacher is None:
 			user = userform.save(commit=False)
 			user.level ="Teacher"
 			user.save()
 			teacher = Teacher.objects.create(user = user)
-			school = admin.schools.get(pk=request.POST.get("sch_pk"))
-			#Description of next 12 lines
-			#Check if teacher class exists
-			#if it doesnt exists create new class for created teacher
-			#if it exists check if class already has teacher
-			#if class has teacher return unique error
-			#if it doesnt have teacher set class teacher to created teacher
-			teacher_class = Class.objects.filter(school=school,class_name=request.POST.get("class"))
-			if teacher_class.exists():
-				teacher_class = teacher_class.first()
-				if teacher_class.teacher is None:
-					teacher_class.teacher = teacher
-					teacher_class.save()
-				else:
-					user.delete()
-					return HttpResponse("UniqueError")
-			else:
-				teacher_class = Class.objects.create(school=school,teacher=teacher,class_name=request.POST.get("class"))
-			return HttpResponse("success")
+			teacher_class.teacher = teacher
+			teacher_class.save()
 		else:
-			#If form is invalid return errors as json
-			extra_context = {"userform":userform}
-			request.extra_context = extra_context		
-			return HttpResponse(userform.errors.as_json())
+			return HttpResponseServerError("Class already exists with a valid teacher.")
+		
+		return HttpResponse(render_alert("Teacher has been sucessfully created"))
 	else:
-		return Http404()
+		#If form is invalid return errors as json		
+		return HttpResponseServerError(get_errors_in_text(userform))
+
 		
 
 @view_for("Admin")

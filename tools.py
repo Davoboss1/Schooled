@@ -11,6 +11,12 @@ def render_alert(msg,type = "success"):
     type_display = type_display.capitalize()
     return '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert"><strong>' + type_display + '!</strong> ' + msg + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 
+def get_errors_in_text(form):
+	errors_dict = form.errors.as_data()
+	error_text = ""
+	for keys in errors_dict.keys():
+		error_text += f"<h6 class='py-2 text-center' > {errors_dict[keys][0].messages[0]} </h6>"
+	return error_text
 
 def require_ajax(func):
     @wraps(func)

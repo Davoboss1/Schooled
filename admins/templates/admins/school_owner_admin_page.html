@@ -76,39 +76,39 @@
         <div class="bg-light thick-horizontal-border" id="admin-tools">
             <!-- main list -->
             <ul class="block-list" onclick="ScrollToId('#main',100)" hx-target="#main">
-                <li data-history="view-school-profile" :hx-get="'{% url 'school_profile' %}' + sch_value + '/'">
+                <li data-history="view-school-profile" :hx-get="'{% url 'admins:school_profile' %}' + sch_value + '/'">
                     School Profile
                 </li>
                 <li data-history="view-performance"
-                    :hx-get="'{% url 'class_list' 'view_performance' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'view_performance' %}'+ sch_value + '/'">
                     View
                     Performance </li>
                 <li data-history="view-attendance"
-                    :hx-get="'{% url 'class_list' 'view_attendance' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'view_attendance' %}'+ sch_value + '/'">
                     View
                     Attendance</li>
                 <li data-history="view-student-information"
-                    :hx-get="'{% url 'class_list' 'view_student_info' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'view_student_info' %}'+ sch_value + '/'">
                     View Students Information</li>
                 <li data-history="view-manage-teachers"
-                    :hx-get="'{% url 'class_list' 'manage_teachers' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'manage_teachers' %}'+ sch_value + '/'">
                     Manage Teachers</li>
                 <li data-history="view-manage-parents"
-                    :hx-get="'{% url 'class_list' 'manage_parents' %}'+ sch_value + '/'">
+                    :hx-get="'{% url 'admins:class_list' 'manage_parents' %}'+ sch_value + '/'">
                     Manage
                     Parents</li>
                 <li data-history="view-messages" hx-get="{% url 'accounts:message_list' %}">
                     Messages <span class="badge badge-dark badge-pill ml-3"
                         id="unread-messages-count">{{unread_msg_count}}</span></li>
-                <li data-history="view-notifications" :hx-get="'{% url 'notifications' %}'+ sch_value + '/'">
+                <li data-history="view-notifications" :hx-get="'{% url 'admins:notifications' %}'+ sch_value + '/'">
                     Notifications
                     <span class="badge badge-dark badge-pill ml-3"
                         id="unviewed-notifications-count">{{unviewed_notifications_count}}</span>
                 </li>
-                <li data-history="view-request-for-changes" hx-get="{% url 'coming_soon' %}">
+                <li data-history="view-request-for-changes" hx-get="{% url 'admins:coming_soon' %}">
                     Request for
                     changes <span class="badge badge-dark badge-pill ml-3">2</span></li>
-                <li data-history="view-post-and-news" hx-get="{% url 'coming_soon' %}">Post
+                <li data-history="view-post-and-news" hx-get="{% url 'admins:coming_soon' %}">Post
                     and News</li>
             </ul>
         </div>
@@ -153,7 +153,7 @@
                         Go back to workspace and menu
                     </button>
                     <form method="post" id="create-school-form" style="max-width:350px;" class="m-3"
-                        hx-post="{% url 'create_new_school' %}" hx-encoding="multipart/form-data"
+                        hx-post="{% url 'admins:create_new_school' %}" hx-encoding="multipart/form-data"
                         hx-indicator="#new-school-status" hx-error-target="#new-school-status"
                         hx-target="#new-school-status">
                         {% csrf_token %}
@@ -292,7 +292,7 @@
                             //Runs after alert has been confirmed and password has been entered
                             let sch_select = document.querySelector("#selected-school");
                             let data = { csrfmiddlewaretoken: "{{csrf_token}}", sch_pk: sch_select.value, password: password };
-                            return htmx.ajax("POST", "{% url 'delete_school' %}", {
+                            return htmx.ajax("POST", "{% url 'admins:delete_school' %}", {
                                 target: "#none", values: data, handler: (elt, res) => {
                                     if (res.xhr.status === 200) {
                                         Swal.fire({

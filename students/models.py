@@ -24,7 +24,7 @@ class Term(models.Model):
 	
 	@property
 	def session(self):		
-		return f"{self.year}/{self.year+1}"
+		return f"{self.year}/{int(self.year)+1}"
 	def __str__(self):
 		return f"{self.session} Session : {self.term}"
 	def set_as_current(self):

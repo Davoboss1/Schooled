@@ -70,7 +70,7 @@
 		var body = $(elem).parent().parent().parent();
 		body.html('<div class="mx-auto my-3 progressBar"></div>');
 		$.ajax({
-			url: "{% url 'view_attendance' class_pk %}",
+			url: "{% url 'admins:view_attendance' class_pk %}",
 			data: {
 				page: page_no,
 			},

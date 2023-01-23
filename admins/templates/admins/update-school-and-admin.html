@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form :hx-post="'{% url 'school_profile' %}'+ sch_value + '/'" hx-target="#status" class="w-100 mx-auto post-form"
+<form :hx-post="'{% url 'admins:school_profile' %}'+ sch_value + '/'" hx-target="#status" class="w-100 mx-auto post-form"
     style="max-width:300px;">
     {% csrf_token %}
     {% if type == "admin" %}
@@ -13,7 +13,7 @@
     </div>
 
     <button type="button" class="genric-btn primary w-100 update-info"
-        :hx-get="'{% url 'school_profile' %}'+ sch_value + '/'" hx-target="#update-modal-body"
+        :hx-get="'{% url 'admins:school_profile' %}'+ sch_value + '/'" hx-target="#update-modal-body"
         hx-vals='{"type" : "password"}'>
         Change Password
     </button>

@@ -17,10 +17,10 @@
                 <tbody>
                     <tr>
                         <td>
-                            {{current_term.session}}
+                            {{available_terms.first.session}}
                         </td>
                         <td>
-                            {{current_term.term}}
+                            {{available_terms.first.term}}
                         </td>
                     </tr>
                 </tbody>
@@ -29,17 +29,20 @@
                 Please select new session</strong>
         </div>
         <div class="d-flex">
-            <h4 class="w-50 pl-3">Year</h4>
+            <h4 class="w-50">Year</h4>
             <h4 class="w-50 pl-3">Term</h4>
         </div>
         <div class="d-flex mt-2">
             <div class="w-50 pr-3">
                 <select class="form-control" id="session-years" x-init="year = $el.value" @change="year = $el.value">
-                    {% if current_term %}
-                    <option value="{{current_term.year}}">{{current_term.session}}</option>
-                    {% else %}
-                    <option disabled selected>-----------</option>
-                    {% endif %}
+                    {% for term in available_terms %}
+                    {% ifchanged %}
+                    <option value="{{term.year}}">{{term.session}}</option>
+
+                    {% endifchanged %}
+                    {% endfor %}
+                    <option >-----------</option>
+                    
                 </select>
             </div>
             <div class="w-50 pl-3">
@@ -53,7 +56,8 @@
                 </select>
             </div>
         </div>
-        <button class="genric-btn primary mt-2" id="add-session" :hx-post="'{% url 'add_sessions' %}'+ sch_value + '/'" :hx-vals='`{ "csrfmiddlewaretoken": "{{csrf_token}}", "year": "${year}", "term" : "${term}" }`' >Select Current Session</button>
+        <div class="my-2" id="term-status"></div>
+        <button class="genric-btn primary mt-2" id="add-session" :hx-post="'{% url 'admins:add_sessions' %}'+ sch_value + '/'" :hx-vals='`{ "csrfmiddlewaretoken": "{{csrf_token}}", "year": "${year}", "term" : "${term}" }`' hx-target="#term-status" >Select Current Session</button>
 
 
     </div>
@@ -68,8 +72,8 @@
 
     </div>
     <div class="collapse card mt-3" id="add-teachers">
-        <form method="post" class="w-100 my-1 mx-auto" style="max-width:300px;"
-            action="{% url 'teachers:teacher_create' %}" id="add-teachers-form">
+        <form class="w-100 my-1 mx-auto" style="max-width:300px;"
+            hx-post="{% url 'teachers:teacher_create' %}" hx-target="#form-status" >
             {% csrf_token %}
             <input type="hidden" name="sch_pk" value="{{school.pk}}">
             <h4>User Information</h4>
@@ -154,125 +158,19 @@
         {% endif %}
     </ul>
 </div>
-{% if type == "manage_teachers" %}
-<script>
-    $(function () {
-        //Add teacher form submit event
-        $("#add-teachers-form").submit(function (event) {
-            event.preventDefault();
-            //Element that shows submit status
-            var status = $("#form-status");
-            //Add loader to status
-            status.html('<div class="mx-auto progressBar"></div>');
-            //Select form in jquery
-            var $form = $(this);
-            //Ajax request
-            $.ajax({
-                url: $form.attr("action"),
-                type: "POST",
-                data: $form.serialize(),
-                success: function (data) {
-                    //if response is successful.
-                    //It returns text success
-                    if (data == "success") {
-                        //On successful request
-                        //Show success message, reset form, remove all error indications in html
-                        status.html('<div class="alert alert-success alert-dismissible fade show" role="alert"> <strong>Success..</strong> You have successfully registered this teacher.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-                        $form.trigger("reset");
-                        $form.find("input").removeClass("is-valid");
-                        $form.find("input").removeClass("is-invalid");
-                        $("span.error-span").remove();
 
-                    }
-                    else if (data == "UniqueError") {
-                        //write error message
-                        status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong> Class and teacher already exists. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-                    }
-                    else {
-                        //If it was any other response. Its probably json.
-                        //Show error messsage
-                        //Parse json and append error message to identified inputs 
-                        status.html('<div class="alert alert-danger fade show" role="alert"> <strong>Failed..</strong> Invalid form inputs detected, Please recheck your form and provide valid input.</div>');
-                        $("span.error-span").remove();
-                        var all_input_container = $('div[id^="div_id_"]');
-                        for (var i = 0; i < all_input_container.length; i++) {
-                            var input = $(all_input_container[i]).find("input");
-                            $(input[0]).attr("class", "textinput textInput form-control is-valid");
-
-                        }
-                        var response = JSON.parse(data);
-                        var responseNames = Object.keys(response);
-                        for (var i = 0; responseNames.length; i++) {
-                            responsearr = response[responseNames[i]];
-                            var responsehtml = $("#div_id_" + responseNames[i]);
-                            var input = responsehtml.find("input");
-                            $(input[0]).attr("class", "textinput textInput form-control is-invalid");
-
-                            for (var inc = 0; inc < responsearr.length; inc++) {
-
-                                var errorhtml = "<span class=\"error-span text-danger\" >" + responsearr[inc].message + "</span>";
-                                responsehtml.append(errorhtml);
-                            }
-                        }
-                        window.document.location.href = "#add-teachers";
-                    }
-
-
-                },
-                error: function (data) {
-                    //Error message
-                    status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong>Something went wrong. Form was not submitted <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-
-                },
-            });
-        });
-    });					
-</script>
-{% endif %}
 {% if type == "view_performance" %}
 <script>
     //Create next 5 years in session select element
-    var year = new Date().getFullYear() - 1;
-    var session_select = document.getElementById("session-years");
-    
     for (var i = -2; i <= 2; i++) {
-        var option = document.createElement("option");
+        let option = document.createElement("option");
+        let year = new Date().getFullYear() - 1;
+        let session_select = document.getElementById("session-years");
+
         option.appendChild(document.createTextNode(year + i + "/" + (year + i + 1)));
         option.value = year + i;
         session_select.appendChild(option);
     }
-   
-        //Get year and term value from thier elements
-        var year = $("#session-years").val();
-        var term = $("#session-term").val();
-        //Select add session button
-        var btn = $(this);
-        btn.html("Selecting...");
-        //Remove session status. (To avoid duplicate error message on another request)
-        $("#session-status").remove();
-        //Ajax request
-        $.ajax({
-            url: "{% url 'add_sessions' %}" + $("#selected-school").val() + "/",
-            type: "Post",
-            timeout: 10000,
-            data: { csrfmiddlewaretoken: "{{csrf_token}}", year: year, term: term },
-            success: function (data) {
-                btn.html("Select Current Session");
-                //Create success message and add it before add session button
-                btn.before('<div class="alert alert-success alert-dismissible fade show mt-3" role="alert" id="session-status"><strong>Success!</strong> Session Selected Successfully.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-            },
-            error: function (res, status, jqxhr) {
-                btn.html("Select Current Session");
-                //Create error message and add it before add session button
-                if (res.responseText == "IAE") {
-                    btn.before('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" id="session-status"><strong>Failed!</strong> Session already exists.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-                } else {
-                    btn.before('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" id="session-status"><strong>Failed!</strong> Something went wrong, Please try again.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-                }
-            }
-        });
-
-    });
 </script>
 {% endif %}
 <script>
