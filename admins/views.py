@@ -190,7 +190,7 @@ def view_performance(request,pk):
 	if terms.exists():
 		current_term = terms.get(current_session=True)
 	else:
-		return HttpResponseServerError("SESSIONERROR")
+		return HttpResponseServerError("Invalid session detected, Click the select session button to select your school current session.")
 	context = {"all_students":students_in_class,"class_pk":pk,"terms":terms,"current_term":current_term}
 
 	#Pagination
@@ -392,7 +392,7 @@ def add_sessions(request,sch_pk):
 			print("New session")
 			
 		current_term.set_as_current()
-		return HttpResponse("Success")
+		return HttpResponse("Session has been selected successfully")
 
 #View for showing teacher or admin or parents profile
 @require_auth

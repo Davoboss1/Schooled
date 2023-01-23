@@ -221,7 +221,7 @@
 
             status.html('<div class="mx-auto progressBar"></div>');
             $.ajax({
-                url: "{% url 'teacher_delete' %}",
+                url: "{% url 'teachers:teacher_delete' %}",
                 type: "POST",
                 data: { csrfmiddlewaretoken: "{{csrf_token}}", pk: $(this).attr("data-id"), },
                 success: function (data) {

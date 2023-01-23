@@ -7,7 +7,7 @@
     Select Session
 </button>
 <div class="collapse mb-3 mx-auto w-100" id="newSession">
-    <div class="card card-body">
+    <div class="card card-body" x-data="{year: '', term: ''}">
         <div class="jumbotron bg-light p-0">
             <table class="table table-bordered text-dark">
                 <thead>
@@ -34,15 +34,16 @@
         </div>
         <div class="d-flex mt-2">
             <div class="w-50 pr-3">
-                <select class="form-control" id="session-years">
+                <select class="form-control" id="session-years" x-init="year = $el.value" @change="year = $el.value">
                     {% if current_term %}
                     <option value="{{current_term.year}}">{{current_term.session}}</option>
+                    {% else %}
+                    <option disabled selected>-----------</option>
                     {% endif %}
-                    <option disabled>-----------</option>
                 </select>
             </div>
             <div class="w-50 pl-3">
-                <select class="form-control" id="session-term">
+                <select class="form-control" id="session-term" x-init="term = $el.value"  @change="term = $el.value">
                     <option> 1st Term
                     </option>
                     <option> 2nd Term
@@ -52,7 +53,7 @@
                 </select>
             </div>
         </div>
-        <button class="genric-btn primary mt-2" id="add-session">Select Current Session</button>
+        <button class="genric-btn primary mt-2" id="add-session" :hx-post="'{% url 'add_sessions' %}'+ sch_value + '/'" :hx-vals='`{ "csrfmiddlewaretoken": "{{csrf_token}}", "year": "${year}", "term" : "${term}" }`' >Select Current Session</button>
 
 
     </div>
@@ -67,8 +68,8 @@
 
     </div>
     <div class="collapse card mt-3" id="add-teachers">
-        <form method="post" class="w-100 my-1 mx-auto" style="max-width:300px;" action="{% url 'teacher_create' %}"
-            id="add-teachers-form">
+        <form method="post" class="w-100 my-1 mx-auto" style="max-width:300px;"
+            action="{% url 'teachers:teacher_create' %}" id="add-teachers-form">
             {% csrf_token %}
             <input type="hidden" name="sch_pk" value="{{school.pk}}">
             <h4>User Information</h4>
@@ -97,16 +98,17 @@
 
 
 <div class="accordion mx-auto w-100" id="itemAccordion">
-    <ul class="list-group" x-data="{ showEdit: false, class_value: '' }" >
+    <ul class="list-group" x-data="{ showEdit: false }">
         <li class="list-group-item d-flex align-items-center text-dark pr-0">
             <span class="w-25">Class</span>
             <b class="dark-red w-50 text-center">No of students</b>
-            <span class="w-25 text-right mr-2"><span class="btn btn-light fa fa-edit" @click="showEdit = !showEdit" id="edit-class"></span></span>
+            <span class="w-25 text-right mr-2"><span :class="`btn btn-light fa fa-${showEdit ? 'close' : 'edit'}`" @click="showEdit = !showEdit"
+                    id="edit-class"></span></span>
         </li>
         {% if classes.exists %}
         {% for class in classes %}
-        <li class="list-group-item list-group-item-action class-list" data-toggle="collapse"
-            data-target="#class-collapse{{class.pk}}" data-url="{{url}}{{class.pk}}/" :disabled="showEdit">
+        <li class="list-group-item list-group-item-action class-list" :data-toggle="!showEdit && 'collapse'"
+            data-target="#class-collapse{{class.pk}}" hx-target="#class-collapse{{class.pk}}" hx-get="{{url}}{{class.pk}}/" hx-trigger="click once">
             <div x-show="!showEdit" class="displayFlex align-items-center">
                 <strong class="w-25">{{class.class_name}}</strong>
                 <span class="w-50 text-center"><span
@@ -114,20 +116,26 @@
                 <span class="w-25 text-right"><span class="fa fa-angle-down drop-icon"></span></span>
 
             </div>
-            <div class="displayFlex align-items-center" x-show="showEdit">
-                <input class="form-control w-25" x-ref="class_input" x-init="class_value = '{{class.class_name}}'" x-model="class_value" value="class_value" >
+            {% with i=forloop.counter %}
+            <div class="displayFlex align-items-center" x-show="showEdit" x-data="{ class_value{{i}} : '' }">
+                <input class="form-control w-25" x-ref="class_input" @blur="htmx.process($refs.update_class_btn{{i}})"
+                    x-init="class_value{{i}} = '{{class.class_name}}'" x-model="class_value{{i}}"
+                    value="class_value{{i}}">
                 <span class="w-50 text-center"><span
-                    class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>
-                <span class="w-25 text-right" >
-                <span
-                    class="badge badge-success badge-pill " hx-post="{% url 'teachers:update_class' %}" hx-target="#none" @click="htmx.process($el)" :hx-vals='`{ "csrfmiddlewaretoken" : "{{csrf_token}}", "class_pk" : "{{class.pk}}", "class_name" : "${class_value}" }`' >
-                    <span
-                        class="fa fa-check"></span>
+                        class="badge dark-red-border badge-danger badge-pill">{{class.student_set.all.count}}</span></span>
+                <span class="w-25 text-right">
+                    <span class="badge badge-success badge-pill" id="edit-class-btn"
+                        hx-post="{% url 'teachers:update_class' %}" hx-target="#none"
+                        x-data="{statusIcon{{i}}: 'fa-check'}"
+                        @htmx:before-request.camel="statusIcon{{i}}='fa-spinner fa-spin'"
+                        @htmx:after-request.camel="statusIcon{{i}}='fa-check'" x-ref="update_class_btn{{i}}"
+                        :hx-vals='`{ "csrfmiddlewaretoken" : "{{csrf_token}}", "class_pk" : "{{class.pk}}", "class_name" : "${class_value{{i}}}" }`'>
+                        <span :class="`fa ${statusIcon{{i}}}`"></span>
+                    </span>
                 </span>
-            </span>
 
             </div>
-            
+            {% endwith %}
         </li>
 
         <!-- li toggles this container -->
@@ -226,14 +234,14 @@
     //Create next 5 years in session select element
     var year = new Date().getFullYear() - 1;
     var session_select = document.getElementById("session-years");
-    for (var i = 0; i < 5; i++) {
+    
+    for (var i = -2; i <= 2; i++) {
         var option = document.createElement("option");
         option.appendChild(document.createTextNode(year + i + "/" + (year + i + 1)));
         option.value = year + i;
         session_select.appendChild(option);
     }
-    //Add session event handler
-    $("#add-session").click(function () {
+   
         //Get year and term value from thier elements
         var year = $("#session-years").val();
         var term = $("#session-term").val();
@@ -268,65 +276,10 @@
 </script>
 {% endif %}
 <script>
-    //Fetches data and appends it under class list
-    //Mainly fetches data for class 
-    function requestData() {
-        var This = this;
-        var collapse = $(This.getAttribute("data-target"));
-
-        if (collapse.find("div").html() == "") {
-            collapse.html('<div class="mx-auto my-3 progressBar"></div>');
-            //Ajax Request
-            $.ajax({
-                url: This.getAttribute("data-url"),
-                type: "GET",
-                success: function (data) {
-                    collapse.html(data);
-                },
-                error: function (data) {
-                    if (data.responseText == "SESSIONERROR") {
-                        collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Error!</strong> Invalid session detected, Click the select session button to select your school current session. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-                    }
-                    else {
-                        collapse.html('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" ><strong>Failed!</strong> Something went wrong, The request you made was not successful. Please try again <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-                    }
-                }
-            });
-
-        }
-
-    }
-
-    var class_list = $(".class-list");
-    class_list.on("click", requestData);
-   
-    $(".edit-class-btn").click(function (e) {
-        var btn = $(this);
-        var icon = btn.children().first()[0];
-        var list = btn.parent().parent();
-        var input = $(list.find("input")[0]);
-        btn.removeClass("badge-danger");
-        icon.className = "fa fa-spinner fa-spin";
-
-        $.ajax({
-            url: "{% url 'teachers:update_class' %}",
-            type: "Post",
-            timeout: 20000,
-            data: { csrfmiddlewaretoken: "{{csrf_token}}", class_pk: btn.attr("data-pk"), class_name: input.val() },
-            success: function (data) {
-                icon.className = "fa fa-check";
-                //Set normal class name element to new class value
-                list.children().first().html(input.val());
-            },
-            error: function (res, textStatus, errorThrown) {
-                icon.className = "fa fa-refresh";
-                btn.addClass("badge-danger");
-            }
-        });
-    })
 
     function add_class(value) {
         document.getElementById("class").value = value;
         window.location.href = "#add-teachers";
     }
+
 </script>
