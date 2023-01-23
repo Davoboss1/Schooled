@@ -16,14 +16,13 @@
         {% if all_students.exists %}
 		{% for student in all_students %}
 		<li class="list-group-item d-flex flex-column" style="border-bottom:2px ridge #53375A;">
-			<input class="border-less" value="{{student.pk}}" style="display:none" readonly>
 			<div class="w-100 d-flex">
 				<h6 class="my-auto w-25">{{forloop.counter}}</h6>
 				<h6 class="my-auto w-75">{{student.name}}</h6>
 
 			</div>
 			<div class="w-75 mx-auto d-flex mt-3">
-				<button class="update-btn genric-btn primary radius mr-auto" >Update</button>
+				<button class="update-btn genric-btn primary radius mr-auto" data-toggle="modal" data-target="#updateModal" hx-get="{% url 'students:update_student' student.pk %}" hx-target="#updatebody"  >Update</button>
 				<button class="delete-btn genric-btn danger radius ml-auto">Delete</button>
 			</div>
 		</li>
@@ -69,53 +68,7 @@
 
 
 <script>
-	$(".update-btn").click(function () {
-		$("#updateModal").modal("show");
-		$("#updatebody").html("<div id=\"loader\" ><div class=\"d-flex flex-column \"><img src=\"{% static 'css/ajax-loader.gif' %}\" alt=\" \" class=\"mx-auto\"><small class=\"mx-auto\">Loading....</small></div></div>");
-		var id = $(this).parent().prev().prev().val();
-		$.ajax({
-			url: "{% url 'students:update_student' %}" + id + "/",
-			type: "GET",
-			success: function (data) {
-				$("#updatebody").html(data);
-
-			},
-			failure: function (data) {
-				alert(data);
-			},
-		});
-
-
-		$("#updateButton").off("click").on('click',function () {
-			$(this).html("Updating..");
-			var status = $("#parent-update-status");
-			$.ajax({
-				url: "{% url 'students:update_student' %}" + id + "/",
-				type: "POST",
-				data: $("#update-form" + id).serialize(),
-				success: function (data) {
-						$("#updateButton").html("Update");
-						$("#updateModal").modal("hide");
-				},
-				error: function (res,res_status,jqXHR) {
-					if (res.responseText == "UNF") {
-						status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong> Parent Username does not exist.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-					}
-					else if (res.responseText == "UNP") {
-						status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong> Username entered is not a parent account. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-					}
-					else if(res.responseText == "FORMERROR"){
-						status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Error.</strong>Invalid form detected. Please check your form and try again. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-					}
-					else{
-						status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Error.</strong> Something went wrong. Request was not sent.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-					}
-					$("#updateButton").html("Update Failed. Retry");
-				}
-			});
-		});
-	});
-
+	
 	$(".delete-btn").click(function () {
 		var delete_btn = $(this);
 		var update_btn =  delete_btn.prev();
