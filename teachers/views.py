@@ -119,4 +119,4 @@ def update_profile(request):
 def teacher_delete(request):
 	id = int(request.POST.get("pk"))
 	Teacher.objects.get(pk=id).user.delete()
-	return HttpResponse("Teacher deleted Successfully")
+	return HttpResponse(render_alert("Teacher deleted Successfully"))

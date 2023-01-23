@@ -58,7 +58,7 @@
                     <b class="dark-red">Are you sure you want to delete this {{type}} ?</b>
                     <div class="d-flex">
                         <button class="btn btn-danger mr-3 delete-teacher-btn" type="button"
-                             hx-post="{% url 'teachers:teacher_delete' %}" hx-vals='{ "csrfmiddlewaretoken" : "{{csrf_token}}", "pk" : "{{teacher.pk}}" }' hx-target="update-status-{{teacher.pk}}" >Yes</button>
+                             hx-post="{% url 'teachers:teacher_delete' %}" hx-vals='{ "csrfmiddlewaretoken" : "{{csrf_token}}", "pk" : "{{teacher.pk}}" }' hx-target="#update-status-{{teacher.pk}}" >Yes</button>
                         <button class="btn btn-success ml-3" type="button" data-toggle="collapse"
                             data-target="#delete-{{teacher.pk}}">No</button>
                     </div>
