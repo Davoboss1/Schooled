@@ -260,17 +260,17 @@ def update_students(request, pk):
                         parent = get_user_model().objects.get(username=n).parent
                         parent_list.append(parent.pk)
                     except get_user_model().DoesNotExist:
-                        # UNF means user not found
-                        return HttpResponseServerError("UNF")
+                        
+                        return HttpResponseServerError("User was not found")
                     except get_user_model().parent.RelatedObjectDoesNotExist:
                         # UNP means user not parent
-                        return HttpResponseServerError("UNP")
+                        return HttpResponseServerError("User is not a parent")
             # Save form and set parents
             form.save()
             form.parents.set(parent_list)
-            return HttpResponse("Success")
+            return HttpResponse(render_alert("Student has been updated successfully"))
         else:
-            return HttpResponseServerError("FORMERROR")
+            return HttpResponseServerError(get_errors_in_text(form))
     else:
         # On get request
         parents = student.parents.all()
@@ -680,7 +680,7 @@ def print_attendance(request, pk, start_date=None, end_date=None):
             date__range=(start_date, end_date))
     else:
         attendance = student.Class.attendance_set.all()
-    return render(request, "students/show_student_attendance.html", {"student": student, "attendance": attendance})
+    return render(request, "students/print_student_attendance.html", {"student": student, "attendance": attendance})
 # View returns print performance page
 
 
@@ -699,7 +699,7 @@ def print_performance(request, pk, year, term):
     performance = term.performance_set.filter(student=student)
     context = {'student': student, 'performance': performance, "term": term}
 
-    return render(request, "students/show_student_performance.html", context)
+    return render(request, "students/print_student_performance.html", context)
 
 # View for rendering attendance as pdf using xhtml2pdf
 
@@ -707,7 +707,7 @@ def print_performance(request, pk, year, term):
 @require_auth
 def convert_attendance_to_pdf(request, pk, start_date=None, end_date=None):
     # Template for pdf
-    template = get_template("students/show_student_attendance.html")
+    template = get_template("students/print_student_attendance.html")
     user = request.user
     level = user.level
     # Get student
@@ -740,7 +740,7 @@ def convert_attendance_to_pdf(request, pk, start_date=None, end_date=None):
 @require_auth
 def convert_performance_to_pdf(request, pk, year, term):
     # Template for pdf
-    template = get_template("students/show_student_performance.html")
+    template = get_template("students/print_student_performance.html")
     user = request.user
     level = user.level
     # Get student

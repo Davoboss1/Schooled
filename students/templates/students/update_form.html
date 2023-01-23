@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form method="POST" class="post-form w-100 mx-auto" style="max-width:300px;" hx-post="{% url 'students:update_student' student.pk %}" id="update-form{{student.pk}}">
+<form method="POST" class="post-form w-100 mx-auto" style="max-width:300px;" hx-target="#parent-update-status" hx-post="{% url 'students:update_student' student.pk %}" id="update-form{{student.pk}}">
 	{% csrf_token %}
 	{{ form|crispy}}
 	<div class="form-group border p-3">

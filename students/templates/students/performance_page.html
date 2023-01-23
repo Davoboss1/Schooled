@@ -60,13 +60,13 @@
 	<nav class="">
 		<div class="nav nav-tabs d-flex" id="nav-tab" role="tablist">
 			<!-- View Performance Tab link -->
-			<a class="nav-item nav-link ml-auto" id="nav-view-performance-tab" data-toggle="tab"
+			<a class='nav-item nav-link ml-auto {% if type == "view-performance" %} active {% endif %}' id="nav-view-performance-tab" data-toggle="tab"
 				href="#nav-view-performance" role="tab" aria-controls="nav-view-performance" aria-selected="true">
 				View Performance
 			</a>
 			<!-- Edit Performance Tab link -->
-			<a class="nav-item nav-link mr-auto" id="nav-edit-performance-tab" data-toggle="tab"
-				href="#nav-edit-performance" role="tab" aria-controls="nav-edit<-performance" aria-selected="false">
+			<a class="nav-item nav-link mr-auto {% if type == 'edit-performance' %} active {% endif %}" id="nav-edit-performance-tab" data-toggle="tab"
+				href="#nav-edit-performance" role="tab" aria-controls="nav-edit-performance" aria-selected="false">
 				Edit Performance
 			</a>
 		</div>
@@ -76,7 +76,7 @@
 	<div class="tab-content" id="nav-tabContent">
 
 		<!-- View performance  tab body-->
-		<div class="tab-pane fade" id="nav-view-performance" role="tabpanel" aria-labelledby="nav-view-performance-tab">
+		<div class="tab-pane fade {% if type == 'view-performance' %} show active {% endif %}" id="nav-view-performance" role="tabpanel" aria-labelledby="nav-view-performance-tab">
 			<!-- View performance tab body  accordion -->
 			<div class="accordion" id="main-accordion">
 				<!-- Performance List -->
@@ -92,7 +92,7 @@
 
 
 		<!-- Edit performance tab -->
-		<div class="tab-pane fade" id="nav-edit-performance" role="tabpanel" aria-labelledby="nav-edit-performance-tab">
+		<div class="tab-pane fade {% if type == 'edit-performance' %} active show {% endif %}" id="nav-edit-performance" role="tabpanel" aria-labelledby="nav-edit-performance-tab">
 			<!-- List group and Accordion for performance -->
 			<div class="list-group spaced-list accordion" id="editPerformanceAccordion">
 				<!-- Edit performance body -->
@@ -147,17 +147,6 @@
 			});
 
 		});
-
-		{% if type == "view-performance" %}
-		$("#nav-view-performance-tab").addClass("active");
-		$("#nav-view-performance").addClass("show active");
-
-		{% elif type == "edit-performance" %}
-		$("#nav-edit-performance-tab").addClass("active");
-		$("#nav-edit-performance").addClass("show active");
-		{% endif %}
-
-
 
 		$("#refresh").click(function () {
 			var refresh_btn = $(this);
