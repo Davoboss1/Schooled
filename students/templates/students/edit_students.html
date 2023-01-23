@@ -49,26 +49,60 @@
 			<div class="modal-body" id="updatebody">
 
 			</div>
-			<div class="modal-footer flex-column">
-				<div class="d-flex ml-auto flex-column">
-
-					<button id="updateButton" class="genric-btn primary radius" type="button">Update</button>
-					<div id="update-status">
-
-					</div>
-				</div>
-
-			</div>
 		</div>
 	</div>
 </div>
 <!--End of delete modal -->
 
 
-
-
 <script>
-	
+	$(".update-btn").click(function () {
+		$("#updateModal").modal("show");
+		$("#updatebody").html("<div id=\"loader\" ><div class=\"d-flex flex-column \"><img src=\"{% static 'css/ajax-loader.gif' %}\" alt=\" \" class=\"mx-auto\"><small class=\"mx-auto\">Loading....</small></div></div>");
+		var id = $(this).parent().prev().prev().val();
+		$.ajax({
+			url: "{% url 'students:update_student' %}" + id + "/",
+			type: "GET",
+			success: function (data) {
+				$("#updatebody").html(data);
+
+			},
+			failure: function (data) {
+				alert(data);
+			},
+		});
+
+
+		$("#updateButton").off("click").on('click',function () {
+			$(this).html("Updating..");
+			var status = $("#parent-update-status");
+			$.ajax({
+				url: "{% url 'students:update_student' %}" + id + "/",
+				type: "POST",
+				data: $("#update-form" + id).serialize(),
+				success: function (data) {
+						$("#updateButton").html("Update");
+						$("#updateModal").modal("hide");
+				},
+				error: function (res,res_status,jqXHR) {
+					if (res.responseText == "UNF") {
+						status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong> Parent Username does not exist.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+					}
+					else if (res.responseText == "UNP") {
+						status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong> Username entered is not a parent account. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+					}
+					else if(res.responseText == "FORMERROR"){
+						status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Error.</strong>Invalid form detected. Please check your form and try again. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+					}
+					else{
+						status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Error.</strong> Something went wrong. Request was not sent.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
+					}
+					$("#updateButton").html("Update Failed. Retry");
+				}
+			});
+		});
+	});
+
 	$(".delete-btn").click(function () {
 		var delete_btn = $(this);
 		var update_btn =  delete_btn.prev();
