@@ -80,7 +80,7 @@ def get_default_term():
 	if Term.objects.first():
 		return Term.objects.first().pk
 	else:
-		return Term.objects.create(term="1st Term",year=date.today().year).pk
+		return Term.objects.create(term="1st Term",year=Date.today().year).pk
 
 class Performance(models.Model):
 	comment_choices = (('excellent','excellent'),

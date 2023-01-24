@@ -62,7 +62,7 @@ def performance_page(request, type):
                     term = Term.objects.get(
                         year=year, term=term_text, school=school)
                 except Term.DoesNotExist:
-                    return HttpResponse("DOE_ERROR")
+                    return HttpResponseServerError("Term selected does not exist")
                 except ValueError:
                     return HttpResponseServerError("Invalid session detected")
                 # get all students in the paginated object list
@@ -93,7 +93,7 @@ def performance_page(request, type):
 @view_for("teacher")
 def attendance_page(request, type):
     # get all student in in teachers class
-    all_Info = request.user.teacher.teacher_class.student_set.all()
+    all_students = request.user.teacher.teacher_class.student_set.all()
     current_class = request.user.teacher.teacher_class
     Date = localdate()
 
@@ -115,7 +115,7 @@ def attendance_page(request, type):
                 date_list[1]), int(date_list[2]))
             # if date is in future
             if Date > localdate():
-                return HttpResponseServerError('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Oops! sorry</strong> You can\'t add or view date for the future .<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                return HttpResponseServerError('<strong>Oops! sorry</strong> You can\'t add or view date for the future.')
             else:
                 # return none
                 # this shows all student as absent
@@ -137,8 +137,7 @@ def attendance_page(request, type):
             attendance = None
 
     context = {
-        'all_Info': all_Info,
-        'attendance': attendance, 'all_students': request.user.teacher.teacher_class.student_set.all(),
+        'attendance': attendance, 'all_students': all_students,
         'date': str(Date),
         'type': type,
     }
@@ -220,7 +219,7 @@ def register_student(request):
                     # if form is not valid return errors
                     return HttpResponseServerError(get_errors_in_text(parentform))
             # if successful return this response
-            return HttpResponse(render_alert('Student has been aded successfully'))
+            return HttpResponse(render_alert('Student has been added successfully'))
         else:
             return HttpResponseServerError(form.errors.as_data)
     else:
@@ -320,8 +319,8 @@ def p_create_or_update(request, student_id):
         selected_subject = current_term.performance_set.filter(
             student=info).get(subject=request.POST['subject'])
     except Term.DoesNotExist:
-        return HttpResponseServerError("SESSIONERROR")
-    except (Performance.DoesNotExist):
+        return HttpResponseServerError("Term selected does not exist")
+    except Performance.DoesNotExist:
         # if performance with added subject does not exist
         # create new performance
         selected_subject = info.performance_set.create(subject=request.POST['subject'], test=request.POST['test'], exam=request.POST[
@@ -373,7 +372,7 @@ def mark(request, Date):
                 date=Date, Class=request.user.teacher.teacher_class)
             attendance.present_students.set(obj)
 
-        return HttpResponse("You Have Successfully added attendance for "+str(Date))
+        return HttpResponse(render_alert("You Have Successfully added attendance for "+str(Date)))
     else:
         return Http404
 
@@ -391,7 +390,7 @@ def handle_uploads(request):
         if student.photo.name != "default.jpg":
             student.photo.delete()
         student.photo.save(file.name, file.file, save=True)
-        return HttpResponse("Success")
+        return HttpResponse("File uploaded successfully")
 
 # View shows attendance in student profile
 
@@ -498,7 +497,7 @@ def view_only_performance(request, pk):
         term = Term.objects.get(
             school=student.Class.school, year=year, term=term_text)
     except Term.DoesNotExist:
-        return HttpResponse("DOE_ERROR")
+        return HttpResponse("Term selected does not exist")
     filtered_performance = list(student.performance_set.filter(term=term))
     # create new attribute called termly_performance
     student.termly_performance = filtered_performance
@@ -543,7 +542,7 @@ def view_performance(request, pk):
                 term = Term.objects.get(
                     school=current_class.school.pk, year=year, term=term_text)
             except Term.DoesNotExist:
-                return HttpResponse("DOE_ERROR")
+                return HttpResponse("Term selected does not exist")
             # get all students in the paginated object list
             for student in students_in_class.object_list:
                 # filter the performance by term
@@ -624,7 +623,7 @@ def view_student_info(request, **kwargs):
     else:
         # if teacher wants to view student info, Just view students in his class
         students = request.user.teacher.teacher_class.student_set.all()
-    return render(request, "students/Student_info.html", {"all_students": students})
+    return render(request, "students/Student_list.html", {"all_students": students})
 
 #View for showing student profile
 @require_auth
@@ -772,16 +771,22 @@ def csv_handler(request):
         # Get neccessary data
         teacher = request.user.teacher
         current_class = teacher.teacher_class
-        student = Student.objects.get(
-            Class=current_class, pk=request.POST.get("student_pk"))
+        try:
+            student = Student.objects.get(
+                Class=current_class, pk=request.POST.get("student_pk"))
+        except:
+            return HttpResponseServerError("Invalid student selected")
         # Get school current term
         term = Term.objects.get(
             school=current_class.school, current_session=True)
-        csv_file = request.FILES["csv_file"]
+        print(request.FILES)
+        csv_file = request.FILES.get("csv_file")
+        if not csv_file:
+            return HttpResponseServerError("You need to upload csv file")
         # Check if uploaded file is greater than 100kb
         if csv_file.size > 100000:
             # Return file too big message
-            return HttpResponse("File size too large")
+            return HttpResponseServerError("File size too large")
         # Read csv file
         csv_file = csv_file.read()
         # Convert from bytes to string and splitlines to enable csvreader to read
@@ -808,7 +813,7 @@ def csv_handler(request):
 
             line_count += 1
         # Return success message with number of performances added(line_count-1 because the first line is not counted)
-        return HttpResponse(f"{line_count} performances for {student.name} added successfully.")
+        return HttpResponse(render_alert(f"{line_count} performances for {student.name} added successfully."))
     else:
         response = HttpResponse(content_type="text/csv")
         response['Content-Disposition'] = 'attachment; filename="template.csv"'

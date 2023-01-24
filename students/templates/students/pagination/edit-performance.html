@@ -11,7 +11,7 @@
     <!-- Collapsed container for add performance -->
     <!-- add performance container and form -->
     <div class="collapse" id="add-performance-form{{info.pk}}" data-parent="#editPerformanceAccordion">
-        <form class="border border-dark add-performance-form" method="post" action="{% url 'students:performance_update' info.id %}">
+        <form class="border border-dark px-2" id="performance-add-form{{info.pk}}" hx-post="{% url 'students:performance_update' info.id %}" hx-trigger="#form-status" >
             {% csrf_token %}
             <input class="form-control w-75 mt-2 ml-2" type="hidden" name="name" value="{{info.name}}">
             <label class="vcenter mt-3 ml-2" >Enter Subject : 
@@ -44,7 +44,7 @@
                     </div>					  	 			
 
                 </div>
-                <input class="btn btn-success btn-block mb-3" type="submit" >
+                <button class="btn btn-success btn-block mb-3" >Create Performance</button>
                 <div class="m-2" id="form-status"></div>
         </form> 
 
@@ -128,35 +128,6 @@
 </div>				
 
 <script>
-    $(".add-performance-form").submit(function(event){
-        event.preventDefault();
-        var status = $(this).find("#form-status");
-        status = $(status[0]);
-        status.html('<div class="mx-auto progressBar"></div>');
-
-        var $form = $(this);
-
-        $.ajax({
-            url:$form.attr("action"),
-            type:"POST",
-            data:$form.serialize(),
-            success:function(data){
-                status.html('<div class="alert alert-success alert-dismissible fade show" role="alert"> <strong>Success..</strong>'+data+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-                $form.trigger("reset");
-                $form.find("#totalScore")[0].innerHTML="--";
-                
-            },
-            error:function(res,status_code,status_text){
-                if(res.responseText == "SESSIONERROR"){
-                    status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>SESSION ERROR..</strong> Sorry there is currently no seesion or term. Contact admin to add session or term, To enable you to add performances. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-                }
-                else
-                status.html('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Failed..</strong>Something went wrong. Form was not submitted <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-
-            },
-        });
-    });
-
 //Delete 
 $('.deleteBtn').click(function(){
     var btn = $(this);

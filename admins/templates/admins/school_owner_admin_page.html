@@ -324,9 +324,9 @@
             },
         }));
     });
-
-
-    {% if new_user %}
+</script>
+{% if new_user %}
+<script>
     Swal.fire({
         html: $("#new-user").html(),
         showCloseButton: true,
@@ -334,9 +334,9 @@
         showConfirmButton: false,
         background: '#efefef'
     });
-    {% endif %}
-
 </script>
+    
+    {% endif %}
 {% endblock %}
 </body>
 

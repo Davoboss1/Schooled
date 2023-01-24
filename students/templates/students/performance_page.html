@@ -3,31 +3,33 @@
 <div class="my-1 mx-auto w-100" style="max-width:400px;">
 	<!-- Main Tabs -->
 	<div class="d-flex flex-column">
-		<button class="genric-btn primary radius mx-auto my-3" data-toggle="collapse" data-target="#importContainer" aria-expanded="false" aria-controls="importContainer" >Import</button>
+		<button class="genric-btn primary radius mx-auto my-3" data-toggle="collapse" data-target="#importContainer"
+			aria-expanded="false" aria-controls="importContainer">Import</button>
 		<div class="collapse mb-3" id="importContainer">
-			<div class="card card-body">
+			<form class="card card-body" hx-encoding="multipart/form-data" hx-post="{% url 'students:csv_handler' %}" hx-target="#csv-status">
+				{% csrf_token %}
 				<a class="text-center" href="{% url 'students:csv_handler' %}">Download csv template</a>
 				<div class="mx-auto d-flex">
-					<div class="custom-file mr-1" > <input type="file" class="custom-file-input" name="user-profile-picture"
-						id="csv_file"
-						onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected' : this.nextElementSibling.innerHTML = 'Choose file')"
-						> <label class="custom-file-label" for="csv_file" id="file-label">Choose
-						csv file</label> </div>
-						<select class="custom-select ml-1" id="file-student-select">
-							<option disabled selected>Select student</option>
-							{% for student in students %}
-							<option value="{{student.pk}}">{{student.name}}</option>
-							{% endfor %}
-						  </select>
+					<div class="custom-file mr-1"> <input type="file" class="custom-file-input"
+							name="csv_file" id="csv_file"
+							onchange="(check_file(this) ? this.nextElementSibling.innerHTML = 'File selected' : this.nextElementSibling.innerHTML = 'Choose file')">
+						<label class="custom-file-label" for="csv_file" id="file-label">Choose
+							csv file</label> </div>
+					<select name="student_pk" class="custom-select ml-1" id="file-student-select">
+						<option disabled selected>Select student</option>
+						{% for student in students %}
+						<option value="{{student.pk}}">{{student.name}}</option>
+						{% endfor %}
+					</select>
 				</div>
 				<div class="mt-3" id="csv-status"></div>
 				<button class="genric-btn info radius mt-2 mx-auto" id="upload-csv"> Upload</button>
-				
-			</div>
+
+			</form>
 		</div>
 	</div>
-	
-	<div class="d-flex flex-column mb-2">
+
+	<div class="d-flex flex-column mb-2" hx-get="{% url 'students:performance_page' type %}" hx-target="#main">
 		<span class="fa fa-3x fa-repeat mx-auto" id="refresh"></span>
 		<small class="mx-auto">Refresh</small>
 	</div>
@@ -36,23 +38,25 @@
 			<h6 class="w-50 ml-3">Year</h6>
 			<h6 class="w-50">Term</h6>
 		</div>
-		<div class="d-flex my-2 mx-3">
+		<div class="d-flex my-2 mx-3" x-data="{year: '{{current_term.year}}', term: '{{current_term.term}}'}">
 
-			<select class="form-control" name="year" id="year" style="min-width: 100px;">
+			<select class="form-control" x-model="year" name="year" id="year" style="min-width: 100px;">
 				{% for term in terms %}
 				{% ifchanged %}
-				<option value="{{term.year}}" {% if current_term.year == term.year %}selected{% endif %}>{{term.session}}</option>
+				<option value="{{term.year}}" {% if current_term.year == term.year %}selected{% endif %}>{{term.session}}
+				</option>
 				{% endifchanged %}
 				{% endfor %}
 			</select>
 
-			<select class="ml-3 form-control" name="term" id="term">
+			<select class="ml-3 form-control" x-model="term" name="term" id="term">
 
-				<option {% if current_term.term == "1st Term"%}selected{% endif %}>1st Term</option>
-				<option {% if current_term.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
-				<option {% if current_term.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
+				<option {% if current_term.term == "1st Term" %}selected{% endif %}>1st Term</option>
+				<option {% if current_term.term == "2nd Term" %}selected{% endif %}>2nd Term</option>
+				<option {% if current_term.term == "3rd Term" %}selected{% endif %}>3rd Term</option>
 			</select>
-			<button class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span class="fa fa-repeat"></span></button>
+			<button hx-get="{% url 'students:performance_page' 'view-performance' %}" hx-target="#performance-list" :hx-vals='`{ "term": "${term}" , "year" : "${year}", "page": 1 }`' class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span
+					class="fa fa-repeat" ></span></button>
 		</div>
 
 	</div>
@@ -60,12 +64,12 @@
 	<nav class="">
 		<div class="nav nav-tabs d-flex" id="nav-tab" role="tablist">
 			<!-- View Performance Tab link -->
-			<a class='nav-item nav-link ml-auto {% if type == "view-performance" %} active {% endif %}' id="nav-view-performance-tab" data-toggle="tab"
+			<a class="nav-item nav-link ml-auto" id="nav-view-performance-tab" data-toggle="tab"
 				href="#nav-view-performance" role="tab" aria-controls="nav-view-performance" aria-selected="true">
 				View Performance
 			</a>
 			<!-- Edit Performance Tab link -->
-			<a class="nav-item nav-link mr-auto {% if type == 'edit-performance' %} active {% endif %}" id="nav-edit-performance-tab" data-toggle="tab"
+			<a class="nav-item nav-link mr-auto" id="nav-edit-performance-tab" data-toggle="tab"
 				href="#nav-edit-performance" role="tab" aria-controls="nav-edit-performance" aria-selected="false">
 				Edit Performance
 			</a>
@@ -76,11 +80,11 @@
 	<div class="tab-content" id="nav-tabContent">
 
 		<!-- View performance  tab body-->
-		<div class="tab-pane fade {% if type == 'view-performance' %} show active {% endif %}" id="nav-view-performance" role="tabpanel" aria-labelledby="nav-view-performance-tab">
+		<div class="tab-pane fade" id="nav-view-performance" role="tabpanel" aria-labelledby="nav-view-performance-tab">
 			<!-- View performance tab body  accordion -->
 			<div class="accordion" id="main-accordion">
 				<!-- Performance List -->
-				<div class="list-group spaced-list" id="performance-list">
+				<div class="list-group spaced-list pt-3" id="performance-list">
 					<!-- performance list body -->
 				</div>
 				<!-- end of list group -->
@@ -92,9 +96,9 @@
 
 
 		<!-- Edit performance tab -->
-		<div class="tab-pane fade {% if type == 'edit-performance' %} active show {% endif %}" id="nav-edit-performance" role="tabpanel" aria-labelledby="nav-edit-performance-tab">
+		<div class="tab-pane fade" id="nav-edit-performance" role="tabpanel" aria-labelledby="nav-edit-performance-tab">
 			<!-- List group and Accordion for performance -->
-			<div class="list-group spaced-list accordion" id="editPerformanceAccordion">
+			<div class="list-group spaced-list accordion pt-3" id="editPerformanceAccordion">
 				<!-- Edit performance body -->
 
 			</div>
@@ -105,141 +109,36 @@
 
 	</div>
 
+	{% if type == "view-performance" %}
+	<script>
+		document.querySelector("#nav-view-performance-tab").classList.add("active");
+		document.querySelector("#nav-view-performance").classList.add("show");
+		document.querySelector("#nav-view-performance").classList.add("active");
+	</script>
+
+
+	{% elif type == "edit-performance" %}
+	<script>
+		document.querySelector("#nav-edit-performance-tab").classList.add("active");
+		document.querySelector("#nav-edit-performance").classList.add("show");
+		document.querySelector("#nav-edit-performance").classList.add("active");
+	</script>
+
+	{% endif %}
+
 	<script>
 
 		$(function () {
-			//Pagination
-			var body = $("#performance-list");
-			body.html('<div class="mx-auto  my-3 progressBar"></div>');
-
-			$.ajax({
-				url: "{% url 'students:performance_page' 'view-performance' %}",
-				data: {
+			htmx.ajax('GET', "{% url 'students:performance_page' 'view-performance' %}", {target:'#performance-list', values: {
 					page: 1,
 					year: $("#year").val(),
 					term: $("#term").val(),
-				},
-				success: function (data) {
-					$("#performance-list").html(data);
-				},
-				error: function (req, status, error) {
-					if(req.responseText){
-					$("#performance-list").html("<div class='d-flex flex-column my-3'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>" + req.responseText +"</div>");
-					}else
-					$("#performance-list").html("<div class='d-flex flex-column my-3'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong and page could not be fetched.</div>");
-				}
-			});
+				}});
 
-			//Pagination
-			var body = $("#editPerformanceAccordion");
-			body.html('<div class="mx-auto  my-3 progressBar"></div>');
-			$.ajax({
-				url: "{% url 'students:performance_page' 'edit-performance' %}",
-				data: {
+			htmx.ajax('GET', "{% url 'students:performance_page' 'edit-performance' %}", {target:'#editPerformanceAccordion', values: {
 					page: 1,
-				},
-				success: function (data) {
-					$("#editPerformanceAccordion").html(data);
-				},
-				error: function (req, status, error) {
-					$("#editPerformanceAccordion").html("<div class='d-flex flex-column my-3'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong and page could not be fetched.</div>");
-				}
-			});
-
+				}});
+			
 		});
-
-		$("#refresh").click(function () {
-			var refresh_btn = $(this);
-			var refresh_text = refresh_btn.next();
-			refresh_btn.addClass("fa-spin");
-
-			var view_performance = document.getElementById("nav-view-performance-tab");
-			var url = null;
-			if (view_performance.classList.contains("active")) {
-				url = "{% url 'students:performance_page' 'view-performance' %}";
-			} else {
-				url = "{% url 'students:performance_page' 'edit-performance' %}";
-			}
-
-			$.ajax({
-				url: url,
-				type: "GET",
-				success: function (data) {
-
-					$("#main").html(data);
-					refresh_btn.removeClass("text-danger");
-					refresh_text.removeClass("text-danger");
-					refresh_text.text("Refresh");
-				},
-				error: function () {
-					refresh_btn.removeClass("fa-spin");
-					refresh_btn.addClass("text-danger");
-					refresh_text.addClass("text-danger");
-					refresh_text.text("Refresh failed");
-				}
-			});
-
-		});
-
-		$("#fetch-termly-performance").click(function (event) {
-			var span_icon = $($(this).find("span")[0]);
-			span_icon.addClass("fa-spin");
-			var view_performance = document.getElementById("nav-view-performance-tab");
-
-			$.ajax({
-				url: "{% url 'students:performance_page' 'view-performance' %}",
-				type: "GET",
-				data: {
-					page: 1,
-					year: $("#year").val(),
-					term: $("#term").val(),
-				},
-				success: function (data) {
-					span_icon.removeClass("fa-spin");
-					if (data == "DOE_ERROR") {
-						$("#performance-list").html('<div class="alert alert-warning my-3" role="alert"> <h6 class="text-center">Term selected does not exist. </div></h6>');
-					}
-					else {
-						$("#performance-list").html(data);
-					}
-				},
-				error: function (response, status, error) {
-					span_icon.removeClass("fa-spin");
-				}
-			});
-
-		});
-
-		$("#upload-csv").click(function(e) {
-			var btn = $(this);
-			var csv_file_select = document.getElementById("csv_file");
-			var student_select = $("#file-student-select");
-			var status = $("#csv-status");
-			if(!csv_file_select.files[0]){
-				status.html(write_alert("Please select csv file","danger"));
-				return;
-			}
-			btn.text("Uploading...");
-			var formdata = new FormData();
-			formdata.append("csrfmiddlewaretoken","{{csrf_token}}");
-			formdata.append("csv_file",csv_file_select.files[0]);
-			formdata.append("student_pk",student_select.val());
-			$.ajax({
-				url: "{% url 'students:csv_handler' %}",
-				type: "Post",
-				contentType: false,
-				processData: false,
-				data: formdata,
-				success: function(data){
-					btn.text("Upload");
-					status.html(write_alert(data));
-				},
-				error: function(res,textStatus,errorThrown){
-					status.html(write_alert("Something went wrong, an error occured.","danger"));
-					btn.text("Upload failed.");
-
-				}
-			});
-
-		});
-	</script>
+	
+		</script>
