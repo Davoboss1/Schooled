@@ -98,13 +98,13 @@ def create_students(Class,no):
             list_data.append(sfname)
             count+=1
     for name in random.sample(list_data,no):
-        Student.objects.create(name=name,address='5 Salami close afromedia,ojo',date_of_birth='2004-07-12',sex='male',state_of_origin='Lagos',phone_no='08185415249',email="schoolemail@gmail.com",Class=Class)
+        Student.objects.create(name=name,address='5 Salami close afromedia,ojo',date_of_birth='2004-07-12',sex='male',state_of_origin='Lagos',phone_no='08185415249',student_email="schoolemail@gmail.com",Class=Class)
         print(f"{name} student for {Class.class_name} added")
 
 def run():
     #print(Class.objects.all())
     #performance_create(Class.objects.get(class_name="JSS 3"))
-    create_students(Class.objects.get(class_name="JSS 3"),2000)
+    create_students(Class.objects.get(class_name="Class 1"),200)
     #delete_all_attendance()
     #attendance_create(Class.objects.get(class_name="JSS 3"),3,2020)
 

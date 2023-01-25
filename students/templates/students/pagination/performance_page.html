@@ -52,61 +52,30 @@
 {% endif %}
 <!-- pagination -->
 <div class="row py-3 border-top border-bottom">
-	<div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
-		{% if all_Info.has_previous %}
-		<button class="genric-btn primary mx-auto performance-pagination-handler"
-			data-page="{{all_Info.previous_page_number}}">
-			<span class="fa fa-angle-left mr-1"></span>Prev </button>
-		{% endif %}
-	</div>
-	<div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
-		<select class="form-control mx-auto performance-pagination-handler" style="max-width: 100px;">
-			{% for page_no in all_Info.paginator.page_range %}
-			<option {% if page_no == all_Info.number %}selected{% endif %}>{{page_no}}</option>
-			{% endfor %}
-		</select>
-	</div>
-	<div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
-		{% if all_Info.has_next %}
-		<button class="genric-btn primary mx-auto performance-pagination-handler "
-			data-page="{{all_Info.next_page_number}}">Next <span class="fa fa-angle-right ml-1"></span></button>
-		{% endif %}
-	</div>
+    <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
+        {% if all_Info.has_previous %}
+        <button class="genric-btn primary mx-auto edit-performance-pagination-handler"
+            hx-get="{% url 'students:performance_page' 'view-performance' %}" hx-target="#performance-list" hx-vals='{ "page" : "{{all_Info.previous_page_number}}" }'>
+            <span class="fa fa-angle-left mr-1"></span>Prev </button>
+        {% endif %}
+    </div>
+    <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
+        <select class="form-control mx-auto edit-performance-pagination-handler" style="max-width: 100px;" hx-get="{% url 'students:performance_page' 'view-performance' %}" hx-target="#performance-list" name="page">
+            {% for page_no in all_Info.paginator.page_range %}
+            <option {% if page_no == all_Info.number %}selected{% endif %}>{{page_no}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
+        {% if all_Info.has_next %}
+        <button class="genric-btn primary mx-auto edit-performance-pagination-handler "
+        hx-get="{% url 'students:performance_page' 'view-performance' %}" hx-target="#performance-list" hx-vals='{ "page" : "{{all_Info.next_page_number}}" }'>Next <span class="fa fa-angle-right ml-1"></span></button>
+        {% endif %}
+    </div>
 </div>
 
 <script>
-	//Pagination
 	
-	$("button.performance-pagination-handler").click(function () {
-		var page_no = $(this).attr("data-page");
-		fetch_performance(page_no,this);
-	});
-	$("select.performance-pagination-handler").change(function () {
-		var page_no = $(this).val();
-		fetch_performance(page_no,this);
-	});
-	function fetch_performance(page_no,elem) {
-
-		var body = $(elem).parent().parent().parent();
-		body.html('<div class="mx-auto my-3 progressBar"></div>');
-		var year = $("#year").val();
-		var term = $("#term").val();
-		$.ajax({
-			url: "{{url}}",
-			timeout: 15000,
-			data: {
-				page: page_no,
-				year: year,
-				term: term,
-			},
-			success: function (data) {
-				body.html(data);
-			},
-			error: function (req, status, error) {
-				body.html('<div class="alert alert-danger alert-dismissible fade show" role="alert" > <strong>Error!</strong> Something went wrong. Attendance was not fetched. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-			}
-		});
-	}
 	
 	$(".loadmore-btn").click(function () {
 		var load_icon = $(this).find("span");

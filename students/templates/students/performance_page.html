@@ -1,6 +1,6 @@
 {% load static %}
-
-<div class="my-1 mx-auto w-100" style="max-width:400px;">
+<!-- Alpine state here so all children can access -->
+<div class="my-1 mx-auto w-100" style="max-width:400px;" x-data="{year: '{{current_term.year}}', term: '{{current_term.term}}'}">
 	<!-- Main Tabs -->
 	<div class="d-flex flex-column">
 		<button class="genric-btn primary radius mx-auto my-3" data-toggle="collapse" data-target="#importContainer"
@@ -38,7 +38,7 @@
 			<h6 class="w-50 ml-3">Year</h6>
 			<h6 class="w-50">Term</h6>
 		</div>
-		<div class="d-flex my-2 mx-3" x-data="{year: '{{current_term.year}}', term: '{{current_term.term}}'}">
+		<div class="d-flex my-2 mx-3" >
 
 			<select class="form-control" x-model="year" name="year" id="year" style="min-width: 100px;">
 				{% for term in terms %}
@@ -108,6 +108,8 @@
 		<!-- End of edit Performance tab -->
 
 	</div>
+
+</div>
 
 	{% if type == "view-performance" %}
 	<script>

@@ -315,18 +315,24 @@ def p_create_or_update(request, student_id):
         info = Student.objects.get(Class__teacher=teacher, pk=student_id)
         current_term = Term.objects.get(
             school=info.Class.school, current_session=True)
+
+        subject = request.POST.get('subject')
+        test = request.POST.get('test')
+        exam = request.POST.get('exam')
+        comment = request.POST.get('comment')
+        if not subject and not test and not exam and not comment:
+            return HttpResponseServerError("Invalid inputs detected")
         # get performance by subject
         selected_subject = current_term.performance_set.filter(
-            student=info).get(subject=request.POST['subject'])
+            student=info).get(subject=subject)
     except Term.DoesNotExist:
         return HttpResponseServerError("Term selected does not exist")
     except Performance.DoesNotExist:
         # if performance with added subject does not exist
         # create new performance
-        selected_subject = info.performance_set.create(subject=request.POST['subject'], test=request.POST['test'], exam=request.POST[
-                                                       'exam'], comment=request.POST['comment'], Class=request.user.teacher.teacher_class, term=current_term)
+        selected_subject = info.performance_set.create(subject=subject, test=test, exam=exam, comment=comment, Class=request.user.teacher.teacher_class, term=current_term)
         # return success message
-        return HttpResponse("Performance Added Successfully")
+        return HttpResponse(render_alert("Performance Added Successfully"))
     else:
         # if performance with added subject exist.
         # replace the added performance
