@@ -36,13 +36,13 @@ def performance_page(request, type):
     # Pagination of students
     if "page" in request.GET.keys():
         # get all students in teachers class
-        all_Info = request.user.teacher.teacher_class.student_set.all()
+        all_students = request.user.teacher.teacher_class.student_set.all()
 
         # Paginate students, Show only 10 objects
-        paginator = Paginator(all_Info, 10)
-        all_Info = paginator.get_page(request.GET.get("page"))
+        paginator = Paginator(all_students, 10)
+        all_students = paginator.get_page(request.GET.get("page"))
         # assign variables to context
-        context["all_Info"] = all_Info
+        context["all_students"] = all_students
         # If type of request is edit-performance just render edit-performance template
         if type == "edit-performance":
             teacher_class = request.user.teacher.teacher_class
@@ -66,7 +66,7 @@ def performance_page(request, type):
                 except ValueError:
                     return HttpResponseServerError("Invalid session detected")
                 # get all students in the paginated object list
-                for student in all_Info.object_list:
+                for student in all_students.object_list:
                     # filter the performance by term
                     filtered_performance = list(
                         student.performance_set.filter(term=term))
@@ -312,9 +312,9 @@ def p_create_or_update(request, student_id):
     try:
         teacher = request.user.teacher
         # info variable represents student
-        info = Student.objects.get(Class__teacher=teacher, pk=student_id)
+        student = Student.objects.get(Class__teacher=teacher, pk=student_id)
         current_term = Term.objects.get(
-            school=info.Class.school, current_session=True)
+            school=student.Class.school, current_session=True)
 
         subject = request.POST.get('subject')
         test = request.POST.get('test')
@@ -324,13 +324,13 @@ def p_create_or_update(request, student_id):
             return HttpResponseServerError("Invalid inputs detected")
         # get performance by subject
         selected_subject = current_term.performance_set.filter(
-            student=info).get(subject=subject)
+            student=student).get(subject=subject)
     except Term.DoesNotExist:
         return HttpResponseServerError("Term selected does not exist")
     except Performance.DoesNotExist:
         # if performance with added subject does not exist
         # create new performance
-        selected_subject = info.performance_set.create(subject=subject, test=test, exam=exam, comment=comment, Class=request.user.teacher.teacher_class, term=current_term)
+        selected_subject = student.performance_set.create(subject=subject, test=test, exam=exam, comment=comment, Class=request.user.teacher.teacher_class, term=current_term)
         # return success message
         return HttpResponse(render_alert("Performance Added Successfully"))
     else:
@@ -537,7 +537,7 @@ def view_performance(request, pk):
         paginator = Paginator(students_in_class, 10)
         students_in_class = paginator.get_page(request.GET.get("page"))
 
-        context["all_Info"] = students_in_class
+        context["all_students"] = students_in_class
         context['url'] = reverse("view_performance", kwargs={"pk": pk})
 
         if "year" in request.GET.keys() and "term" in request.GET.keys():
