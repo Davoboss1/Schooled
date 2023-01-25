@@ -35,7 +35,7 @@
                 </strong>
                 <span class="fa fa-arrow-down mx-auto">
                 </span>
-                <strong class="mx-auto" id="totalScore" x-text="parseInt(test) + parseInt(exam)">
+                <strong class="mx-auto" id="totalScore" x-text="isNaN(parseInt(test) + parseInt(exam)) ? 0 : (parseInt(test) + parseInt(exam))">
                     --
                 </strong>
             </div>
