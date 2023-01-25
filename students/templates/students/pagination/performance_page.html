@@ -49,6 +49,7 @@
 			show_btn = false
 		}" 
 		x-show="show_btn"
+		hx-swap="beforeend"
 		:hx-vals='`{ "page_no": "${page_no}" , "student_pk" : "{{info.pk}}" , "year" : "${year}" , "term" : "${term}" }`' >Load more <span
 				class="fa fa-arrow-circle-down"></span></button>
 	</div>
