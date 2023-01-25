@@ -585,7 +585,8 @@ def loadmore_performance(queryset, no_of_items, page):
     try:
         queryset = paginator.page(page).object_list
     except EmptyPage:
-        return HttpResponse("Empty", status=404)
+        print("Error empty page")
+        return HttpResponseServerError("Empty")
     data = ""
     for performance in queryset:
         data += f'''<tr>

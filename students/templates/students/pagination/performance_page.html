@@ -38,7 +38,7 @@
 	<div class="alert alert-info text-center my-3">No Performance for this term</div>
 	{% endif %}
 	<div class="d-flex">
-		<button class="btn mx-auto loadmore-btn" data-student-pk="{{info.pk}}" data-page="2">Load more <span
+		<button class="btn mx-auto loadmore-btn" hx-get="{{url}}" x-data="{page_no: 2}" hx-target="#table-body-{{info.pk}}" hx-loading-target="#none" hx-error-target="#none" @htmx:after-on-load.camel=" console.log($event); if($event.detail.xhr.responseText == 'Empty') page_no+=1; else hideElement($event.detail.elt)" :hx-vals='`{ "page_no": "${page_no}" , "student_pk" : "{{info.pk}}" , "year" : "${year}" , "term" : "${term}" }`' data-student-pk="" data-page="2">Load more <span
 				class="fa fa-arrow-circle-down"></span></button>
 	</div>
 
@@ -76,40 +76,8 @@
 
 <script>
 	
+	function hideElement(element) {
+		element.classList.add("d-none");
+	}
 	
-	$(".loadmore-btn").click(function () {
-		var load_icon = $(this).find("span");
-		$(load_icon[0]).addClass("fa-spin");
-		$(load_icon[0]).removeClass("text-danger");
-		var student_pk = $(this).attr("data-student-pk");
-		page_no = $(this).attr("data-page");
-		var loadmore_btn = $(this);
-		$.ajax({
-			url: "{{url}}",
-			type: "GET",
-			data: {
-				page_no: page_no,
-				student_pk: student_pk,
-				year: $("#year").val(),
-				term: $("#term").val(),
-			},
-			success: function (data) {
-				if (data == "Empty") {
-					loadmore_btn.css("display", "none");
-				} else {
-
-					$(load_icon[0]).removeClass("fa-spin");
-					$("#table-body-" + student_pk).append(data);
-					page_no = parseInt(page_no) + 1;
-					loadmore_btn.attr("data-page", page_no);
-					loadmore_btn.data("page", page_no);
-				}
-			},
-			error: function (req, status, error) {
-				$(load_icon[0]).removeClass("fa-spin");
-				$(load_icon[0]).addClass("text-danger");
-			}
-		});
-	});
-
 </script>
