@@ -38,7 +38,7 @@
 	<div class="alert alert-info text-center my-3">No Performance for this term</div>
 	{% endif %}
 	<div class="d-flex">
-		<button class="btn mx-auto loadmore-btn" hx-get="{{url}}" x-data="{page_no: 2}" hx-target="#table-body-{{info.pk}}" hx-loading-target="#none" hx-error-target="#none" @htmx:after-on-load.camel=" console.log($event); if($event.detail.xhr.responseText == 'Empty') page_no+=1; else hideElement($event.detail.elt)" :hx-vals='`{ "page_no": "${page_no}" , "student_pk" : "{{info.pk}}" , "year" : "${year}" , "term" : "${term}" }`' data-student-pk="" data-page="2">Load more <span
+		<button class="btn mx-auto loadmore-btn" hx-get="{{url}}" x-data="{page_no: 2}" hx-target="#table-body-{{info.pk}}" hx-loading-target="#none" hx-error-target="#none" @htmx:after-on-load.camel=" console.log($event); if($event.detail.xhr.responseText == 'Empty'){ page_no+=1;} else {hideElement($event.detail.elt)}" :hx-vals='`{ "page_no": "${page_no}" , "student_pk" : "{{info.pk}}" , "year" : "${year}" , "term" : "${term}" }`' data-student-pk="" data-page="2">Load more <span
 				class="fa fa-arrow-circle-down"></span></button>
 	</div>
 
@@ -77,6 +77,7 @@
 <script>
 	
 	function hideElement(element) {
+		console.log("Hiding element");
 		element.classList.add("d-none");
 	}
 	

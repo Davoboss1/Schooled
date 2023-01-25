@@ -84,7 +84,7 @@ def performance_page(request, type):
         filtered_performance = list(student.performance_set.filter(term=term))
         # create new attribute called termly_performance
         student.termly_performance = filtered_performance
-        return HttpResponse(loadmore_performance(student.termly_performance, 10, int(request.GET.get("page_no"))))
+        return loadmore_performance(student.termly_performance, 10, int(request.GET.get("page_no")))
     context["students"] = request.user.teacher.teacher_class.student_set.all()
     return render(request, 'students/performance_page.html', context)
 
@@ -574,7 +574,7 @@ def view_performance(request, pk):
         filtered_performance = list(student.performance_set.filter(term=term))
         # create new attribute called termly_performance
         student.termly_performance = filtered_performance
-        return HttpResponse(loadmore_performance(student.termly_performance, 10, int(request.GET.get("page_no"))))
+        return loadmore_performance(student.termly_performance, 10, int(request.GET.get("page_no")))
     return render(request, "students/view-student-performance.html", context)
 
 # Function that paginages queryset but mainly performance and returns it in html table rows
@@ -597,7 +597,7 @@ def loadmore_performance(queryset, no_of_items, page):
 <td>{performance.comment}</td>
 </tr>
 		'''
-    return data
+    return HttpResponse(data)
 
 # view for viewing attendance for admin
 
