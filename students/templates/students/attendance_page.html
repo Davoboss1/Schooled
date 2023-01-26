@@ -34,7 +34,7 @@
 
 
         <!-- Attendance mark form -->
-        <form method="post" hx-post="{% url 'students:mark' date %}" hx-target="#form-status" id="mark-form">
+        <form method="post" no-reset hx-post="{% url 'students:mark' date %}" hx-target="#form-status" id="mark-form">
             <h6 class="my-3">Mark attendance for {{date|to_date|date:"l jS, F Y"}}</h6>
             <!-- Mark and Unmark all buttons -->
             <div class="mark-all-container">
@@ -59,10 +59,10 @@
                     <!-- Loop should start here -->
                     {% csrf_token %}
                     {% for students in all_students %}
-                    <tr>
+                    <tr @click="checked = !checked" :test="checked" x-data="{checked: {% if students in attendance %}true{% else %}false{% endif %}}">
                         <td>{{forloop.counter}}</td>
                         <td>{{students.name}} </td>
-                        <td><input type="checkbox" class="student-checkbox" name="present" value="{{students.id}}" {% if students in attendance %}checked{% endif %}></td>
+                        <td ><input type="checkbox" class="student-checkbox" name="present" value="{{students.id}}" x-model="checked"></td>
                     </tr>
                     {% endfor %}
 

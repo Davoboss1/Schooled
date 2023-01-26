@@ -1,24 +1,24 @@
 {% load custom_filter %}
-
-<div class="d-flex flex-column mt-2">
+<div x-data="{year: '{{current_term.year}}', term: '{{current_term.term}}'}">
+	<div class="d-flex flex-column mt-2">
 				<div class="d-flex">
 				<h6 class="w-50 ">Year</h6> <h6 class="w-50">Term</h6>
 				</div>		
 					<div class="d-flex my-2 mx-1" >
-				<select class="form-control" name="year" id="year">
+				<select class="form-control" name="year" id="year" x-model="year">
 					{% for term in terms %}
 					{% ifchanged %}
 					<option value="{{term.year}}" {% if current_term.year == term.year %}selected{% endif %}>{{term.session}}</option>	
 					{% endifchanged %}
 					{% endfor %}
 					</select>
-					<select class="ml-1 form-control" name="term" id="term">
+					<select class="ml-1 form-control" name="term" id="term" x-model="term">
 				
 						<option {% if current_term.term == "1st Term"%}selected{% endif %}>1st Term</option>
 						<option {% if current_term.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
 						<option {% if current_term.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
 					</select>
-					<button class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span class="fa fa-repeat"></span></button>
+					<button class=" ml-2 btn btn-dark " hx-get="{% url 'students:view_performance' class_pk %}" hx-target="#performance-container{{class_pk}}" :hx-vals='`{ "page" : "1" , "term" : "${term}" , "year" : "${year}" }`' id="fetch-termly-performance"><span class="fa fa-repeat"></span></button>
 				</div>
 				<div id="termly-performance-status">
 					
@@ -26,180 +26,8 @@
 			</div>
 <div class="accordion" id="main-accordion">
 <!-- Performance List -->
- <div class="list-group spaced-list" id="performance-container{{class_pk}}">
-<!-- First list item -->
-{% if all_students.object_list.exists %}
-{% for student in all_students %}
-  <a data-toggle="collapse" href="#student-performance{{student.pk}}" class="list-group-item list-group-item-action d-flex "  role="button">
-   <h6  class="vcenter">
-	  	{{student.name}}
- 	  </h6>
-  	 <span class="fa fa-angle-down ml-auto vcenter"></span>
-  	</a>
-		<div class="collapse" id="student-performance{{student.pk}}" data-parent="#main-accordion">
-			
-			<!-- Performance Table -->
-			
-            {% with performances=student|current_term_filter|slice:":10" %}
-            {% if  performances.exists %}
-			<table class="table table-striped table-bordered performance-table table-responsive" >
-			 <thead >
-			  	<th>Subject</th>
-				 <th>Test Score</th>
-				 <th>Exam Score</th>
-			  	<th>Total Score</th>
-				 <th>Comment</th>
-			 </thead>
-				<tbody id="table-body-{{student.pk}}">
-                    {% for performance in performances %}
-					<tr>
-						<td>{{performance.subject}}</td>
-						<td>{{performance.test}}</td>
-						<td>{{performance.exam}}</td>
-						<td>{{performance.total}}</td>
-						<td>{{performance.comment}}</td>
-					</tr>
-					{% endfor %}
-				</tbody>				
-            </table>
-            {% else %}
-                <div class="alert alert-info">No performance for this term</div>
-            {% endif %}
-			{% endwith %}
-			<div class="d-flex">
-				<button class="btn mx-auto loadmore-btn" data-student-pk="{{student.pk}}" data-page="2">Load more <span class="fa fa-arrow-circle-down"></span></button>
-			</div>
-
-		</div>
-				
-		{% endfor %}
-{% else %}
-    <div class="border-left border-right border-danger py-3">
-    <h5 class="text-center text-danger">No student in this class</h5>
-    </div>
-{% endif %}
-		<!-- End of view performance tab body-->	 						
-		
-			<!-- pagination -->
-<div class="row py-3 border-top border-bottom">
-	<div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
-		{% if all_students.has_previous %}
-		<button class="genric-btn primary mx-auto performance-pagination-handler"
-			data-page="{{all_students.previous_page_number}}">
-			<span class="fa fa-angle-left mr-1"></span>Prev </button>
-		{% endif %}
+ <div class="list-group spaced-list" id="performance-container{{class_pk}}" hx-get="{% url 'students:view_performance' class_pk %}" hx-trigger="load" :hx-vals='`{ "page" : "1" , "term" : "${term}" , "year" : "${year}" }`'>
+				  	 			 
 	</div>
-	<div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
-		<select class="form-control mx-auto performance-pagination-handler" style="max-width: 100px;">
-			{% for page_no in all_students.paginator.page_range %}
-			<option {% if page_no == all_students.number %}selected{% endif %}>{{page_no}}</option>
-			{% endfor %}
-		</select>
-	</div>
-	<div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
-		{% if all_students.has_next %}
-		<button class="genric-btn primary mx-auto performance-pagination-handler "
-			data-page="{{all_students.next_page_number}}">Next <span class="fa fa-angle-right ml-1"></span></button>
-		{% endif %}
-	</div>
-</div>				 
-						  	 			 
-	</div>
-</div>			
-<script>
-//Pagination
-$("button.performance-pagination-handler").click(function () {
-		var page_no = $(this).attr("data-page");
-		fetch_performance(page_no,this);
-	});
-	$("select.performance-pagination-handler").change(function () {
-		var page_no = $(this).val();
-		fetch_performance(page_no,this);
-	});
-	function fetch_performance(page_no,elem) {
-		var body = 	$(elem).parent().parent().parent();
-
-		body.html('<div class="mx-auto my-3 progressBar"></div>');
-		$.ajax({
-			url : "{% url 'students:view_performance' class_pk %}",
-			data : {
-				page:page_no,
-				year:$("#year").val(),
-				term:$("#term").val(),
-			},
-			success : function(data){
-				
-			body.html(data);
-			},
-			error : function(req,status,error){
-				body.html('<div class="alert alert-danger alert-dismissible fade show" role="alert" > <strong>Error!</strong> Something went wrong. Attendance was not fetched. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-			}
-		});
-	}
-	
-
-
-	$(".loadmore-btn").click(function(){
-		var load_icon = $(this).find("span");
-		$(load_icon[0]).addClass("fa-spin");
-		$(load_icon[0]).removeClass("text-danger");
-		var student_pk =  $(this).attr("data-student-pk");
-		page_no = $(this).attr("data-page");
-		var loadmore_btn = $(this);
-
-		$.ajax({
-			url : "{% url 'students:view_performance' class_pk %}",
-			type : "GET",
-			data : {
-				page_no : page_no,
-				student_pk : student_pk,
-				year:$("#year").val(),
-				term:$("#term").val(),
-			},
-			success : function(data){
-				if(data=="Empty"){
-					loadmore_btn.css("display","none");
-				}else{
-				
-				$(load_icon[0]).removeClass("fa-spin");
-				$("#table-body-"+student_pk).append(data);
-				page_no = parseInt(page_no)+1;
-				loadmore_btn.attr("data-page",page_no);
-				loadmore_btn.data("page",page_no);
-				}
-			},
-			error : function(req,status,error){
-				$(load_icon[0]).removeClass("fa-spin");
-				$(load_icon[0]).addClass("text-danger");
-
-			}
-		});
-	});
-	$("#fetch-termly-performance").click(function(event){
-		var span_icon = $($(this).find("span")[0]);
-		span_icon.addClass("fa-spin");
-	 	$.ajax({
-	 		url : "{% url 'students:view_performance' class_pk %}",
-	 		type : "GET",
-	 		data:{
-			page:1,
-			year:$("#year").val(),
-			term:$("#term").val(),
-		},
-	 		success : function(data){
-	 			span_icon.removeClass("fa-spin");
-	 			if(data=="DOE_ERROR"){
-	 				$("#performance-container{{class_pk}}").html('<div class="alert alert-warning" role="alert"> <h6 class="text-center">Term selected does not exist. </div></h6>');
-	 			}else{
-	 			
-	 		$("#performance-container{{class_pk}}").html(data);
-	 		}
-	 		},
-	 		error : function(response,status,error){
-	 			span_icon.removeClass("fa-spin");
-	 		}
-	 	});
-	 
-	});
-	
-</script>
+</div>	
+</div>

@@ -72,6 +72,7 @@ def performance_page(request, type):
                         student.performance_set.filter(term=term))
                     # create new attribute called termly_performance
                     student.termly_performance = filtered_performance
+            print(context)
             return render(request, "students/pagination/performance_page.html", context)
     # If performance for particular student
     # Mainly for loading more performances
@@ -451,59 +452,24 @@ def view_only_performance(request, pk):
         student = Student.objects.get(Class__school__admin=user.admin, pk=pk)
     else:
         student = user.teacher.teacher_class.student_set.get(pk=pk)
-    term_html = None
-    # Parent argument exists if request is made by parent
-    # Check if parent is in get request keys
-    if "parent" in request.GET:
-        # Get all needed variables form term
+    
+    
+    year = request.GET.get("year")
+    term_text = request.GET.get("term")
+    term = None
+    if not year and not term_text:
         terms = Term.objects.filter(school=student.Class.school)
-        try:
-            current_term = terms.get(current_session=True)
-        except Term.DoesNotExist:
-            return HttpResponseServerError("Sorry performances are not available for you to view yet")
-        year = current_term.year
-        term_text = current_term.term
-        # Render it in a template
-        data = '''<div>
-					<div class="d-flex flex-column">
-						<div class="d-flex">
-							<h6 class="w-50 ">Year</h6>
-							<h6 class="w-50">Term</h6>
-						</div>
-						<div class="d-flex my-2 mx-1"><select class="form-control" name="year"
-								id="year">
-								{% for term in terms %}
-								{% ifchanged %}<option value="{{term.year}}" {% if current_term.year == term.year %}selected{% endif %}>{{term.session}}</option>
-								{% endifchanged %}
-								{% endfor %}
-							</select>
-							<select class="ml-1 form-control" name="term" id="term">
-								<option {% if current_term.term == "1st Term"%}selected{% endif %}>1st Term</option>
-								<option {% if current_term.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
-								<option {% if current_term.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
-							</select>
-							<button class=" ml-2 btn btn-dark " id="fetch-termly-performance" onclick="fetch_termly_performance(this)"><span
-									class="fa fa-repeat"></span></button>
-						</div>
-					</div>
-				</div>
-			'''
-        # Assign term_html to template
-        term_html = Template(data).render(
-            Context({"current_term": current_term, "terms": terms}))
-    else:
-        try:
-            year = int(request.GET.get("year"))
-            term_text = request.GET.get("term")
-        except ValueError:
+        if terms.exists():
+            term = terms.get(current_session=True)
+        else:
             return HttpResponseServerError("Invalid session detected.")
-
-    # try to get term object
-    try:
-        term = Term.objects.get(
-            school=student.Class.school, year=year, term=term_text)
-    except Term.DoesNotExist:
-        return HttpResponse("Term selected does not exist")
+    else:
+        # try to get term object
+        try:
+            term = Term.objects.get(
+                school=student.Class.school, year=int(year), term=term_text)
+        except Term.DoesNotExist:
+            return HttpResponseServerError("Term selected does not exist")
     filtered_performance = list(student.performance_set.filter(term=term))
     # create new attribute called termly_performance
     student.termly_performance = filtered_performance
@@ -511,7 +477,7 @@ def view_only_performance(request, pk):
     performance = student.termly_performance
     paginator = Paginator(performance, 10)
     performance = paginator.get_page(request.GET.get("page"))
-    return render(request, "students/view_only_performance.html", {"student": student, "performance": performance, "terms": Term.objects.filter(school=student.Class.school), "term_html": term_html})
+    return render(request, "students/view_only_performance.html", {"student": student, "performance": performance, "terms": Term.objects.filter(school=student.Class.school), "current_term" : term})
 
 
 # view that handles performance viewing for admin
@@ -531,37 +497,6 @@ def view_performance(request, pk):
     context = {"all_students": students_in_class, "class_pk": pk,
                "terms": terms, "current_term": current_term}
 
-    # Pagination
-    if "page" in request.GET.keys():
-        # Paginator object to show only 10 objects
-        paginator = Paginator(students_in_class, 10)
-        students_in_class = paginator.get_page(request.GET.get("page"))
-
-        context["all_students"] = students_in_class
-        context['url'] = reverse("view_performance", kwargs={"pk": pk})
-
-        if "year" in request.GET.keys() and "term" in request.GET.keys():
-            year = int(request.GET.get("year"))
-            term_text = request.GET.get("term")
-            # try to get term object
-            try:
-                term = Term.objects.get(
-                    school=current_class.school.pk, year=year, term=term_text)
-            except Term.DoesNotExist:
-                return HttpResponse("Term selected does not exist")
-            # get all students in the paginated object list
-            for student in students_in_class.object_list:
-                # filter the performance by term
-                filtered_performance = list(
-                    student.performance_set.filter(term=term))
-                # create new attribute called termly_performance
-                student.termly_performance = filtered_performance
-        return render(request, "students/pagination/performance_page.html", context)
-    else:
-        paginator = Paginator(students_in_class, 10)
-        students_in_class = paginator.get_page(1)
-        context["all_students"] = students_in_class
-
     # This occurs when user load more performance of a particular student
     if "student_pk" in request.GET.keys():
         student = Student.objects.get(
@@ -575,6 +510,40 @@ def view_performance(request, pk):
         # create new attribute called termly_performance
         student.termly_performance = filtered_performance
         return loadmore_performance(student.termly_performance, 10, int(request.GET.get("page_no")))
+    
+
+    # Pagination
+    if "page" in request.GET.keys():
+        # Paginator object to show only 10 objects
+        paginator = Paginator(students_in_class, 10)
+        students_in_class = paginator.get_page(request.GET.get("page"))
+
+        context["all_students"] = students_in_class
+        context['url'] = reverse("students:view_performance", kwargs={"pk": pk})
+
+        if "year" in request.GET.keys() and "term" in request.GET.keys():
+            year = int(request.GET.get("year"))
+            term_text = request.GET.get("term")
+            # try to get term object
+            try:
+                term = Term.objects.get(
+                    school=current_class.school.pk, year=year, term=term_text)
+            except Term.DoesNotExist:
+                return HttpResponseServerError("Term selected does not exist")
+            # get all students in the paginated object list
+            for student in students_in_class.object_list:
+                # filter the performance by term
+                filtered_performance = list(
+                    student.performance_set.filter(term=term))
+                # create new attribute called termly_performance
+                student.termly_performance = filtered_performance
+        print(context)
+        return render(request, "students/pagination/performance_page.html", context)
+    else:
+        paginator = Paginator(students_in_class, 10)
+        students_in_class = paginator.get_page(1)
+        context["all_students"] = students_in_class
+
     return render(request, "students/view-student-performance.html", context)
 
 # Function that paginages queryset but mainly performance and returns it in html table rows

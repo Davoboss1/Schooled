@@ -1,0 +1,148 @@
+{% load custom_filter %}
+<div style="max-width: 700px;">
+<h2 class="text-center my-3">Messages</h2>
+<div class="row mb-3 mx-3">
+    <div class="col-12 col-md-6 col-lg-6 mb-3 d-flex">
+        <button class="genric-btn primary radius w-100 mx-auto" style="max-width:400px;" id="back-convo" hx-get="{% url 'accounts:message_list' %}" hx-target="#main"> <span
+                class="fa fa-angle-left mr-2"></span> Go back to conversations</button>
+    </div>
+    <div class="col-12 col-md-6 col-lg-6 mb-3 d-flex">
+        <button class="genric-btn primary radius w-100 mx-auto" style="max-width:400px;" id="refresh"  hx-get="{% url 'accounts:messages' conversation.pk %}" hx-target="#main">Refresh <span
+                class="fa fa-refresh ml-1"></span></button>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header d-flex">
+        
+            {% if conversation.reciever.get_username == user.get_username %}
+            {% with reciever=conversation.sender|get_user %}
+            <div class="thumb m-0 mr-1">
+                <img class="rounded-circle icon_50x50" alt=""  src="{{reciever.profile_picture.url|default:'/media/default.jpg'}}">
+            </div>
+            <div class="">
+            <h6><u class="text-dark">Name</u> : <b class="text-dark">{{reciever.get_full_name|default:'Unavailable user'}}</b> </h6>
+            <h6><u class="text-dark">Username</u> : <b class="text-dark">{{reciever.get_username|default:'Unavailable'}}</b></h6>
+            <h6><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.level|default:'Unavailable'}}</b></h6>
+            {% endwith %}
+            {% else %}
+            {% with reciever=conversation.reciever %}
+            <div class="thumb m-0 mr-1">
+                <img class="rounded-circle icon_50x50" alt=""  src="{{reciever.profile_picture.url|default:'/media/default.jpg'}}">
+            </div>
+            <div class="">
+            <h6><u class="text-dark">Name</u> : <b class="text-dark">{{reciever.get_full_name|default:'No Name'}}</b> </h6>
+            <h6><u class="text-dark">Username</u> : <b class="text-dark">{{reciever.get_username|default:'Unavailable'}}</b></h6>
+            <h6><u class="text-dark">User Type</u> : <b class="text-dark">{{reciever.level|default:'Unavailable'}}</b></h6>
+            {% endwith %}
+            {% endif %}
+        </div>
+        <div class="ml-auto">
+            <small class="d-block text-dark">Last Message </small>
+            <small class="d-block text-dark">{{conversation.messages_set.first.message_datetime}}</small>
+        </div>
+    </div>
+    <!-- End of card header -->
+
+    <!-- Card body -->
+    <div class="card-body d-flex flex-column" id="msg-card">
+
+        <h3 class="card-title text-center mb-3"><u class="text-dark">{{conversation.subject}}</u></h3>
+        <button class="genric-btn primary radius mb-3 mx-auto w-100  prev-msg" style="max-width:400px;" hx-swap="outerHTML" hx-get="{% url 'accounts:messages' conversation.pk %}" hx-vals='{ "more_msg" : "" , "page_no" : "2" }'>
+            Show previous messsages</button>
+        {% for msg in  msgs %}
+        {% if msg.sent_by == user.get_username %}
+
+        <div class="ml-auto d-flex flex-column" style="width: 80%;padding: 0; max-width: 450px;">
+            <div class="d-flex flex-column"
+                style="background: linear-gradient(#330033 90%,white 0); border-radius: 5px;">
+                <p class="text-light p-3 m-0">
+                    {{msg.message}}
+                </p>
+                <div class="thumb m-0 ml-auto">
+                    <img class="rounded-circle" style="width: 35px; height: 35px;" alt=""
+                        src="{{user.profile_picture.url}}">
+                </div>
+
+            </div>
+            <small class="text-muted ml-auto" style="text-align: end;">{{msg.message_datetime|timesince }} ago</small>
+
+        </div>
+        {% else %}
+        <div class="mr-auto" style="width: 80%;padding: 0; max-width: 450px;">
+            <div class="d-flex flex-column" style="background: linear-gradient(black 90%,white 0); border-radius: 5px;">
+                <p class="text-light p-3 m-0">
+                    {{msg.message}}
+                </p>
+                <div class="thumb m-0 mr-auto">
+                    {% if conversation.sender == user.get_username %}
+                    <img class="rounded-circle" style="width: 35px; height: 35px;" alt=""
+                        src="{{conversation.reciever.profile_picture.url|default:'/media/default.jpg'}}">
+                    {% else %}
+                    {% with other_user=conversation.sender|get_user %}
+                    <img class="rounded-circle" style="width: 35px; height: 35px;" alt=""
+                        src="{{other_user.profile_picture.url|default:'/media/default.jpg'}}">
+                    {% endwith %}
+                    {% endif %}
+                </div>
+            </div>
+            <small class="text-muted mr-auto">{{msg.message_datetime|timesince }} ago</small>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+
+    </div>
+    <!-- End of card body -->
+    <!-- Card footer-->
+    <div class="card-footer d-flex" id="msg-footer">
+        <textarea class="single-textarea border-bottom border-primary" onfocus="this.placeholder = ''"
+            onblur="this.placeholder = 'Message'" id="message-box" placeholder="Message"></textarea>
+        <div class="my-auto d-flex flex-column">
+            <div id="send-status"></div>
+            <button class="btn btn-primary mx-auto" id="check" hx-get="{% url 'accounts:messages' conversation.pk %}" hx-vals='{ "check_msg" : "" }' hx-loading-target="#send-status" hx-swap="beforeend" hx-target="#msg-card"><span class="fa fa-refresh"></span></button>
+            <button class="genric-btn primary mt-1 send-button"> Send</button>
+        </div>
+    </div>
+    <!-- End of card footer -->
+</div>
+<!-- End of Card -->
+</div>
+<input id="img-url" type="hidden" value="{{user.profile_picture.url}}">
+</div>
+<script>
+    //Send button event handler
+    document.querySelector(".send-button").onclick =function () {
+
+        let message_cont = document.querySelector("#message-box");
+        let message = message_cont.value;
+        let send_button = this;
+        //Prevents empty message from being sent
+        if (message.trim().length < 1) {
+            return;
+        }
+        send_button.disabled = true;
+        send_button.textContent = "Sending...";
+
+        htmx.ajax("POST", "{% url 'accounts:messages' conversation.pk %}", {
+                        target: "#none", values: {
+                            csrfmiddlewaretoken: "{{csrf_token}}",
+                            message: message,
+                            sender: "{{user.get_username}}"
+                        }, handler: (elt, res) => {
+                            if (res.xhr.status === 200) {
+                                var msg = '<div class="ml-auto d-flex flex-column" style="width: 70%;padding: 0;"><div class="d-flex flex-column" style="background: linear-gradient(#330033 90%,white 0); border-radius: 5px;"> <p class="text-light p-3 m-0">' + message + '</p><div class="thumb m-0 ml-auto"><img class="rounded-circle" style="width: 35px; height: 35px;" alt="" src="' + $("#img-url").val() + '"></div></div><small class="text-muted ml-auto" style="text-align: end;">Sent</small></div>';
+                                document.querySelector("#msg-card").innerHTML+=msg;
+                                send_button.textContent = "Send";
+                                message_cont.value = "";
+                                send_button.disabled = false;
+                            } else {
+                                send_button.textContent = "Failed";
+                                send_button.disabled = false;
+
+                            }
+                        }
+        } )
+    };
+
+    
+</script>

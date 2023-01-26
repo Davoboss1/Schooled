@@ -1,7 +1,7 @@
 {% load static %}
 <!-- Profile page -->
 <!-- To be used with modal -->
-<div id="profile">
+<div id="profile" >
 	<!-- Profile picture -->
 	<img class="rounded" src="{{student.photo.url}}" alt="" style="max-width:50%; max-height:50%; float:right;"
 >
@@ -9,9 +9,9 @@
 	<div class="form-group w-50 border p-2 mr-1">
 		<label for="customFile">Photo</label>
 		<div class="custom-file"> <input type="file" name="photo" accept="image/*" class="custom-file-input"
-				id="student-photo" onchange="document.getElementById('file-label').innerHTML='Selected';"> <label
+				id="student-photo" onchange="document.getElementById('file-label').innerHTML='Selected';" hx-post="{% url 'students:handle_uploads' %}" hx-target="#upload-status" hx-trigger="change" hx-encoding="multipart/form-data" :hx-vals='`js:{ "csrfmiddlewaretoken" : "{{csrf_token}}" , "pk" : "{{student.pk}}" , "photo" : document.getElementById("student-photo").files[0] }`'> <label
 				class="custom-file-label" for="customFile" id="file-label">Choose file</label> </div>
-		<small id="upload-status"></small>
+		<small class="text-success" id="upload-status"></small>
 	</div>
 	{% endif %}
 	<!--List of user details. -->
@@ -65,7 +65,7 @@
 						<td>
 							{{parent.user.get_username}}
 						</td>
-						<td class="btn btn-light w-100 view-parent-profile" ><span class="fa fa-eye" ></span></td>
+						<td class="btn btn-light w-100 view-parent-profile" hx-get="{% url 'admins:show_profile' 'parent' parent.user.get_username %}" hx-target="#profile-body" ><span class="fa fa-eye" ></span></td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -85,33 +85,12 @@
 		</li>
 
 	</ul>
-	<div class="d-flex flex-column">
-		<div class="d-flex">
-			<h6 class="w-50 ">Year</h6>
-			<h6 class="w-50">Term</h6>
-		</div>
-		<div class="d-flex my-2 mx-1">
-			<select class="form-control" name="year" id="year">{% for term in terms %}
-				{% ifchanged %}
-				<option value="{{term.year}}" {% if current_term.year == term.year %}selected{% endif %}>{{term.session}}</option>
-				{% endifchanged %}
-				{% endfor %}
-			</select>
-			<select class="ml-1 form-control" name="term" id="term">
-
-				<option {% if current_term.term == "1st Term"%}selected{% endif %}>1st Term</option>
-				<option {% if current_term.term == "2nd Term"%}selected{% endif %}>2nd Term</option>
-				<option {% if current_term.term == "3rd Term"%}selected{% endif %}>3rd Term</option>
-			</select>
-			<button class=" ml-2 btn btn-dark " id="fetch-termly-performance"><span class="fa fa-repeat"></span></button>
-		</div>
-
-	</div>
+	
 	<div class="btn-group w-100 mt-1 mb-3" role="group" aria-label="get performance"> <button type="button"
 			class="genric-btn info radius w-50 mx-2" onclick="download_pdf('P')">Download <span class="fa fa-download"></span></button> <button type="button"
 			class="genric-btn info radius w-50 mx-2" onclick="print_performance()">Print <span class="lnr lnr-printer"></span></button> </div>
 	<!-- Performance part -->
-	<div id="performance-view">
+	<div id="performance-view" hx-get="{% url 'students:view_only_performance' student.pk %}" :hx-vals='`{ "term" : "${term}" , "year" : "${year}" }`' hx-trigger="load" >
 
 	</div>
 	<hr>
@@ -119,119 +98,23 @@
 	<div class="btn-group w-100 mt-1 mb-3" role="group" aria-label="get performance"> <button type="button"
 			class="genric-btn info radius w-50 mx-2" onclick="download_pdf('A')">Download <span class="fa fa-download"></span></button>
 			<button class="genric-btn info radius w-50 mx-2" onclick="print_attendance()">Print <span class="lnr lnr-printer"></span></button> </div>
-	<div id="attendance-view">
+	<div id="attendance-view"  hx-get="{% url 'students:view_only_attendance' student.pk %}" hx-trigger="load">
 
 	</div>
 </div>
 
 <script>
  	
-	$(function () {
-		var pk = "{{student.pk}}";
-		$("#performance-view").html("<div class='progressBar mx-auto'></div>");
-		$.ajax({
-			url: "{% url 'students:view_only_performance' %}" + pk + "/",
-			type: "get",
-			data: {
-				year: "{{current_term.year}}",
-				term: "{{current_term.term}}",
-			},
-			success: function (data) {
-				$("#performance-view").html(data);
-			},
-			error: function (req, status, error) {
-				var msg;
-				if(req.responseText){
-					msg=req.responseText;
-				}else{
-					msg="Something went wrong.";
-				}
-				$("#performance-view").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>" + msg +"</div>");
-			}
-		});
-		//Attendance ajax request
-		$("#attendance-view").html("<div class='progressBar mx-auto'></div>");
-		$.ajax({
-			url: "{% url 'students:view_only_attendance' %}" + pk + "/",
-			type: "get",
-			success: function (data) {
-				$("#attendance-view").html(data);
-			},
-			error: function (req, status, error) {
-				$("#attendance-view").html("<div class='d-flex flex-column'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
-			}
-		});
-
-	});
-
-	$(".view-parent-profile").click(function (e) {
-		var parent_username = $(this).prev().text();
-		get_data("{% url 'admins:show_profile' %}"+"parent/"+parent_username+"/",{},$("#profile-body")[0]);
-	});
-	//Upload image event handler
-	var uploadStatus = $("#upload-status");
-	$("#student-photo").on("change", function () {
-		uploadStatus.html("Uploading.....");
-		var files = this.files;
-		var formdata = new FormData();
-		formdata.append("photo", files[0]);
-		formdata.append("csrfmiddlewaretoken", "{{csrf_token}}");
-		formdata.append("pk", "{{student.pk}}");
-		$.ajax({
-			url: "{% url 'students:handle_uploads' %}",
-			type: "POST",
-			data: formdata,
-			processData: false,
-			contentType: false,
-			success: function (response, status, jqxhr) {
-				uploadStatus.css("color", "green");
-				uploadStatus.html("Uploaded.");
-
-			},
-			error: function (response, status, jqxhr) {
-				uploadStatus.css("color", "red");
-				uploadStatus.html("Failed.");
-
-			}
-		}
-		);
-	});
-
-	$("#fetch-termly-performance").click(function (event) {
-		var span_icon = $($(this).find("span")[0]);
-		span_icon.addClass("fa-spin");
-
-		$.ajax({
-			url: "{% url 'students:view_only_performance' student.pk %}",
-			type: "GET",
-			data: {
-				page: 1,
-				year: $("#year").val(),
-				term: $("#term").val(),
-			},
-			success: function (data) {
-				span_icon.removeClass("fa-spin");
-				if (data == "DOE_ERROR") {
-					$("#performance-view").html('<div class="alert alert-warning my-3" role="alert"> <h6 class="text-center text-light">Term selected does not exist. </div></h6>');
-				} else {
-					$("#performance-view").html(data);
-				}
-			},
-			error: function (response, status, error) {
-				span_icon.removeClass("fa-spin");
-			}
-		});
-	});
-
+	
 	function download_pdf(type) {
 		if (type == "P") {
-			var year = $("#year").val();
-			var term = $("#term").val();
+			let year = document.querySelector("#year").value;
+			let term = document.querySelector("#term").value;
 			window.location.href = "http://{{request.get_host}}{% url 'students:convert_performance_to_pdf' %}" + "{{student.pk}}" + "/" + year + "/" + term + "/";
 		}
 		else if (type == "A") {
-			var start_date = $("#start-date").val();
-			var end_date =  $("#end-date").val();
+			let start_date = document.querySelector("#start-date").value;
+			let end_date =  document.querySelector("#end-date").value;
 			if(start_date && end_date){
 				window.location.href = "http://{{request.get_host}}{% url 'students:convert_attendance_to_pdf'  student.pk %}"+start_date+"/"+end_date+"/";
 			}else{
@@ -240,14 +123,14 @@
 		}
 	}
 	function print_performance() {
-		var year = $("#year").val();
-		var term = $("#term").val();
+		var year = document.querySelector("#year").value;
+		var term = document.querySelector("#term").value;
 		window.location.href = "http://{{request.get_host}}{% url 'students:print_performance' %}" + "{{student.pk}}" + "/" + year + "/" + term + "/";
 	}
 
 	function print_attendance(){
-		var start_date = $("#start-date").val();
-		var end_date =  $("#end-date").val();
+		var start_date = document.querySelector("#start-date").value;
+		var end_date =  document.querySelector("#end-date").value;
 		if(start_date && end_date){
 			window.location.href = "{% url 'students:print_attendance' student.pk %}"+start_date+"/"+end_date+"/";
 		}else{

@@ -50,7 +50,7 @@ document.addEventListener("htmx:afterRequest", function (event) {
     let element = detail.elt;
     let tag_type = element.tagName.toLowerCase();
 
-    if (detail.successful && tag_type === "form") {
+    if (detail.successful && tag_type === "form" && !element.hasAttribute("no-reset")) {
         detail.elt.reset();
     }
     if (element.hasAttribute("hx-loading-target"))

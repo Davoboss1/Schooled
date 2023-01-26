@@ -254,7 +254,7 @@ def notifications(request, sch_pk):
             return HttpResponseServerError("EMPTY")
     else:
         activity_log = activity_log_paginator.page(1)
-    return render(request, "admins/notifications.html", {"activity_log": activity_log, "total_no": total_no})
+    return render(request, "admins/notifications.html", {"activity_log": activity_log, "total_no": total_no, "school" : school })
 
 
 def coming_soon(request):

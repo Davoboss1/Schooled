@@ -1,6 +1,7 @@
 import random
 from datetime import datetime,timedelta
 from django.shortcuts import render, redirect,HttpResponse
+from django.urls import reverse
 from django.http.response import HttpResponseNotAllowed,HttpResponseServerError,JsonResponse
 from django.contrib.auth import get_user_model
 from .forms import UserCreationForm,SetPasswordForm
@@ -190,7 +191,7 @@ def message_list(request,sch_pk=None):
 	for convo in conversations:
 		convo.msg_count = convo.messages_set.filter(message_read=False).exclude(sent_by=request.user.get_username()).count()
 
-	return render(request,"admins/message-list.html",{"conversations":conversations,"user":user,})
+	return render(request,"accounts/message-list.html",{"conversations":conversations,"user":user,})
 
 #View that lists all messages
 #View handles all messaging requests and differenciates requests by arguments in get request
@@ -222,7 +223,7 @@ def messages(request,convo_pk):
 	msgs.reverse()	
 	#Update unread messages as read
 	conversation.messages_set.all().exclude(sent_by=request.user.get_username()).update(message_read=True)
-	return render(request,"admins/messages.html",{"conversation":conversation,"user":user,"msgs":msgs})
+	return render(request,"accounts/messages.html",{"conversation":conversation,"user":user,"msgs":msgs})
 
 #Funtion for creating new conversation
 @require_auth
@@ -243,7 +244,9 @@ def new_conversation(request):
 	#Add message to conversation
 	message = Messages(conversation=conversation,message=request.POST.get("message-entry"),sent_by=request.POST.get("sender"))
 	message.save()
-	return HttpResponse("Success")
+	#message list url
+	url = reverse("accounts:message_list")
+	return HttpResponse(f"<div hx-get='{url}' hx-trigger='load' hx-target='#main'></div>")
 
 #function for loading more messages
 @require_auth
@@ -257,12 +260,14 @@ def more_msg(request,convo_pk):
 	try:
 		data = paginator.page(page_no)
 	except EmptyPage:
-		return HttpResponse("Empty")
+		return HttpResponse("")
 	data = list(data.object_list)
 	data.reverse()			
 	#Message template
 	data = Template('''
 {% load custom_filter %}
+<button class="genric-btn primary radius mb-3 mx-auto w-100  prev-msg" style="max-width:400px;" hx-swap="outerHTML" hx-get="{% url 'accounts:messages' conversation.pk %}" hx-vals='{ "more_msg" : "" , "page_no" : "{{next_page_no}}" }'>
+            Show previous messsages</button>
 		{% for msg in messages_set %} 	
     {% if msg.sent_by == user.get_username %}
     <div class="ml-auto d-flex flex-column" style="width: 70%;padding: 0;">
@@ -300,8 +305,8 @@ def more_msg(request,convo_pk):
     </div>
     {% endif %}
 		{% endfor %}
-				 ''').render(Context({"messages_set" : data,"user":user,"conversation":conversation}))
-	return JsonResponse({"next_page_no":page_no+1,"data" : data})
+				 ''').render(Context({"messages_set" : data,"user":user,"conversation":conversation, "next_page_no":page_no+1}))
+	return HttpResponse(data)
 
 #Function to check for new messages
 @require_auth

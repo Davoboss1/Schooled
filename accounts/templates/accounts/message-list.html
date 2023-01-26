@@ -6,7 +6,7 @@
 </button>
 <div class="collapse" id="newConvo">
     <div class="card card-body my-2 ">
-        <form id="newConvoForm" class="d-flex flex-column mx-auto w-100" style="max-width:400px;">
+        <form id="newConvoForm" class="d-flex flex-column mx-auto w-100" hx-post="{% url 'accounts:message_list' %}" hx-target="#main" style="max-width:400px;">
             {% csrf_token %}
             <input type="hidden" name="convo" value="">
             <input type="hidden" name="sender" value="{{user.get_username}}">
@@ -48,7 +48,7 @@
                     </div>
                     <div class="desc w-100 ml-2">
                         <div class="d-flex">
-                            <span style="width: 85%;"><h6 class="text-dark">{{recipent.get_full_name|default:"Unavailable user"}}</h6>
+                            <span style="width: 85%;"><h6 class="text-dark">{{recipent.get_full_name|default:"No Name"}}</h6>
                                 <div>
                                     <u class="text-dark">{{recipent.level|default:"Unavailable"}}</u>
                                 </div>
@@ -61,7 +61,8 @@
                                 {{conversation.subject}}
                             </p>
                             <button class="genric-btn primary radius ml-auto mt-auto chat-btn"
-                                data-convo-pk="{{conversation.pk}}">Chat</button>
+                                data-convo-pk="{{conversation.pk}}" hx-get="{% url 'accounts:messages' conversation.pk %}" hx-target="#main"
+                                >Chat</button>
                         </div>
                     </div>
                 </div>
@@ -82,7 +83,7 @@
                     </div>
                     <div class="desc w-100 ml-2">
                         <div class="d-flex">
-                            <span class="my-2" style="width: 85%;"><h6 class="text-dark">{{recipent.get_full_name}}</h6>
+                            <span class="my-2" style="width: 85%;"><h6 class="text-dark">{{recipent.get_full_name|default:recipent.username}}</h6>
                                 <div class="mt-1">
                                     <u class="text-dark">{{recipent.level}}</u>
                                 </div>
@@ -96,8 +97,8 @@
                             <p class="comment mr-1">
                                 {{conversation.subject}}
                             </p>
-                            <button class="genric-btn primary radius ml-auto mt-auto chat-btn"
-                                data-convo-pk="{{conversation.pk}}">Chat</button>
+                            <button class="genric-btn primary radius ml-auto mt-auto chat-btn" hx-get="{% url 'accounts:messages' conversation.pk %}" hx-target="#main"
+                               >Chat</button>
                         </div>
                     </div>
                 </div>
@@ -119,49 +120,5 @@
 </div>
 <script>
     //Set unread messages number to 0
-    $("#unread-messages-count").html("0");
-    //New conversation event hander
-    $("#newConvoForm").submit(function (event) {
-        event.preventDefault();
-        //Get message value
-        var message = $("#message-entry").val();
-        //Trim message whitespace and check if contain messages(Prevents empty messages from being sent).
-        if (message.trim().length < 1) {
-            return;
-        }
-        var form = $(this);
-        $("#start-convo-button").html("Creating Conversation....");
-        $("#newConvoStatus").remove();
-        $.post({
-
-            url: "{% url 'accounts:message_list' %}",
-            data: form.serialize(),
-            success: function (data) {
-                //On success after conversation created.
-                //Refresh page 
-                $("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small>Reloading page.....</small></div>');
-                $.get("{% url 'accounts:message_list' %}", {}).done(function (data) {
-                    $("#main").html(data);
-                });
-            },
-            error: function (res) {
-                //Error message
-                $("#start-convo-button").html("Failed. Retry");
-                if (res.responseText === undefined) {
-                    $("#start-convo-button").before('<div class="alert alert-danger alert-dismissible fade show my-2" id="newConvoStatus" role="alert"><strong>Failed.</strong> Something went wrong. Please retry<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times</span></button></div>');
-                } else {
-                    $("#start-convo-button").before('<div class="alert alert-danger alert-dismissible fade show my-2" id="newConvoStatus" role="alert"><strong>Failed.</strong>' + res.responseText + '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times</span></button></div>');
-                }
-            }
-        });
-    });
-//Routes user to message page
-    $(".chat-btn").click(function (e) {
-        var convo_pk = $(this).attr("data-convo-pk");
-        $("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small class="text-center">Getting messages.....</small></div>');
-        $.get("{% url 'accounts:messages' %}" + convo_pk + "/", {}).done(function (data) {
-            $("#main").html(data);
-        });
-    });
-
+    document.querySelector("#unread-messages-count").textContent = "0";
 </script>

@@ -1,4 +1,4 @@
-{% extends "admins/school_owner_admin_page.html" %}
+{% extends "admins/index.html" %}
 {% load crispy_forms_tags %}
 {% load static %}
 {% block style %}
@@ -34,6 +34,7 @@
 
 </section>
 <!-- ================ End banner Area ================= -->
+<div x-data>
 <div class="container-fluid" style="max-width:1000px;padding:0; ">
 
 	<div class="card text-center my-3" >
@@ -62,7 +63,7 @@
 				{% for child in parent.student_set.all %}
 				<div class="student-view mb-3">
 					<img src="{{child.photo.url}}" class="rounded" alt="Photo"
-						style="max-width:500px; max-height:300px;">
+						style="max-width:300px; max-height:300px;">
 					<div class="d-flex flex-column mt-2">
 						<ul class="py-3 border-top">
 							<li class="py-2">
@@ -76,12 +77,11 @@
 							</li>
 							<li class="py-2">
 								<strong>Teacher : </strong> <strong><a class="school-info-btn" href="#school-info"
-										data-toggle="modal" data-type="teacher"
-										data-lookup="{{child.Class.teacher.user.get_username}}">{{child.Class.teacher.full_name}}</a></strong>
+										data-toggle="modal"  hx-get="{% url 'admins:show_profile' 'teacher' child.Class.teacher.user.get_username %}" hx-target="#school-info-body" >{{child.Class.teacher.full_name|default:child.Class.teacher.user.get_username}}</a></strong>
 							</li>
 							<li class="py-2">
-								<strong>School : </strong> <strong><a class="school-info-btn" href="#school-info"
-										data-toggle="modal" data-type="school" data-lookup="{{child.Class.school.pk}}">
+								<strong>School : </strong> <strong><a class="school-info-btn" href="#school-info" hx-get="{% url 'admins:show_profile' 'school' child.Class.school.pk %}" hx-target="#school-info-body"
+										data-toggle="modal">
 										{{child.Class.school}}</a></strong>
 							</li>
 							<li class="py-2">
@@ -105,11 +105,11 @@
 						</ul>
 
 						<div class="d-flex flex-column my-3">
-							<button class="genric-btn primary radius mx-auto show-modal-btn" data-pk="{{child.pk}}">
+							<button class="genric-btn primary radius mx-auto show-modal-btn" hx-get="{% url 'students:view_only_attendance' child.pk %}" hx-target="#modalBody" @click="$refs.modal_title.textContent = 'Wards Attendance'" data-toggle="modal" data-target="#detailsModal" hx-vals='{ "parent" : " "}'>
 								View Attendance
 							</button>
 							<button class="genric-btn primary radius mx-auto mt-3 show-modal-btn"
-								data-type="view-performance" data-pk="{{child.pk}}">
+								hx-get="{% url 'students:view_only_performance' child.pk %}" hx-target="#modalBody" hx-vals='{ "parent" : " "}' data-toggle="modal" data-target="#detailsModal" @click="$refs.modal_title.textContent = 'Wards Performance'">
 								View Performance
 							</button>
 						</div>
@@ -129,7 +129,7 @@
 			<!-- Start of View profile tab -->
 			<div class="student-view tab-pane fade mx-3" id="view-profile-tab" role="tabpanel">
 				<div class="student-view mb-3">
-					<img src="{{parent.user.profile_picture.url}}" alt="Photo">
+					<img src="{{parent.user.profile_picture.url}}" alt="Photo" width="300" height="300">
 					<div class="d-flex flex-column mt-2">
 						<ul class="py-3 border-top border-bottom">
 							<li class="py-2">
@@ -240,7 +240,7 @@
 			<!-- end of edit profile tab -->
 			<!-- Start of View profile tab -->
 			<div class="student-view tab-pane fade" id="messages-tab" role="tabpanel">
-				<div class="m-3 d-flex flex-column" style="text-align:left;" id="main"></div>
+				<div class="m-3 d-flex flex-column" style="text-align:left;" id="main" hx-get="{% url 'accounts:message_list' %}" hx-trigger="load"></div>
 			</div>
 			<!-- end of View profile tab -->
 		</div>
@@ -253,13 +253,13 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title my-auto" id="detailsModalTitle"></h4>
+				<h6 class="modal-title my-auto" x-ref="modal_title" id="detailsModalTitle"></h6>
 
 				<div class="dropdown">
 					<button type="button" style="background:white; border:none;" id="dropdown-menu-button"
 						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<img src="{% static 'img/option.png' %}" class="fa-rotate-90" alt=""
-							style="width:50px; height:50px;">
+							style="width:40px; height:40px;">
 					</button>
 
 					<div class="dropdown-menu" aria-labelledby="dropdown-menu-button">
@@ -298,17 +298,13 @@
 		</div>
 	</div>
 </div>
-
+</div>
 {% endblock %}
 
 {% block script %}
 <script>
-	$(function () {
-		$("#main").html('<div class="m-auto d-flex flex-column"><div class="mx-auto progressBar"></div><small>Fetching conversations.....</small></div>');
-		$.get("{% url 'accounts:message_list' %}", {}).done(function (data) {
-			$("#main").html(data);
-		});
-	});
+	
+	
 	var pk;
 	var type;
 	function download_pdf() {
@@ -347,39 +343,8 @@
 			}
 		}
 	}
-	$(".show-modal-btn").click(function () {
-		$("#detailsModal").modal("show");
-		var body = $("#modalBody");
-		body.html("<div class='progressBar mx-auto'></div>");
-		pk = $(this).attr("data-pk");
-		type = $(this).attr("data-type");
-		var data = {};
-		if (type == "view-performance") {
-			var url = "{% url 'students:view_only_performance' %}" + pk + "/";
-			$("#detailsModalTitle").html("Wards performance");
-			data.parent = "";
-		} else {
-			$("#detailsModalTitle").html("Wards attendance");
-			var url = "{% url 'students:view_only_attendance' %}" + pk + "/";
-		}
-		console.log("Request about to me made.")
-		$.ajax({
-			url: url,
-			type: "get",
-			data: data,
-			success: function (data) {
-				body.html(data);
-			},
-			error: function (req, status, error) {
-				if(req.responseText){
-				body.html(write_alert(req.responseText,"danger"));
-				}else{
-					body.html(write_alert("Something went wrong, your request failed. Please try again","danger"));}					
-					
-			}
-		});
-	});
-
+	
+	
 	$("form").submit(function (event) {
 		event.preventDefault();
 		var form = $(this);
@@ -418,49 +383,5 @@
 		});
 	});
 
-	function fetch_termly_performance(This) {
-		var span_icon = $($(This).find("span")[0]);
-		span_icon.addClass("fa-spin");
-		$.ajax({
-			url: "{% url 'students:view_only_performance' %}" + pk + "/",
-			type: "GET",
-			data: {
-				page: 1,
-				year: $("#year").val(),
-				term: $("#term").val(),
-			},
-			success: function (data) {
-				span_icon.removeClass("fa-spin");
-				if (data == "DOE_ERROR") {
-					$("#performance-div").html('<div class="alert alert-warning my-3" role="alert"> <h6 class="text-center">Term selected does not exist. </div></h6>');
-				} else {
-					$("#performance-div").html(data);
-				}
-			},
-			error: function (response, status, error) {
-				span_icon.removeClass("fa-spin");
-			}
-		});
-	}
-
-	//School information 
-	$(".school-info-btn").click(function () {
-		var btn = $(this);
-		var lookup = btn.attr("data-lookup");
-		var type = btn.attr("data-type");
-		$("#school-info-title").html(btn.html() + " Information");
-		var body = $("#school-info-body");
-		body.html("<div class='progressBar mx-auto my-3'></div>");
-		var url = "{% url 'show_profile' %}" + type + "/" + lookup + "/";
-		$.get({
-			url: url,
-			success: function (data) {
-				body.html(data);
-			},
-			error: function (res, status, jqXHR) {
-				body.html('<div class="alert alert-danger alert-dismissible fade show my-3" role="alert"> <strong >Failed!</strong> Something went wrong. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button></div>');
-			}
-		});
-	});
-</script>
+	</script>
 {% endblock %}

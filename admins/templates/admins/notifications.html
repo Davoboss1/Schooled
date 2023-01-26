@@ -22,36 +22,24 @@
         </div>
     {% endif %}
 </div>
+<div id="notif-status" class="my-3"></div>
 <div class="d-flex">
 	<button class="genric-btn info mx-auto circle w-100 mt-2" id="load-more-btn" data-page-no="2"
-		style="max-width:300px;"> Load more</button>
+		style="max-width:300px;" hx-get="{% url 'admins:notifications' school.pk %}" 
+		x-data="{page_no: 2, show_btn: true}" 
+		hx-target="#notif" 
+		hx-loading-target="#notif-status" hx-error-target="#notif-status" 
+		@click="$event.target.disabled = true;" 
+		@htmx:after-on-load.camel="if($event.detail.xhr.responseText != 'Empty')
+		{ page_no+=1; $event.target.disabled = false;} 
+		else {
+			show_btn = false
+		}" 
+		x-show="show_btn"
+		hx-swap="beforeend"
+		:hx-vals='`{ "page": "${page_no}" }`'> Load more</button>
 
 </div>
 <script>
-	$("#unviewed-notifications-count").html("0");
-	//Loads more notifications
-	$("#load-more-btn").click(function () {
-		var btn = $(this);
-		btn.text("Loading....");
-		var page = btn.attr("data-page-no");
-		$.ajax({
-			url: "{% url 'admins:notifications' %}" + $("#selected-school").val() + "/",
-			data: { page: page },
-			timeout: 15000,
-			success: function (data) {
-				btn.text("Load More");
-				$("#notif").append(data);
-				btn.attr("data-page-no", parseInt(page) + 1)
-			},
-			error: function (res, status, statusText) {
-				if (res.responseText == "EMPTY") {
-					//If error response is EMPTY hide load more button
-					btn.css("display", "none");
-				}
-				else {
-					btn.text("Loading Failed, Retry.");
-				}
-			}
-		});
-	});
-</script>
+	document.querySelector("#unviewed-notifications-count").textContent = "0";
+	</script>

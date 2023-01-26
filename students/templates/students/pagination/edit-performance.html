@@ -1,22 +1,22 @@
 {% load custom_filter %}
-{% if all_Info.object_list.exists %}
-{% for info in all_Info %}
-<a class="list-group-item list-group-item-action d-flex">{{info.name}}
+{% if all_students.object_list.exists %}
+{% for student in all_students %}
+<a class="list-group-item list-group-item-action d-flex">{{student.name}}
     <span class="ml-auto">
         <span class="fa fa-minus-circle mr-3" style="color:red;" data-toggle="collapse"
-            data-target="#delete-performance{{info.id}}" onclick="">
+            data-target="#delete-performance{{student.id}}" onclick="">
         </span>
         <span class="fa fa-plus-circle" style="color:green;" data-toggle="collapse"
-            data-target="#add-performance-form-{{info.pk}}" onclick=""></span>
+            data-target="#add-performance-form-{{student.pk}}" onclick=""></span>
     </span>
 </a>
 <!-- Collapsed container for add performance -->
 <!-- add performance container and form -->
-<div class="collapse" id="add-performance-form-{{info.pk}}" data-parent="#editPerformanceAccordion">
-    <form class="border border-dark px-2" id="performance-add-form-{{info.pk}}"
-        hx-post="{% url 'students:performance_update' info.id %}" hx-target="#form-status-{{info.pk}}">
+<div class="collapse" id="add-performance-form-{{student.pk}}" data-parent="#editPerformanceAccordion">
+    <form class="border border-dark px-2" id="performance-add-form-{{student.pk}}"
+        hx-post="{% url 'students:performance_update' student.id %}" hx-target="#form-status-{{student.pk}}">
         {% csrf_token %}
-        <input class="form-control w-75 mt-2 ml-2" type="hidden" name="name" value="{{info.name}}">
+        <input class="form-control w-75 mt-2 ml-2" type="hidden" name="name" value="{{student.name}}">
         <label class="vcenter mt-3 ml-2">Enter Subject :
         </label>
         <input class="form-control w-75 mt-2 ml-2" type="text" name="subject" list="subject-list" autocomplete="off">
@@ -48,7 +48,7 @@
 
         </div>
         <button class="btn btn-success btn-block mb-3">Create Performance</button>
-        <div class="m-2" id="form-status-{{info.pk}}"></div>
+        <div class="m-2" id="form-status-{{student.pk}}"></div>
     </form>
 
 </div>
@@ -59,7 +59,7 @@
 
 <!-- Delete performance tab -->
 
-<div class="collapse" id="delete-performance{{info.id}}" data-parent="#editPerformanceAccordion">
+<div class="collapse" id="delete-performance{{student.id}}" data-parent="#editPerformanceAccordion">
     <!-- Subject list -->
     <ul class="list-group ">
 
@@ -72,7 +72,7 @@
             </strong>
         </li>
 
-        {% for performance in info|current_term_filter %}
+        {% for performance in student|current_term_filter %}
         <li class="list-group-item d-flex">
             <span style="display:none;">
                 {{performance.pk}}
@@ -109,23 +109,23 @@
 <!-- pagination -->
 <div class="row py-3 border-top border-bottom">
     <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
-        {% if all_Info.has_previous %}
+        {% if all_students.has_previous %}
         <button class="genric-btn primary mx-auto edit-performance-pagination-handler"
-            hx-get="{% url 'students:performance_page' 'edit-performance' %}" hx-target="#editPerformanceAccordion" hx-vals='{ "page" : "{{all_Info.previous_page_number}}" }'>
+            hx-get="{% url 'students:performance_page' 'edit-performance' %}" hx-target="#editPerformanceAccordion" hx-vals='{ "page" : "{{all_students.previous_page_number}}" }'>
             <span class="fa fa-angle-left mr-1"></span>Prev </button>
         {% endif %}
     </div>
     <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
         <select class="form-control mx-auto edit-performance-pagination-handler" style="max-width: 100px;" hx-get="{% url 'students:performance_page' 'edit-performance' %}" hx-target="#editPerformanceAccordion" name="page">
-            {% for page_no in all_Info.paginator.page_range %}
-            <option {% if page_no == all_Info.number %}selected{% endif %}>{{page_no}}</option>
+            {% for page_no in all_students.paginator.page_range %}
+            <option {% if page_no == all_students.number %}selected{% endif %}>{{page_no}}</option>
             {% endfor %}
         </select>
     </div>
     <div class="col-4 d-flex" style="padding:0; margin:0; height:40px;">
-        {% if all_Info.has_next %}
+        {% if all_students.has_next %}
         <button class="genric-btn primary mx-auto edit-performance-pagination-handler "
-        hx-get="{% url 'students:performance_page' 'edit-performance' %}" hx-target="#editPerformanceAccordion" hx-vals='{ "page" : "{{all_Info.next_page_number}}" }'>Next <span class="fa fa-angle-right ml-1"></span></button>
+        hx-get="{% url 'students:performance_page' 'edit-performance' %}" hx-target="#editPerformanceAccordion" hx-vals='{ "page" : "{{all_students.next_page_number}}" }'>Next <span class="fa fa-angle-right ml-1"></span></button>
         {% endif %}
     </div>
 </div>
