@@ -1,13 +1,12 @@
-
-<div id="helpSideNav" class="sidenav" >
+<div id="helpSideNav" class="sidenav">
 
     <h6 class="help-nav-title">Help information</h6>
     <a href="javascript:void(0)" class="closebtn">&times;</a>
 
     <div class="container" id="help-nav-body">
-    <strong class="font-weight-bold"></strong>
-    <p class="mt-3">
-    </p>
+        <strong class="font-weight-bold"></strong>
+        <p class="mt-3">
+        </p>
     </div>
 </div>
 
@@ -15,7 +14,7 @@
 <ul class="help-list row">
     {% for help in helps %}
     <div class="col-md-6 col-lg-4">
-        <li data-pk="{{help.pk}}">
+        <li hx-get="/accounts/help_page/" hx-target="#help-nav-body" hx-vals='{ "help_pk" : "{{help.pk}}" }'>
             {{help.title}}
             <span class="lnr lnr-arrow-right my-auto"></span>
         </li>
@@ -24,22 +23,17 @@
 </ul>
 
 <script>
-        $(".help-list li").click(function(){
-            list = $(this);
+    document.querySelectorAll(".help-list li").forEach((elem) => {
+        elem.onclick = function () {  
             //Expand side nav
             document.getElementById("helpSideNav").style.width = "80%";
-            $("#closeHelp")[0].disabled = true;
-            //Get list and the nav body
-            var nav_body= $("#help-nav-body");
-            //Set nav body title with list text
-            nav_body.children().first().text(list.text());
-            //Fetch help information into nav-hel-body last element 
-            get_data("/accounts/help_page/",{help_pk:list.attr("data-pk")},nav_body.children().last()[0]);
-        });
-        //Close help nav
-        $(".sidenav .closebtn").click(function(){
-            document.getElementById("helpSideNav").style.width = "0";
-            $("#closeHelp")[0].disabled = false;
-        });
-        
+            document.querySelector("#closeHelp").disabled = true;
+         }
+    });
+    //Close help nav
+    document.querySelector(".sidenav .closebtn").onclick = function () {
+        document.getElementById("helpSideNav").style.width = "0";
+        document.querySelector("#closeHelp").disabled = false;
+    };
+
 </script>

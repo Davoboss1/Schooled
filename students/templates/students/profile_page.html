@@ -125,16 +125,16 @@
 	function print_performance() {
 		var year = document.querySelector("#year").value;
 		var term = document.querySelector("#term").value;
-		window.location.href = "http://{{request.get_host}}{% url 'students:print_performance' %}" + "{{student.pk}}" + "/" + year + "/" + term + "/";
+		window.open("http://{{request.get_host}}{% url 'students:print_performance' %}" + "{{student.pk}}" + "/" + year + "/" + term + "/","_blank");
 	}
 
 	function print_attendance(){
 		var start_date = document.querySelector("#start-date").value;
 		var end_date =  document.querySelector("#end-date").value;
 		if(start_date && end_date){
-			window.location.href = "{% url 'students:print_attendance' student.pk %}"+start_date+"/"+end_date+"/";
+			window.open("{% url 'students:print_attendance' student.pk %}"+start_date+"/"+end_date+"/","_blank");
 		}else{
-			window.location.href = "{% url 'students:print_attendance' student.pk %}";
+			window.open("{% url 'students:print_attendance' student.pk %}","_blank");
 		}
 	}
 	</script>

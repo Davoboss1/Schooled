@@ -1,4 +1,5 @@
 from django.shortcuts import render,Http404,HttpResponse,redirect
+from django.http.response import HttpResponseServerError
 from django.db.utils import IntegrityError
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
@@ -7,7 +8,7 @@ from accounts.models import Messages
 from .forms import ParentForm
 from students.models import Term
 from admins.views import get_errors_in_text
-from tools import save_picture,view_for,require_ajax
+from tools import save_picture,view_for,render_alert
 # Create your views here.
 #Parents homepage view
 @view_for("parent")
@@ -50,17 +51,17 @@ def update(request):
 			if user_update_form.is_valid():
 				user = user_update_form.save()
 				save_picture(user.profile_picture,request.FILES.get("profile-picture"))
-				return HttpResponse("Success")
+				return HttpResponse(render_alert("Your details has been updated successfully"))
 			else:
-				return HttpResponse(get_errors_in_text(user_update_form))
+				return HttpResponseServerError(get_errors_in_text(user_update_form))
 		elif type == "Password":
 			#change password form
 			user_pcf = PasswordChangeForm(user,request.POST)
 			if user_pcf.is_valid():
 				user_pcf.save()
-				return HttpResponse("Redirect")
+				return HttpResponse(render_alert("Your password has been changed successfully"))
 			else:
-				return HttpResponse(get_errors_in_text(user_pcf))
+				return HttpResponseServerError(get_errors_in_text(user_pcf))
 		#if post request is of type Info
 		#this type of post request changes the user information
 		elif type == "Info":
@@ -68,7 +69,7 @@ def update(request):
 			user_info = ParentForm(request.POST,instance=user.parent)
 			if user_info.is_valid():
 				user_info.save()
-				return HttpResponse("Success")
+				return HttpResponse(render_alert("Your details has been updated successfully"))
 			else:
-				return HttpResponse(get_errors_in_text(user_info))		
+				return HttpResponseServerError(get_errors_in_text(user_info))		
 

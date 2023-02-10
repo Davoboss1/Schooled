@@ -64,17 +64,16 @@ function write_loader(msg) {
 var help_requested = false;
 function toggleHelp(show) {
 	if (show) {
-		$("#help-container").removeClass("close");
+		document.querySelector("#help-container").classList.remove("close");
 		setTimeout(function () {
 			document.getElementById("main-page-body").style.display = "none";
 		}, 500);
-		var body = document.getElementById("help-container-body");
 		if (!help_requested) {
-			get_data("/accounts/help_page/", {}, body);
+			htmx.ajax('GET', '/accounts/help_page/', '#help-container-body')
 			help_requested = true;
 		}
 	} else {
-		$("#help-container").addClass("close");
+		document.querySelector("#help-container").classList.add("close");
 		document.getElementById("main-page-body").style.display = "block";
 	}
 }

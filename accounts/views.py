@@ -351,8 +351,13 @@ def help_view(request):
     #If help_pk attr is in request.GET return requested help description 
     if "help_pk" in request.GET:
         help_obj = help.objects.get(pk=request.GET.get("help_pk"))
-        description = Template("{{desc|linebreaks}}").render(Context({"desc":help_obj.description}));
-        return HttpResponse(description)
+        data = Template('''
+		<strong class="font-weight-bold">{{title}}</strong>
+        <p class="mt-3">
+		{{desc|linebreaks}}
+		</p>
+		''').render(Context({"desc":help_obj.description , "title" : help_obj.title }))
+        return HttpResponse(data)
     #Get all help and return template
     helps = help.objects.all()
     return render(request,"accounts/help-page.html",{"helps":helps})

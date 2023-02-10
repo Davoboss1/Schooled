@@ -34,7 +34,7 @@
 
 </section>
 <!-- ================ End banner Area ================= -->
-<div x-data>
+<div x-data="{ student_pk: '',type:'' }">
 <div class="container-fluid" style="max-width:1000px;padding:0; ">
 
 	<div class="card text-center my-3" >
@@ -105,11 +105,17 @@
 						</ul>
 
 						<div class="d-flex flex-column my-3">
-							<button class="genric-btn primary radius mx-auto show-modal-btn" hx-get="{% url 'students:view_only_attendance' child.pk %}" hx-target="#modalBody" @click="$refs.modal_title.textContent = 'Wards Attendance'" data-toggle="modal" data-target="#detailsModal" hx-vals='{ "parent" : " "}'>
+							<button class="genric-btn primary radius mx-auto show-modal-btn" hx-get="{% url 'students:view_only_attendance' child.pk %}" hx-target="#modalBody" @click="
+							$refs.modal_title.textContent = 'Wards Attendance'; 
+							student_pk = '{{child.pk}}'; 
+							type = 'view-attendance';" data-toggle="modal" data-target="#detailsModal" hx-vals='{ "parent" : " "}'>
 								View Attendance
 							</button>
 							<button class="genric-btn primary radius mx-auto mt-3 show-modal-btn"
-								hx-get="{% url 'students:view_only_performance' child.pk %}" hx-target="#modalBody" hx-vals='{ "parent" : " "}' data-toggle="modal" data-target="#detailsModal" @click="$refs.modal_title.textContent = 'Wards Performance'">
+								hx-get="{% url 'students:view_only_performance' child.pk %}" hx-target="#modalBody" hx-vals='{ "parent" : " "}' data-toggle="modal" data-target="#detailsModal" @click="
+								$refs.modal_title.textContent = 'Wards Performance'; 
+								student_pk = '{{child.pk}}'; 
+								type = 'view-performance';">
 								View Performance
 							</button>
 						</div>
@@ -168,7 +174,7 @@
 						</div>
 						<div class="collapse" id="edit-username-collapse" data-parent="#edit-profile-accordion">
 							<div class="card-body">
-								<form method="post">
+								<form method="post" hx-post="{% url 'parents:update' %}" hx-target="#update-user-status" hx-encoding="multipart/form-data" >
 									{% csrf_token %}
 									<input name="type" value="Username" type="hidden">
 									<div class="parent-form">
@@ -176,6 +182,7 @@
 										<label class="mt-2">Change profile picture</label>
 										<input class="form-control my-2" name="profile-picture" accept="image/*" type="file">
 									</div>
+									<div id="update-user-status"></div>
 									<button class="genric-btn success radius w-100 mx-auto" style="max-width:300px;"
 										type="submit">Change</button>
 								</form>
@@ -195,10 +202,11 @@
 						</div>
 						<div class="collapse" id="edit-password-collapse" data-parent="#edit-profile-accordion">
 							<div class="card-body">
-								<form method="post" class="item-auto pwd-form" >
+								<form method="post" class="item-auto pwd-form"  hx-post="{% url 'parents:update' %}" hx-target="#update-password-status" @htmx:after-on-load.camel="window.location.href = '{% url 'accounts:login' %}'">
 									{% csrf_token %}
 									<input name="type" value="Password" type="hidden">
 									{{password_change_form|crispy}}
+									<div id="update-password-status"></div>
 
 									<button class="genric-btn success radius mx-auto w-100 mb-1" style="max-width:300px;"
 										type="submit">Change</button>
@@ -220,10 +228,11 @@
 						</div>
 						<div class="collapse" id="edit-info-collapse" data-parent="#edit-profile-accordion">
 							<div class="card-body">
-								<form method="post" class="parent-form">
+								<form method="post" class="parent-form"  hx-post="{% url 'parents:update' %}" hx-target="#update-details-status">
 									{% csrf_token %}
 									<input name="type" value="Info" type="hidden">
 									{{parent_form|crispy}}
+									<div id="update-details-status"></div>
 									<button class="genric-btn success radius mx-auto w-100" style="max-width:300px;"
 										type="submit">Change</button>
 								</form>
@@ -266,8 +275,8 @@
 
 						<a class="dropdown-item" href="#" data-dismiss="modal" aria-label="Close">Close</a>
 						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" onclick="download_pdf()">Download <span class="fa fa-download"></span></a>
-						<a class="dropdown-item" onclick="print_pages()">Print <span class="lnr lnr-printer"></span></a>
+						<a class="dropdown-item" @click="download_pdf(student_pk,type)">Download <span class="fa fa-download"></span></a>
+						<a class="dropdown-item" @click="print_pages(student_pk,type)">Print <span class="lnr lnr-printer"></span></a>
 					</div>
 				</div>
 			</div>
@@ -304,19 +313,16 @@
 {% block script %}
 <script>
 	
-	
-	var pk;
-	var type;
-	function download_pdf() {
+	function download_pdf(pk,type) {
 		if (type == "view-performance") {
-			var year = $("#year").val();
-			var term = $("#term").val();
+			let year = document.querySelector("#year").value;
+			let term = document.querySelector("#term").value;
 			window.location.href = "http://{{request.get_host}}{% url 'students:convert_performance_to_pdf' %}" + pk + "/" + year + "/" + term + "/";
 
 		}
 		else {
-			var start_date = $("#start-date").val();
-			var end_date =  $("#end-date").val();
+			let start_date = document.querySelector("#start-date").value;
+			let end_date =  document.querySelector("#end-date").value;
 			if(start_date && end_date){
 			window.location.href = "http://{{request.get_host}}{% url 'students:convert_attendance_to_pdf' %}" + pk + "/"+start_date+"/"+end_date+"/";
 			}
@@ -326,62 +332,23 @@
 		}
 	}
 
-	function print_pages(){
+	function print_pages(pk,type){
 		if (type == "view-performance") {
-			var year = $("#year").val();
-			var term = $("#term").val();
-			window.location.href = "http://{{request.get_host}}{% url 'students:print_performance' %}" + pk + "/" + year + "/" + term + "/";
+			let year = document.querySelector("#year").value;
+			let term = document.querySelector("#term").value;
+			window.open("http://{{request.get_host}}{% url 'students:print_performance' %}" + pk + "/" + year + "/" + term + "/", "_blank");
 
 		}
 		else {
-			var start_date = $("#start-date").val();
-			var end_date =  $("#end-date").val();
+			let start_date = document.querySelector("#start-date").value;
+			let end_date =  document.querySelector("#end-date").value;
 			if(start_date && end_date){
-			window.location.href = "http://{{request.get_host}}{% url 'students:print_attendance' %}" + pk + "/"+start_date+"/"+end_date+"/";
+				window.open("http://{{request.get_host}}{% url 'students:print_attendance' %}" + pk + "/"+start_date+"/"+end_date+"/","_blank");
 			}else{
-			window.location.href = "http://{{request.get_host}}{% url 'students:print_attendance' %}" + pk + "/";
+				window.open("http://{{request.get_host}}{% url 'students:print_attendance' %}" + pk + "/","_blank");
 			}
 		}
 	}
 	
-	
-	$("form").submit(function (event) {
-		event.preventDefault();
-		var form = $(this);
-		$("#update-status").remove();
-		form.append("<div class='progressBar mx-auto my-3' id='update-status' style='max-width: 400px;'> </div>");
-		var formdata = new FormData(form[0]);
-		$.ajax({
-			url: "{% url 'parents:update' %}",
-			type: "POST",
-			processData: false,
-			contentType: false,
-			data: formdata,
-			success: function (data) {
-				//If response value is success.
-				//write the success alert to the form.
-				$("#update-status").remove();
-				if (data == "Success") {
-					form.append('<div class="alert alert-success alert-dismissible fade show mt-3 mx-auto" role="alert" id="update-status" style="max-width: 400px;"> <strong>Success!</strong> Data has been updated successfully. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-
-				}
-				else if (data == "Redirect") {
-					form.append(write_alert("Password has been changed successfully. You will be redirected to login page soon."));
-                    window.setTimeout(function(){
-					    window.location.href = "{% url 'accounts:login' %}";
-                    },2000);
-				}
-				else {
-					form.append('<div class="alert alert-danger alert-dismissible fade show mt-3 mx-auto" id="update-status" role="alert" style="max-width: 400px;"> <strong >Failed!</strong>' + data + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>');
-				}
-			},
-			error: function (request, status, error) {
-				$("#update-status").remove();
-				form.append("<div class='d-flex flex-column' id='update-status'><img class='mx-auto' src='{% static 'img/error.png' %}' style='width:50px; height:50px;'><small class='mx-auto text-danger'>Something went wrong.</div>");
-
-			},
-		});
-	});
-
 	</script>
 {% endblock %}
